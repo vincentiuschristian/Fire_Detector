@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Fire Detector</string>
+    <string name="title_home">Home</string>
+    <string name="title_emergency">Emergency</string>
+    <string name="title_profile">Profile</string>
+    <string name="polisi">Polisi</string>
+    <string name="ambulance">Ambulance</string>
+    <string name="warning_text">ⓘ Tombol darurat ini hanya boleh digunakan saat terjadi kebakaran. Penyalahgunaan akan diberikan sanksi sesuai aturan yang berlaku.</string>
+    <string name="call_fire_fighter">Call Fire Fighter</string>
+    <string name="call_police">Call Police</string>
+    <string name="call_ambulance">Call Ambulance</string>
+    <string name="emergency">Emergency</string>
+    <string name="your_location">Your Location</string>
+    <string name="address_dummy">Jl. ZA. Pagar Alam No.89, Gedong Meneng, Kec. Rajabasa, Kota Bandar Lampung</string>
+</resources>
