@@ -12,4 +12,16 @@
     <string name="emergency">Emergency</string>
     <string name="your_location">Your Location</string>
     <string name="address_dummy">Jl. ZA. Pagar Alam No.89, Gedong Meneng, Kec. Rajabasa, Kota Bandar Lampung</string>
+    <string name="temperature">Temperature</string>
+    <string name="icon_temperature">icon temperature</string>
+    <string name="icon_humidity">icon humidity</string>
+    <string name="kelembapan">Kelembapan</string>
+    <string name="icon_air_quality">icon air quality</string>
+    <string name="kualitas_udara">Kualitas Udara</string>
+    <string name="icon_fire">icon fire</string>
+    <string name="api_terdeteksi">Api Terdeteksi</string>
+    <string name="not_detected">False</string>
+    <string name="baik">Baik</string>
+    <string name="_30">30%</string>
+    <string name="_40">40°</string>
 </resources>
