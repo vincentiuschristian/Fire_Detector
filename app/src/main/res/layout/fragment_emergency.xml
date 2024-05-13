@@ -50,6 +50,7 @@
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:layout_gravity="center"
+                    android:contentDescription="@string/location_icon"
                     android:layout_marginStart="24dp"
                     android:src="@drawable/map_pin"
                     app:layout_constraintStart_toStartOf="parent"
