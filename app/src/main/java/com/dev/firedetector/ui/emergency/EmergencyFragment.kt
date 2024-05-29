@@ -12,7 +12,9 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.dev.firedetector.R
 import com.dev.firedetector.databinding.FragmentEmergencyBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
 class EmergencyFragment : Fragment() {
@@ -36,16 +38,16 @@ class EmergencyFragment : Fragment() {
         binding.apply {
             btnPolisi.setOnClickListener {
                 val police = "tel:089605958454"
-                callPolice(police)
+                showConfirmationDialog(police)
             }
             btnAmbulance.setOnClickListener {
                 val ambulance = "tel:0895600560600"
-                callPolice(ambulance)
+                showConfirmationDialog(ambulance)
             }
         }
     }
 
-    private fun callPolice(number: String) {
+    private fun calling(number: String) {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.CALL_PHONE
@@ -57,13 +59,29 @@ class EmergencyFragment : Fragment() {
         }
     }
 
+    private fun showConfirmationDialog(number: String){
+        MaterialAlertDialogBuilder(requireContext(), R.style.MaterialAlertDialog_rounded)
+            .setTitle(resources.getString(R.string.title))
+            .setMessage(resources.getString(R.string.supporting_text))
+            .setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton(resources.getString(R.string.accept)) { dialog, _ ->
+                calling(number)
+                dialog.dismiss()
+            }
+            .show()
+    }
+
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            Toast.makeText(requireContext(), "Permission granted to make calls", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Permission granted to make calls", Toast.LENGTH_SHORT)
+                .show()
         } else {
-            Toast.makeText(requireContext(), "Permission denied to make calls", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Permission denied to make calls", Toast.LENGTH_SHORT)
+                .show()
         }
     }
 
