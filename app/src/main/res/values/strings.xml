@@ -30,4 +30,15 @@
     <string name="cancel">Batal</string>
     <string name="decline">Menolak</string>
     <string name="accept">Ya</string>
+    <string name="login">Login</string>
+    <string name="masuk_ke_akun_anda">Masuk ke Akun Anda</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="tidak_mempunyai_akun">Tidak mempunyai Akun?</string>
+    <string name="daftar">Daftar</string>
+    <string name="register">Register</string>
+    <string name="daftarkan_akun_anda">Daftarkan Akun Anda</string>
+    <string name="email">Email</string>
+    <string name="sudah_mempunyai_akun">Sudah mempunyai Akun?</string>
+    <string name="masuk">Masuk</string>
 </resources>

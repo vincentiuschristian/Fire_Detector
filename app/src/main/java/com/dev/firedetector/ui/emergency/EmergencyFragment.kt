@@ -77,7 +77,7 @@ class EmergencyFragment : Fragment() {
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            Toast.makeText(requireContext(), "Permission granted to make calls", Toast.LENGTH_SHORT)
+            Toast.makeText(requireContext(), "Permission granted", Toast.LENGTH_SHORT)
                 .show()
         } else {
             Toast.makeText(requireContext(), "Permission denied to make calls", Toast.LENGTH_SHORT)
