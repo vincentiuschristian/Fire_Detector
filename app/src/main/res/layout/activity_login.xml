@@ -13,9 +13,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
         android:paddingStart="16dp"
+        android:textColor="@color/black"
         android:paddingEnd="8dp"
         android:text="@string/login"
-        android:textSize="24sp"
+        android:textSize="28sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,6 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:paddingStart="16dp"
+        android:textColor="#545454"
         android:paddingEnd="8dp"
         android:text="@string/masuk_ke_akun_anda"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,12 +41,13 @@
         app:layout_constraintGuide_percent="0.5"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.google.android.material.textfield.TextInputLayout
+    <com.dev.firedetector.customview.CustomTextInputLayout
         android:id="@+id/tilUsername"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        app:endIconMode="clear_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guidelineHorizontal">
 
@@ -52,11 +55,13 @@
             android:id="@+id/etUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/username" />
+            style="@style/CustomEditText"
+            android:hint="@string/username"
+            android:inputType="textPersonName" />
 
-    </com.google.android.material.textfield.TextInputLayout>
+    </com.dev.firedetector.customview.CustomTextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
+    <com.dev.firedetector.customview.CustomTextInputLayout
         android:id="@+id/tilPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -64,16 +69,18 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintStart_toStartOf="parent"
+        app:endIconMode="password_toggle"
         app:layout_constraintTop_toBottomOf="@id/tilUsername">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etPassword"
+            style="@style/CustomEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/password"
             android:inputType="textPassword" />
 
-    </com.google.android.material.textfield.TextInputLayout>
+    </com.dev.firedetector.customview.CustomTextInputLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogin"

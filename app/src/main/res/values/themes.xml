@@ -23,4 +23,16 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">16dp</item>
     </style>
+
+    <style name="CustomEditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/bg_edit_text</item>
+        <item name="android:textColorHint">#757575</item>
+        <item name="android:textSize">16sp</item>
+        <item name="textInputStyle">@style/Widget.Material3.TextInputEditText.OutlinedBox</item>
+        <item name="android:padding">20dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
 </resources>

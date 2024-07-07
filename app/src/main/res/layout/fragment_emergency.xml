@@ -18,7 +18,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/white"
             android:paddingTop="10dp"
-            app:title="Telepon Darurat"
+            app:title="@string/telepon_darurat"
             app:titleCentered="true" />
 
     </com.google.android.material.appbar.AppBarLayout>

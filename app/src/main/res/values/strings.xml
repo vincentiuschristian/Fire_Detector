@@ -41,4 +41,12 @@
     <string name="email">Email</string>
     <string name="sudah_mempunyai_akun">Sudah mempunyai Akun?</string>
     <string name="masuk">Masuk</string>
+    <string name="profile">Profile</string>
+    <string name="logout">Logout</string>
+    <string name="name">Name</string>
+    <string name="full_name">Full Name</string>
+    <string name="location">Location</string>
+    <string name="telepon_darurat">Telepon Darurat</string>
+    <string name="luis_hamilton">Luis Hamilton</string>
+    <string name="kondisi_ruangan">Kondisi Ruangan</string>
 </resources>
