@@ -7,18 +7,29 @@
     android:layout_height="match_parent"
     tools:context=".ui.login.LoginActivity">
 
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="36dp"
+        android:contentDescription="@string/logo_aplikasi"
+        android:src="@drawable/logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/tvLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="8dp"
         android:paddingStart="16dp"
-        android:textColor="@color/black"
         android:paddingEnd="8dp"
         android:text="@string/login"
-        android:textSize="28sp"
+        android:textColor="@color/black"
+        android:textSize="36sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <TextView
         android:id="@+id/tvMasuk"
@@ -26,9 +37,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:paddingStart="16dp"
-        android:textColor="#545454"
         android:paddingEnd="8dp"
         android:text="@string/masuk_ke_akun_anda"
+        android:textColor="#545454"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvLogin" />
 
@@ -52,11 +64,11 @@
         app:layout_constraintTop_toBottomOf="@id/guidelineHorizontal">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etUsername"
+            android:id="@+id/etEmail"
+            style="@style/CustomEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/CustomEditText"
-            android:hint="@string/username"
+            android:hint="@string/email"
             android:inputType="textPersonName" />
 
     </com.dev.firedetector.customview.CustomTextInputLayout>
@@ -68,8 +80,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        app:layout_constraintStart_toStartOf="parent"
         app:endIconMode="password_toggle"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tilUsername">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -87,8 +99,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="@string/login"
-        app:cornerRadius="12dp"
+        android:height="58dp"
+        android:text="@string/masuk"
+        app:backgroundTint="#222227"
+        app:cornerRadius="16dp"
         app:layout_constraintTop_toBottomOf="@id/tilPassword" />
 
     <LinearLayout
@@ -106,6 +120,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/black"
             android:text="@string/tidak_mempunyai_akun" />
 
         <TextView
@@ -114,7 +129,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:text="@string/daftar"
-            android:textColor="?attr/colorPrimary"
+            android:textColor="#6F00FF"
             android:textStyle="bold" />
 
     </LinearLayout>

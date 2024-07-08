@@ -49,4 +49,6 @@
     <string name="telepon_darurat">Telepon Darurat</string>
     <string name="luis_hamilton">Luis Hamilton</string>
     <string name="kondisi_ruangan">Kondisi Ruangan</string>
+    <string name="logo_aplikasi">Logo Aplikasi</string>
+    <string name="example_gmail_com">example@gmail.com</string>
 </resources>
