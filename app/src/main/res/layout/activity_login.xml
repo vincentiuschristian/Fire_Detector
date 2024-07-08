@@ -120,8 +120,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:text="@string/tidak_mempunyai_akun" />
+            android:text="@string/tidak_mempunyai_akun"
+            android:textColor="@color/black" />
 
         <TextView
             android:id="@+id/tv_move_register"
