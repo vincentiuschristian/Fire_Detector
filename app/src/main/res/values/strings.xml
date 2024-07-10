@@ -51,4 +51,6 @@
     <string name="kondisi_ruangan">Kondisi Ruangan</string>
     <string name="logo_aplikasi">Logo Aplikasi</string>
     <string name="example_gmail_com">example@gmail.com</string>
+    <string name="welcome">Halo,</string>
+    <string name="dummy_name">Dimas</string>
 </resources>

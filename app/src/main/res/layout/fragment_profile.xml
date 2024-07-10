@@ -47,9 +47,11 @@
 
             <TextView
                 android:id="@+id/tv_userName"
-                style="@style/TextAppearance.Material3.TitleLarge"
+                android:textSize="20sp"
                 android:layout_width="wrap_content"
+                android:textColor="@color/black"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/plus_jakarta_sans_semi_bold"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/username"
@@ -59,7 +61,8 @@
 
             <TextView
                 android:id="@+id/tv_userEmail"
-                style="@style/TextAppearance.Material3.BodyMedium"
+                android:fontFamily="@font/plus_jakarta_sans_regular"
+                android:textColor="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -75,6 +78,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="36dp"
+                android:fontFamily="@font/plus_jakarta_sans_regular"
                 android:text="@string/name"
                 android:textColor="@color/primaryContainer"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -85,6 +89,7 @@
                 android:id="@+id/tv_user_full_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/plus_jakarta_sans_semi_bold"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/luis_hamilton"
@@ -102,6 +107,7 @@
                 android:layout_marginEnd="16dp"
                 android:text="@string/location"
                 android:textColor="@color/primaryContainer"
+                android:fontFamily="@font/plus_jakarta_sans_regular"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_user_full_name" />
@@ -110,6 +116,7 @@
                 android:id="@+id/tvUserLocation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/plus_jakarta_sans_semi_bold"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="16dp"
@@ -125,6 +132,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="64dp"
+                android:fontFamily="@font/plus_jakarta_sans_regular"
                 android:letterSpacing="0.02"
                 android:text="@string/logout"
                 android:textSize="18sp"
