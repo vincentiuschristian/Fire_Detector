@@ -25,12 +25,11 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:fitsSystemWindows="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
+            android:paddingBottom="70dp"
             android:layout_height="match_parent">
 
             <TextView
@@ -39,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:paddingTop="24dp"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:textColor="@color/primary"
                 android:fontFamily="@font/plus_jakarta_sans_medium"
                 android:text="@string/welcome"
