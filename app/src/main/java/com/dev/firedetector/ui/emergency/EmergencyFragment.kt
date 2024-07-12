@@ -36,10 +36,17 @@ class EmergencyFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
+            btnCallPemadamKebakaran.setOnClickListener {
+                val phoneNumber = "+6285379654250"
+                val message = "Halo, ini pesan automatise dari aplikasi saya."
+                sendMessage(phoneNumber, message)
+            }
+
             btnPolisi.setOnClickListener {
                 val police = "tel:089605958454"
                 showConfirmationDialog(police)
             }
+
             btnAmbulance.setOnClickListener {
                 val ambulance = "tel:0895600560600"
                 showConfirmationDialog(ambulance)
@@ -83,6 +90,12 @@ class EmergencyFragment : Fragment() {
             Toast.makeText(requireContext(), "Permission denied to make calls", Toast.LENGTH_SHORT)
                 .show()
         }
+    }
+
+    private fun sendMessage(number: String, message: String) {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse("https://api.whatsapp.com/send?phone=$number&text=$message")
+        startActivity(intent)
     }
 
     override fun onDestroyView() {

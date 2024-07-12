@@ -6,10 +6,10 @@
         android:icon="@drawable/home_selector"
         android:title="@string/title_home" />
 
-<!--    <item
+    <item
         android:id="@+id/navigation_emergency"
         android:icon="@drawable/warning_selector"
-        android:title="@string/title_emergency" />-->
+        android:title="@string/title_emergency" />
 
     <item
         android:id="@+id/navigation_profile"

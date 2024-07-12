@@ -26,7 +26,7 @@
     <string name="_40">40°</string>
     <string name="location_icon">Location icon</string>
     <string name="title">Telepon Darurat</string>
-    <string name="supporting_text">Apakah Anda yakin untuk telepon?</string>
+    <string name="supporting_text">Apakah anda yakin untuk melakukan panggilan darurat?</string>
     <string name="cancel">Batal</string>
     <string name="decline">Menolak</string>
     <string name="accept">Ya</string>
