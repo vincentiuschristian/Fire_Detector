@@ -52,4 +52,5 @@
     <string name="logo_aplikasi">Logo Aplikasi</string>
     <string name="example_gmail_com">example@gmail.com</string>
     <string name="welcome">Halo,</string>
+    <string name="address_message">Terjadi kebakaran rumah.\n Lokasi: Jl. Anggrek No.1, Gedong Meneng, Kec. Rajabasa, Kota Bandar Lampung \nhttps://maps.app.goo.gl/Se4uSo54XEiWSmie8</string>
 </resources>

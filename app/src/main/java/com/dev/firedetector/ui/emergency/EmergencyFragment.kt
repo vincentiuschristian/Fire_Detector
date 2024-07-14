@@ -37,8 +37,8 @@ class EmergencyFragment : Fragment() {
 
         binding.apply {
             btnCallPemadamKebakaran.setOnClickListener {
-                val phoneNumber = "+6285379654250"
-                val message = "Halo, ini pesan automatise dari aplikasi saya."
+                val phoneNumber = "+6281915326711"
+                val message = resources.getString(R.string.address_message)
                 sendMessage(phoneNumber, message)
             }
 
