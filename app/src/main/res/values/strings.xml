@@ -20,7 +20,7 @@
     <string name="kualitas_udara">Kualitas Udara</string>
     <string name="icon_fire">icon fire</string>
     <string name="api_terdeteksi">Api Terdeteksi</string>
-    <string name="not_detected">False</string>
+    <string name="not_detected">Tidak Terdeteksi</string>
     <string name="baik">Baik</string>
     <string name="_30">30%</string>
     <string name="_40">40°</string>
@@ -53,4 +53,6 @@
     <string name="example_gmail_com">example@gmail.com</string>
     <string name="welcome">Halo,</string>
     <string name="address_message">Terjadi kebakaran rumah.\n Lokasi: Jl. Anggrek No.1, Gedong Meneng, Kec. Rajabasa, Kota Bandar Lampung \nhttps://maps.app.goo.gl/Se4uSo54XEiWSmie8</string>
+    <string name="password_warning">Password must be at least 6 characters!</string>
+    <string name="email_warning">Enter a valid email address!</string>
 </resources>

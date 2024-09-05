@@ -282,7 +282,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/not_detected"
                         android:textColor="@color/primary"
-                        android:textSize="32sp"
+                        android:textSize="20sp"
                         android:textStyle="bold"
                         android:fontFamily="@font/plus_jakarta_sans_bold"
                         app:layout_constraintBottom_toBottomOf="parent"
