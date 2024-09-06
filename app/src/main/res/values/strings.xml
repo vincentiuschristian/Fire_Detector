@@ -55,4 +55,5 @@
     <string name="address_message">Terjadi kebakaran rumah.\n Lokasi: Jl. Anggrek No.1, Gedong Meneng, Kec. Rajabasa, Kota Bandar Lampung \nhttps://maps.app.goo.gl/Se4uSo54XEiWSmie8</string>
     <string name="password_warning">Password must be at least 6 characters!</string>
     <string name="email_warning">Enter a valid email address!</string>
+    <string name="empty_field">Kolom tidak boleh kosong!</string>
 </resources>

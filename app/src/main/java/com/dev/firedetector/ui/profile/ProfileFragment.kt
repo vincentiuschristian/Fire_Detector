@@ -6,13 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import com.dev.firedetector.AuthActivity
+import com.dev.firedetector.data.ViewModelFactory
 import com.dev.firedetector.databinding.FragmentProfileBinding
-import com.dev.firedetector.ui.login.LoginActivity
 
 class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: ProfileViewModel by viewModels {
+        ViewModelFactory.getInstance(requireContext())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,7 +32,8 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnLogout.setOnClickListener {
-            startActivity(Intent(requireContext(), LoginActivity::class.java))
+           viewModel.logout()
+            startActivity(Intent(requireActivity(), AuthActivity::class.java))
         }
     }
 

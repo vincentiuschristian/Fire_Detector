@@ -1,5 +1,6 @@
 package com.dev.firedetector.data.repository
 
+import android.content.Context
 import com.dev.firedetector.data.model.User
 import com.dev.firedetector.util.Reference
 import com.google.firebase.auth.AuthResult
@@ -8,7 +9,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
-class FireRepository() {
+class FireRepository(context: Context) {
     private val auth = FirebaseAuth.getInstance()
     private val db: FirebaseFirestore by lazy {
         Firebase.firestore
@@ -46,7 +47,32 @@ class FireRepository() {
         }
     }
 
+    fun getUserData(onResult: (User?, Exception?) -> Unit) {
+        db.collection(Reference.COLLECTION).document(auth.currentUser!!.uid)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                val user = documentSnapshot.toObject(User::class.java)
+                onResult(user, null)
+            }
+            .addOnFailureListener { e ->
+                onResult(null, e)
+            }
+    }
+
     fun logout() {
         auth.signOut()
+    }
+
+    companion object {
+        @Volatile
+        private var instances: FireRepository? = null
+
+        fun getInstance(context: Context):FireRepository =
+            instances ?: synchronized(this){
+                instances ?:FireRepository(context)
+                    .also {
+                        instances = it
+                    }
+            }
     }
 }
