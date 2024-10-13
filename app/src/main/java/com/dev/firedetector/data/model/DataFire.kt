@@ -1,5 +1,5 @@
 package com.dev.firedetector.data.model
 
-data class DataFire{
-
-}
+data class DataFire(
+    var suhu: String? = "",
+)
