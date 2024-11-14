@@ -59,6 +59,10 @@ class FireRepository(context: Context) {
             }
     }
 
+    fun getFireData(onResult: (User?, Exception?) -> Unit){
+
+    }
+
     fun logout() {
         auth.signOut()
     }

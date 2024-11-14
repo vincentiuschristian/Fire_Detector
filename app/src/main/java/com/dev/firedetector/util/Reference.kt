@@ -8,6 +8,7 @@ import com.dev.firedetector.R
 
 object Reference {
     const val COLLECTION = "fire"
+    const val COLLECTION2 = "api"
 
     fun isEmailValid(context: Context, email: String): Boolean {
         return if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {

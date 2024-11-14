@@ -56,4 +56,8 @@
     <string name="password_warning">Password must be at least 6 characters!</string>
     <string name="email_warning">Enter a valid email address!</string>
     <string name="empty_field">Kolom tidak boleh kosong!</string>
+    <string name="notelp_damkar">+62811729444</string>
+    <string name="notelp_polisi">tel:089605958454</string>
+    <string name="id_perangkat">ID Perangkat</string>
+    <string name="lokasi">Lokasi</string>
 </resources>

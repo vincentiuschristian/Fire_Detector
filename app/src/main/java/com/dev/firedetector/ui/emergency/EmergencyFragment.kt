@@ -37,13 +37,13 @@ class EmergencyFragment : Fragment() {
 
         binding.apply {
             btnCallPemadamKebakaran.setOnClickListener {
-                val phoneNumber = "+6281915326711"
+                val phoneNumber = getString(R.string.notelp_damkar)
                 val message = resources.getString(R.string.address_message)
                 sendMessage(phoneNumber, message)
             }
 
             btnPolisi.setOnClickListener {
-                val police = "tel:089605958454"
+                val police = getString(R.string.notelp_polisi)
                 showConfirmationDialog(police)
             }
 
