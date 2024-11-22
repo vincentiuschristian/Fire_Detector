@@ -77,10 +77,9 @@ class FireRepository(context: Context) {
                 DataFire(temp, hum, gasLevel, flameDetected)
             }
         } catch (e: Exception) {
-            emptyList() // Kembalikan list kosong jika ada error
+            emptyList()
         }
     }
-
 
     companion object {
         @Volatile
