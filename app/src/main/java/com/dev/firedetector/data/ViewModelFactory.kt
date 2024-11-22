@@ -5,9 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.dev.firedetector.data.repository.FireRepository
 import com.dev.firedetector.di.Injection
+import com.dev.firedetector.ui.history.HistoryViewModel
 import com.dev.firedetector.ui.profile.ProfileViewModel
 import com.dev.firedetector.ui.register.AuthViewModel
 
+@Suppress("UNCHECKED_CAST")
 class ViewModelFactory(private val repository: FireRepository): ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T = when(modelClass){
@@ -15,6 +17,7 @@ class ViewModelFactory(private val repository: FireRepository): ViewModelProvide
 //        HomeViewModel::class.java -> HomeViewModel(repository)
         AuthViewModel::class.java -> AuthViewModel(repository)
         ProfileViewModel::class.java -> ProfileViewModel(repository)
+        HistoryViewModel::class.java -> HistoryViewModel(repository)
 
         else ->  throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
 
