@@ -15,6 +15,7 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topBar"
             android:layout_width="match_parent"
+            app:menu="@menu/menu_home"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/white"
             app:title="@string/kondisi_ruangan"
