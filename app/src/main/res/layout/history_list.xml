@@ -1,6 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginEnd="8dp"
+    app:cardCornerRadius="14dp"
+    app:strokeWidth="0dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_temperature"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="8dp"
+            android:contentDescription="@string/icon_temperature"
+            android:src="@drawable/temperature_celsius"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/label_temperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:paddingStart="8dp"
+            android:paddingEnd="1dp"
+            android:text="@string/temperature"
+            app:layout_constraintStart_toEndOf="@id/iv_temperature"
+            app:layout_constraintTop_toTopOf="@id/iv_temperature" />
+
+        <TextView
+            android:id="@+id/tv_temperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="8dp"
+            android:paddingEnd="1dp"
+            android:text="@string/_40"
+            app:layout_constraintBottom_toBottomOf="@id/iv_temperature"
+            app:layout_constraintStart_toEndOf="@id/iv_temperature" />
+
+        <ImageView
+            android:id="@+id/iv_kualitas_udara"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="12dp"
+            android:contentDescription="@string/icon_air_quality"
+            android:src="@drawable/windy"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_temperature" />
+
+        <TextView
+            android:id="@+id/label_kualitas_udara"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:paddingStart="8dp"
+            android:paddingEnd="1dp"
+            android:text="@string/kualitas_udara"
+            app:layout_constraintStart_toEndOf="@id/iv_kualitas_udara"
+            app:layout_constraintTop_toTopOf="@id/iv_kualitas_udara" />
+
+        <TextView
+            android:id="@+id/tv_kualitasUdara"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="8dp"
+            android:paddingEnd="1dp"
+            android:text="@string/baik"
+            app:layout_constraintBottom_toBottomOf="@id/iv_kualitas_udara"
+            app:layout_constraintStart_toEndOf="@id/iv_kualitas_udara" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineVertical"
+            android:layout_width="wrap_content"
+            android:layout_height="64dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintGuide_percent="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_kelembapan"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:contentDescription="@string/icon_humidity"
+            android:src="@drawable/humidity"
+            app:layout_constraintStart_toStartOf="@id/guidelineVertical"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/label_kelembapan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="8dp"
+            android:textStyle="bold"
+            android:paddingEnd="1dp"
+            android:text="@string/kelembapan"
+            app:layout_constraintStart_toEndOf="@id/iv_kelembapan"
+            app:layout_constraintTop_toTopOf="@id/iv_kelembapan" />
+
+        <TextView
+            android:id="@+id/tv_kelembapan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="8dp"
+            android:paddingEnd="1dp"
+            android:text="@string/_30"
+            app:layout_constraintBottom_toBottomOf="@id/iv_kelembapan"
+            app:layout_constraintStart_toEndOf="@id/iv_kelembapan" />
+
+        <ImageView
+            android:id="@+id/iv_api"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="12dp"
+            android:contentDescription="@string/icon_fire"
+            android:src="@drawable/fire"
+            app:layout_constraintStart_toStartOf="@id/guidelineVertical"
+            app:layout_constraintTop_toBottomOf="@id/iv_kelembapan" />
+
+        <TextView
+            android:id="@+id/label_api"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:paddingStart="8dp"
+            android:paddingEnd="1dp"
+            android:text="@string/api_terdeteksi"
+            app:layout_constraintStart_toEndOf="@id/iv_api"
+            app:layout_constraintTop_toTopOf="@id/iv_api" />
+
+        <TextView
+            android:id="@+id/tv_api_terdeteksi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="8dp"
+            android:paddingEnd="1dp"
+            android:text="@string/aman"
+            app:layout_constraintBottom_toBottomOf="@id/iv_api"
+            app:layout_constraintStart_toEndOf="@id/iv_api" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_api_terdeteksi" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

@@ -1,27 +1,22 @@
 package com.dev.firedetector.ui.adapter
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.dev.firedetector.data.model.History
+import com.dev.firedetector.data.model.DataFire
+import com.dev.firedetector.databinding.HistoryListBinding
 
-class HistoryAdapter(private val dataHistory: ArrayList<History>): RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>(){
+class HistoryAdapter(private val dataHistory: ArrayList<DataFire>): RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>(){
     inner class HistoryViewHolder(private val binding: HistoryListBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(history: History){
+        fun bind(data: DataFire){
             binding.apply {
-                tvJobVacancy.text = history.jobText
-                tvResult.text = history.resultScan
-            }
-
-            itemView.setOnClickListener {
-                val intent = Intent(itemView.context, ResultFragment::class.java)
-                intent.putExtra(ResultFragment.KEY_DETAIL, history)
-                itemView.context.startActivity(intent)
+                tvTemperature.text = data.temp.toString()
+                tvKelembapan.text = data.hum.toString()
+                tvKualitasUdara.text = data.gasLevel.toString()
+                tvApiTerdeteksi.text = data.flameDetected.toString()
             }
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
@@ -38,7 +33,7 @@ class HistoryAdapter(private val dataHistory: ArrayList<History>): RecyclerView.
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateData(newData: List<History>){
+    fun updateData(newData: List<DataFire>){
         dataHistory.clear()
         dataHistory.addAll(newData)
         notifyDataSetChanged()
