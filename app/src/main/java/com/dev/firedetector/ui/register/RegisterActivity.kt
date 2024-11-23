@@ -48,12 +48,13 @@ class RegisterActivity : AppCompatActivity() {
                 val username = etUsername.text.toString()
                 val email = etEmail.text.toString()
                 val password = etPassword.text.toString()
+                val location = etLokasi.text.toString()
 
-                if (username.isNotEmpty() && isEmailValid(applicationContext, email) && isPasswordValid(applicationContext, password)) {
+                if (username.isNotEmpty() && isEmailValid(applicationContext, email) && isPasswordValid(applicationContext, password) && location.isNotEmpty()) {
                     authViewModel.register(
                         email = email,
                         pass = password,
-                        User(username = username, email = email)
+                        User(username = username, email = email, location = location)
                     )
                     authViewModel.loading.observe(this@RegisterActivity) {
                         showLoading(it)
@@ -98,7 +99,7 @@ class RegisterActivity : AppCompatActivity() {
                     if (location != null) {
                         val latitude = location.latitude
                         val longitude = location.longitude
-                        binding.etLokasi.setText("$latitude, $longitude")
+                        binding.etLokasi.setText(getString(R.string.location_format, latitude, longitude))
                         showSnackbar("Lokasi berhasil didapatkan!")
                     } else {
                         showSnackbar(getString(R.string.location_not_found))
@@ -132,7 +133,7 @@ class RegisterActivity : AppCompatActivity() {
         }
 
     private fun showSnackbar(message: String?) {
-        Snackbar.make(binding.root, message ?: "Unknown error", Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(binding.root, message ?: "Unknown Error", Snackbar.LENGTH_SHORT).show()
     }
 
     private fun showLoading(isLoading: Boolean) {

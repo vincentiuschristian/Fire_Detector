@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.dev.firedetector.AuthActivity
@@ -35,6 +36,27 @@ class ProfileFragment : Fragment() {
            viewModel.logout()
             startActivity(Intent(requireActivity(), AuthActivity::class.java))
         }
+
+        viewModel.loading.observe(viewLifecycleOwner){
+            showLoading(it)
+        }
+
+        viewModel.userData.observe(viewLifecycleOwner){data ->
+            if (data != null){
+                binding.tvUserName.text = data.username
+                binding.tvUserEmail.text = data.email
+                binding.tvUserFullName.text = data.username
+                binding.tvUserLocation.text = data.location
+            } else {
+                showToast(viewModel.error.toString())
+            }
+        }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.fetchData()
     }
 
     override fun onDestroyView() {
@@ -42,4 +64,11 @@ class ProfileFragment : Fragment() {
         _binding = null
     }
 
+    private fun showToast(message: String?) {
+        Toast.makeText(requireContext(), message!!, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
 }

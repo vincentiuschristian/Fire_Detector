@@ -54,7 +54,7 @@
                 android:fontFamily="@font/plus_jakarta_sans_semi_bold"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
-                android:text="@string/dummy_name"
+                android:text="@string/name"
                 app:layout_constraintBottom_toTopOf="@id/tv_userEmail"
                 app:layout_constraintStart_toEndOf="@id/img_profile"
                 app:layout_constraintTop_toTopOf="@id/img_profile" />
@@ -92,7 +92,7 @@
                 android:fontFamily="@font/plus_jakarta_sans_semi_bold"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="4dp"
-                android:text="@string/dummy_name"
+                android:text="@string/name"
                 android:textColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

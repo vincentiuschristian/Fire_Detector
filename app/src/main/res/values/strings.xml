@@ -11,7 +11,7 @@
     <string name="call_ambulance">Call Ambulance</string>
     <string name="emergency">Emergency</string>
     <string name="your_location">Your Location</string>
-    <string name="address_dummy">Jl. ZA. Pagar Alam No.89, Gedong Meneng, Kec. Rajabasa, Kota Bandar Lampung</string>
+    <string name="address_dummy">Your address</string>
     <string name="temperature">Temperature</string>
     <string name="icon_temperature">icon temperature</string>
     <string name="icon_humidity">icon humidity</string>
@@ -47,7 +47,6 @@
     <string name="full_name">Full Name</string>
     <string name="location">Location</string>
     <string name="telepon_darurat">Telepon Darurat</string>
-    <string name="dummy_name">Luis Hamilton</string>
     <string name="kondisi_ruangan">Kondisi Ruangan</string>
     <string name="logo_aplikasi">Logo Aplikasi</string>
     <string name="example_gmail_com">example@gmail.com</string>
@@ -66,4 +65,5 @@
     <string name="aman">Aman</string>
     <string name="tidak_ada_data">Tidak Ada Data</string>
     <string name="get_location">Get Location</string>
+    <string name="location_format">%1$.6f, %2$.6f</string>
 </resources>
