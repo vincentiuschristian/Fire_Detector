@@ -23,8 +23,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:paddingStart="16dp"
         android:fontFamily="@font/plus_jakarta_sans_semi_bold"
+        android:paddingStart="16dp"
         android:paddingEnd="8dp"
         android:text="@string/login"
         android:textColor="@color/black"
@@ -37,8 +37,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:paddingStart="16dp"
         android:fontFamily="@font/plus_jakarta_sans_regular"
+        android:paddingStart="16dp"
         android:paddingEnd="8dp"
         android:text="@string/masuk_ke_akun_anda"
         android:textColor="#545454"
@@ -59,8 +59,8 @@
         android:id="@+id/tilUsername"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
         app:endIconMode="clear_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guidelineHorizontal">
@@ -68,9 +68,9 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etEmail"
             style="@style/CustomEditText"
-            android:fontFamily="@font/plus_jakarta_sans_regular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/plus_jakarta_sans_regular"
             android:hint="@string/email"
             android:inputType="textPersonName" />
 
@@ -80,9 +80,9 @@
         android:id="@+id/tilPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="12dp"
         app:endIconMode="password_toggle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tilUsername">
@@ -101,13 +101,14 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogin"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:height="58dp"
+        android:layout_height="58dp"
+        android:layout_margin="12dp"
         android:fontFamily="@font/plus_jakarta_sans_semi_bold"
         android:text="@string/masuk"
         app:backgroundTint="#222227"
         app:cornerRadius="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tilPassword" />
 
     <LinearLayout
@@ -125,16 +126,16 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/tidak_mempunyai_akun"
             android:fontFamily="@font/plus_jakarta_sans_regular"
+            android:text="@string/tidak_mempunyai_akun"
             android:textColor="@color/black" />
 
         <TextView
             android:id="@+id/tv_move_register"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/plus_jakarta_sans_semi_bold"
             android:layout_marginStart="4dp"
+            android:fontFamily="@font/plus_jakarta_sans_semi_bold"
             android:text="@string/daftar"
             android:textColor="#6F00FF"
             android:textStyle="bold" />

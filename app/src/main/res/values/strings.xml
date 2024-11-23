@@ -65,4 +65,5 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="aman">Aman</string>
     <string name="tidak_ada_data">Tidak Ada Data</string>
+    <string name="get_location">Get Location</string>
 </resources>
