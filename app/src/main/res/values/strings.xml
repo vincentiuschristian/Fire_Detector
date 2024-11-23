@@ -61,8 +61,8 @@
     <string name="id_perangkat">ID Perangkat</string>
     <string name="lokasi">Lokasi</string>
     <string name="history">History</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="location_not_found">Location not found</string>
+    <string name="permission_denied">LPermintaan akses lokasi ditolak!</string>
     <string name="aman">Aman</string>
     <string name="tidak_ada_data">Tidak Ada Data</string>
     <string name="get_location">Get Location</string>
