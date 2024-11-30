@@ -43,10 +43,12 @@ class ProfileFragment : Fragment() {
 
         viewModel.userData.observe(viewLifecycleOwner){data ->
             if (data != null){
-                binding.tvUserName.text = data.username
-                binding.tvUserEmail.text = data.email
-                binding.tvUserFullName.text = data.username
-                binding.tvUserLocation.text = data.location
+                binding.apply {
+                    tvUserName.text = data.username
+                    tvUserEmail.text = data.email
+                    tvUserFullName.text = data.username
+                    tvUserLocation.text = data.location
+                }
             } else {
                 showToast(viewModel.error.toString())
             }

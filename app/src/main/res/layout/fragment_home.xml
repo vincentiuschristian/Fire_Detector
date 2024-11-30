@@ -15,9 +15,9 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topBar"
             android:layout_width="match_parent"
-            app:menu="@menu/menu_home"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/white"
+            app:menu="@menu/menu_home"
             app:title="@string/kondisi_ruangan"
             app:titleCentered="true" />
 
@@ -30,19 +30,19 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:paddingBottom="70dp"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:paddingBottom="70dp">
 
             <TextView
                 android:id="@+id/tvHalo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:paddingTop="24dp"
-                android:textSize="18sp"
-                android:textColor="@color/primary"
                 android:fontFamily="@font/plus_jakarta_sans_medium"
+                android:paddingTop="24dp"
                 android:text="@string/welcome"
+                android:textColor="@color/primary"
+                android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -51,11 +51,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
+                android:letterSpacing="0.03"
                 android:text="@string/name"
                 android:textColor="@color/black"
-                android:letterSpacing="0.03"
-                android:textStyle="bold"
                 android:textSize="24sp"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvHalo" />
 
@@ -96,29 +96,30 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/txt_temperature"
+                        android:id="@+id/text_suhu"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
-                        android:text="@string/temperature"
                         android:fontFamily="@font/plus_jakarta_sans_regular"
+                        android:text="@string/temperature"
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="@+id/icon_temperature"
                         app:layout_constraintStart_toEndOf="@+id/icon_temperature"
                         app:layout_constraintTop_toTopOf="@+id/icon_temperature" />
 
                     <TextView
+                        android:id="@+id/txt_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/plus_jakarta_sans_bold"
                         android:text="@string/_40"
                         android:textColor="@color/primary"
                         android:textSize="32sp"
                         android:textStyle="bold"
-                        android:fontFamily="@font/plus_jakarta_sans_bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/txt_temperature" />
+                        app:layout_constraintTop_toBottomOf="@id/text_suhu" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -153,29 +154,30 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/txt_humidity"
+                        android:id="@+id/text_humidity"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
-                        android:text="@string/kelembapan"
                         android:fontFamily="@font/plus_jakarta_sans_regular"
+                        android:text="@string/kelembapan"
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="@+id/icon_humidity"
                         app:layout_constraintStart_toEndOf="@+id/icon_humidity"
                         app:layout_constraintTop_toTopOf="@+id/icon_humidity" />
 
                     <TextView
+                        android:id="@+id/txt_humidity"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/plus_jakarta_sans_bold"
                         android:text="@string/_30"
                         android:textColor="@color/primary"
                         android:textSize="32sp"
                         android:textStyle="bold"
-                        android:fontFamily="@font/plus_jakarta_sans_bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/txt_humidity" />
+                        app:layout_constraintTop_toBottomOf="@id/text_humidity" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -210,11 +212,11 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/txt_fire"
+                        android:id="@+id/text_air_quality"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/plus_jakarta_sans_regular"
                         android:layout_marginStart="4dp"
+                        android:fontFamily="@font/plus_jakarta_sans_regular"
                         android:text="@string/kualitas_udara"
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="@+id/icon_wind"
@@ -222,17 +224,18 @@
                         app:layout_constraintTop_toTopOf="@+id/icon_wind" />
 
                     <TextView
+                        android:id="@+id/txt_air_quality"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/plus_jakarta_sans_bold"
                         android:text="@string/baik"
                         android:textColor="@color/primary"
                         android:textSize="32sp"
                         android:textStyle="bold"
-                        android:fontFamily="@font/plus_jakarta_sans_bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/txt_fire" />
+                        app:layout_constraintTop_toBottomOf="@id/text_air_quality" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -267,37 +270,45 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/txt_fire_detection"
+                        android:id="@+id/text_api_terdeteksi"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
-                        android:text="@string/api_terdeteksi"
                         android:fontFamily="@font/plus_jakarta_sans_regular"
+                        android:text="@string/api_terdeteksi"
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="@+id/icon_is_fire"
                         app:layout_constraintStart_toEndOf="@+id/icon_is_fire"
                         app:layout_constraintTop_toTopOf="@+id/icon_is_fire" />
 
                     <TextView
+                        android:id="@+id/txt_fire_detection"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/plus_jakarta_sans_bold"
                         android:text="@string/not_detected"
                         android:textColor="@color/primary"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:fontFamily="@font/plus_jakarta_sans_bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/txt_fire_detection" />
+                        app:layout_constraintTop_toBottomOf="@id/text_api_terdeteksi" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
             </com.google.android.material.card.MaterialCardView>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
     </androidx.core.widget.NestedScrollView>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@android:color/transparent"
+        android:indeterminate="true"
+        android:translationZ="10dp"
+        android:visibility="gone" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Fire Detector</string>
+    <string name="app_name">Pantauin</string>
     <string name="title_home">Home</string>
     <string name="title_emergency">Emergency</string>
     <string name="title_profile">Profile</string>
@@ -20,10 +20,10 @@
     <string name="kualitas_udara">Kualitas Udara</string>
     <string name="icon_fire">icon fire</string>
     <string name="api_terdeteksi">Api Terdeteksi</string>
-    <string name="not_detected">Tidak Terdeteksi</string>
-    <string name="baik">Baik</string>
-    <string name="_30">30%</string>
-    <string name="_40">40°</string>
+    <string name="not_detected">-</string>
+    <string name="baik">-</string>
+    <string name="_30">-%</string>
+    <string name="_40">-°</string>
     <string name="location_icon">Location icon</string>
     <string name="title">Telepon Darurat</string>
     <string name="supporting_text">Apakah anda yakin untuk melakukan panggilan darurat?</string>
@@ -61,9 +61,12 @@
     <string name="lokasi">Lokasi</string>
     <string name="history">History</string>
     <string name="location_not_found">Location not found</string>
-    <string name="permission_denied">LPermintaan akses lokasi ditolak!</string>
+    <string name="permission_denied">Permintaan akses lokasi ditolak!</string>
     <string name="aman">Aman</string>
     <string name="tidak_ada_data">Tidak Ada Data</string>
     <string name="get_location">Get Location</string>
     <string name="location_format">%1$.6f, %2$.6f</string>
+    <string name="text_suhu">%1$s °C</string>
+    <string name="text_kelembapan">%s %%</string>
+    <string name="text_kualitas_udara">%1$s PPM</string>
 </resources>

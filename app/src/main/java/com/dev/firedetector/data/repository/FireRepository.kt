@@ -81,6 +81,28 @@ class FireRepository(context: Context) {
         }
     }
 
+    /*suspend fun getLatestSensorData(): DataFire? {
+        return try {
+            val querySnapshot = db.collection(Reference.COLLECTION_API)
+                .orderBy(FieldPath.documentId(), Query.Direction.DESCENDING)
+                .limit(1)
+                .get()
+                .await()
+
+            querySnapshot.documents.firstOrNull()?.let { documentSnapshot ->
+                val temp = documentSnapshot.getDouble(Reference.FIELD_TEMP) ?: 0.0
+                val hum = documentSnapshot.getDouble(Reference.FIELD_HUM) ?: 0.0
+                val gasLevel = documentSnapshot.getDouble(Reference.FIELD_GAS_LEVEL) ?: 0.0
+                val flameDetected = documentSnapshot.getBoolean(Reference.FIELD_FLAME_DETECTED) ?: false
+
+                DataFire(temp, hum, gasLevel, flameDetected)
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+*/
+
     companion object {
         @Volatile
         private var instances: FireRepository? = null
