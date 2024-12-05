@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.googleGmsGoogleServices)
+//    id("com.google.devtools.ksp")
+//    id("kotlin-parcelize")
 }
 
 android {
@@ -59,6 +61,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.play.services.maps)
-
     implementation (libs.roundedimageview)
+    implementation(libs.androidx.datastore.preferences)
 }

@@ -4,17 +4,18 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.dev.firedetector.data.model.DataFire
+import com.dev.firedetector.data.model.DataAlatModel
 import com.dev.firedetector.databinding.HistoryListBinding
 
-class HistoryAdapter(private val dataHistory: ArrayList<DataFire>): RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>(){
+class HistoryAdapter(private val dataHistory: ArrayList<DataAlatModel>): RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>(){
     inner class HistoryViewHolder(private val binding: HistoryListBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(data: DataFire){
+        fun bind(data: DataAlatModel){
             binding.apply {
                 tvTemperature.text = data.temp.toString()
                 tvKelembapan.text = data.hum.toString()
-                tvKualitasUdara.text = data.gasLevel.toString()
+                tvKualitasUdara.text = data.mqValue.toString()
                 tvApiTerdeteksi.text = data.flameDetected.toString()
+                tvTimeStamp.text = data.timestamp.toString()
             }
         }
     }
@@ -33,7 +34,7 @@ class HistoryAdapter(private val dataHistory: ArrayList<DataFire>): RecyclerView
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateData(newData: List<DataFire>){
+    fun updateData(newData: List<DataAlatModel>){
         dataHistory.clear()
         dataHistory.addAll(newData)
         notifyDataSetChanged()

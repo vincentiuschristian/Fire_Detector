@@ -2,6 +2,7 @@ package com.dev.firedetector.ui.login
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.dev.firedetector.MainActivity
 import com.dev.firedetector.R
 import com.dev.firedetector.data.ViewModelFactory
+import com.dev.firedetector.data.pref.UserModel
 import com.dev.firedetector.databinding.ActivityLoginBinding
 import com.dev.firedetector.ui.register.AuthViewModel
 import com.dev.firedetector.ui.register.RegisterActivity
@@ -28,12 +30,28 @@ class LoginActivity : AppCompatActivity() {
 
         binding.apply {
             btnLogin.setOnClickListener {
-                val email = binding.etEmail.text.toString()
-                val password = binding.etPassword.text.toString()
+                val idPerangkat = etIdPerangkat.text.toString().trim()
+                val email = etEmail.text.toString()
+                val password = etPassword.text.toString()
 
-                if(Reference.isEmailValid(applicationContext, email) && Reference.isPasswordValid(applicationContext, password)){
-                    authViewModel.loading.observe(this@LoginActivity){
+                authViewModel.loading.observe(this@LoginActivity) {
+                    showLoading(it)
+                }
+
+                if (idPerangkat.isNotEmpty() && Reference.isEmailValid(
+                        applicationContext,
+                        email
+                    ) && Reference.isPasswordValid(
+                        applicationContext,
+                        password
+                    )
+                ) {
+                    authViewModel.loading.observe(this@LoginActivity) {
                         showLoading(it)
+                    }
+                    saveId(idPerangkat)
+                    authViewModel.getId().observe(this@LoginActivity) { userModel ->
+                        Log.d("LoginActivity ID", "Saved ID Perangkat: ${userModel.idPerangkat}")
                     }
                     authViewModel.login(email, password)
                     showToast("Login Success")
@@ -49,6 +67,11 @@ class LoginActivity : AppCompatActivity() {
         }
 
     }
+
+    private fun saveId(idPerangkat: String){
+        authViewModel.saveId(UserModel(idPerangkat))
+    }
+
     private fun showToast(message: String?) {
         Toast.makeText(this, message!!, Toast.LENGTH_SHORT).show()
     }
@@ -57,7 +80,7 @@ class LoginActivity : AppCompatActivity() {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
-    private fun navigate(){
+    private fun navigate() {
         val intent = Intent(applicationContext, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)

@@ -33,16 +33,17 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnLogout.setOnClickListener {
-           viewModel.logout()
+            viewModel.logout()
+            viewModel.clearIdSaved()
             startActivity(Intent(requireActivity(), AuthActivity::class.java))
         }
 
-        viewModel.loading.observe(viewLifecycleOwner){
+        viewModel.loading.observe(viewLifecycleOwner) {
             showLoading(it)
         }
 
-        viewModel.userData.observe(viewLifecycleOwner){data ->
-            if (data != null){
+        viewModel.dataUserModelData.observe(viewLifecycleOwner) { data ->
+            if (data != null) {
                 binding.apply {
                     tvUserName.text = data.username
                     tvUserEmail.text = data.email

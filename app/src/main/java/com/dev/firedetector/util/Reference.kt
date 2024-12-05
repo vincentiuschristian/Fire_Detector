@@ -7,7 +7,9 @@ import android.widget.Toast
 import com.dev.firedetector.R
 
 object Reference {
-    const val COLLECTION = "fire"
+    const val COLLECTION = "Fire"
+    const val DATAUSER = "DataUser"
+    const val DATAALAT = "DataALAT"
     const val COLLECTION_API = "api"
     const val FIELD_TEMP = "Temp"
     const val FIELD_HUM = "Hum"

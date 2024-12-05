@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat
 import com.dev.firedetector.AuthActivity
 import com.dev.firedetector.R
 import com.dev.firedetector.data.ViewModelFactory
-import com.dev.firedetector.data.model.User
+import com.dev.firedetector.data.model.DataUserModel
 import com.dev.firedetector.databinding.ActivityRegisterBinding
 import com.dev.firedetector.ui.login.LoginActivity
 import com.dev.firedetector.util.Reference.isEmailValid
@@ -45,29 +45,44 @@ class RegisterActivity : AppCompatActivity() {
 
         binding.apply {
             btnRegister.setOnClickListener {
+                val idPerangkat = etIdPerangkat.text.toString().trim()
                 val username = etUsername.text.toString()
                 val email = etEmail.text.toString()
                 val password = etPassword.text.toString()
                 val location = etLokasi.text.toString()
 
-                if (username.isNotEmpty() && isEmailValid(applicationContext, email) && isPasswordValid(applicationContext, password) && location.isNotEmpty()) {
+                if (username.isNotEmpty() && isEmailValid(applicationContext, email) &&
+                    isPasswordValid(applicationContext, password) && location.isNotEmpty() && idPerangkat.isNotEmpty()) {
+
                     authViewModel.register(
                         email = email,
                         pass = password,
-                        User(username = username, email = email, location = location)
+                        dataUserModelData = DataUserModel(username = username, email = email, location = location, idPerangkat = idPerangkat),
+                        idPerangkat = idPerangkat
                     )
+
                     authViewModel.loading.observe(this@RegisterActivity) {
                         showLoading(it)
                     }
-                    showSnackbar("Register Success")
-                    finish()
+
+                    authViewModel.message.observe(this@RegisterActivity) { message ->
+                        if (message == "Register Success, Logging In...") {
+                            showSnackbar("Register Success")
+                            finish()
+                        } else {
+                            showSnackbar(message)
+                        }
+                    }
                 } else {
                     showSnackbar(resources.getString(R.string.empty_field))
                 }
             }
+
+
             tvMoveRegister.setOnClickListener {
                 startActivity(Intent(applicationContext, LoginActivity::class.java))
             }
+
             btnLokasi.setOnClickListener {
                 getMyLocation()
             }

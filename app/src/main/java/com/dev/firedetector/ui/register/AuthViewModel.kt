@@ -3,8 +3,11 @@ package com.dev.firedetector.ui.register
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.dev.firedetector.data.model.User
+import androidx.lifecycle.viewModelScope
+import com.dev.firedetector.data.model.DataUserModel
+import com.dev.firedetector.data.pref.UserModel
 import com.dev.firedetector.data.repository.FireRepository
+import kotlinx.coroutines.launch
 
 class AuthViewModel(private val repository: FireRepository) : ViewModel() {
     private val _message = MutableLiveData<String>()
@@ -40,9 +43,9 @@ class AuthViewModel(private val repository: FireRepository) : ViewModel() {
         )
     }
 
-    fun register(email: String, pass: String, userData: User) {
+    fun register(email: String, pass: String, dataUserModelData: DataUserModel, idPerangkat: String) {
         _loading.value = true
-        repository.register(userData, email, pass) { _, it ->
+        repository.register(dataUserModelData, email, pass, idPerangkat) { _, it ->
             if (it == null) {
                 login(email, pass)
                 _loading.value = false
@@ -53,5 +56,23 @@ class AuthViewModel(private val repository: FireRepository) : ViewModel() {
             }
         }
     }
+
+    fun saveId(userModel: UserModel){
+        viewModelScope.launch {
+            repository.saveIdPerangkat(userModel)
+        }
+    }
+
+    fun getId(): LiveData<UserModel> {
+        val idPerangkatLiveData = MutableLiveData<UserModel>()
+        viewModelScope.launch {
+            repository.getIdPerangkat().collect { userModel ->
+                idPerangkatLiveData.postValue(userModel)
+            }
+        }
+        return idPerangkatLiveData
+    }
+
+
 
 }

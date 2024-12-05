@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <application
@@ -24,6 +24,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FireDetector"
         tools:targetApi="31">
+        <activity
+            android:name=".ui.idPerangkat.InsertIdActivity"
+            android:exported="false"
+            android:theme="@style/Theme.FireDetector" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -31,7 +35,7 @@
 
         <activity
             android:name=".AuthActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -40,8 +44,8 @@
         </activity>
         <activity
             android:name=".ui.register.RegisterActivity"
-            android:foregroundServiceType="location"
-            android:exported="true"/>
+            android:exported="true"
+            android:foregroundServiceType="location" />
         <activity
             android:name=".ui.login.LoginActivity"
             android:exported="false" />
