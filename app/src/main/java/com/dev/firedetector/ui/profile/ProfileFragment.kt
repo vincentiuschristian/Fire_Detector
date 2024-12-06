@@ -45,6 +45,7 @@ class ProfileFragment : Fragment() {
         viewModel.userModelData.observe(viewLifecycleOwner) { data ->
             if (data != null) {
                 binding.apply {
+                    tvIdPerangkat.text = data.idPerangkat
                     tvUserName.text = data.username
                     tvUserEmail.text = data.email
                     tvUserFullName.text = data.username
