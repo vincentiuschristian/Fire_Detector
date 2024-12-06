@@ -1,12 +1,13 @@
 package com.dev.firedetector.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import com.dev.firedetector.R
 import com.dev.firedetector.data.ViewModelFactory
 import com.dev.firedetector.databinding.FragmentHomeBinding
@@ -37,45 +38,32 @@ class HomeFragment : Fragment() {
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
 
-        binding.apply {
-            topBar.setOnMenuItemClickListener { menuItem ->
-                when (menuItem.itemId) {
-                    R.id.menu_history -> {
-                        findNavController().navigate(R.id.action_navigation_home_to_historyFragment)
-                        true
-                    }
-
-                    else -> false
-                }
-
-            }
-        }
-
         viewModel.loading.observe(viewLifecycleOwner) {
             showLoading(it)
         }
 
         viewModel.sensorData.observe(viewLifecycleOwner) { data ->
-/*            if (data != null) {
+            if (data != null) {
                 binding.apply {
-                    txtTemperature.text = getString(R.string.text_suhu, data.temp)
+                    txtTemperature.text = getString(R.string.text_suhu, data.temp.toString())
+                    Log.d("Data Home", "Data Home: ${data.temp}")
                     txtHumidity.text = getString(R.string.text_kelembapan, data.hum.toString())
-                    txtAirQuality.text = getString(R.string.text_kualitas_udara, data.gasLevel)
+                    txtAirQuality.text = getString(R.string.text_kualitas_udara, data.mqValue)
                     txtFireDetection.text =
-                        if (data.flameDetected == true) getString(R.string.api_terdeteksi) else getString(
+                        if (data.flameDetected == "Api Terdeteksi") getString(R.string.api_terdeteksi) else getString(
                             R.string.api_tidak_terdeteksi
                         )
                     cvIsFire.setCardBackgroundColor(
                         ContextCompat.getColor(
                             requireContext(),
-                            if (data.flameDetected == true) R.color.red else R.color.black
+                            if (data.flameDetected.toString() == "Api Tidak Terdeteksi") R.color.red else R.color.cardview_color
                         )
                     )
                 }
-            }*/
+            }
         }
 
-        profileViewModel.dataUserModelData.observe(viewLifecycleOwner) { data ->
+        profileViewModel.userModelData.observe(viewLifecycleOwner) { data ->
             if (data != null) {
                 binding.apply {
                     tvName.text = data.username

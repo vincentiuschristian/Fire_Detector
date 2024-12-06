@@ -9,12 +9,12 @@ import com.dev.firedetector.R
 object Reference {
     const val COLLECTION = "Fire"
     const val DATAUSER = "DataUser"
-    const val DATAALAT = "DataALAT"
-    const val COLLECTION_API = "api"
-    const val FIELD_TEMP = "Temp"
-    const val FIELD_HUM = "Hum"
-    const val FIELD_GAS_LEVEL = "GasLevel"
+    const val DATAALAT = "DataAlat"
+    const val FIELD_TEMP = "Temperature"
+    const val FIELD_HUM = "Humidity"
+    const val FIELD_GAS_LEVEL = "MQValue"
     const val FIELD_FLAME_DETECTED = "FlameDetected"
+    const val FIELD_TIMESTAMP = "timestamp"
 
     fun isEmailValid(context: Context, email: String): Boolean {
         return if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {

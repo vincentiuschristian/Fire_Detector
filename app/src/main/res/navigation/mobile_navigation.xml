@@ -10,25 +10,18 @@
         android:name="com.dev.firedetector.ui.home.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" >
-        <action
-            android:id="@+id/action_navigation_home_to_historyFragment"
-            app:destination="@id/historyFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_emergency"
-        android:name="com.dev.firedetector.ui.emergency.EmergencyFragment"
-        android:label="@string/title_emergency"
-        tools:layout="@layout/fragment_emergency" />
+        android:id="@+id/navigation_history"
+        android:name="com.dev.firedetector.ui.history.HistoryFragment"
+        android:label="@string/history"
+        tools:layout="@layout/fragment_history" />
 
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.dev.firedetector.ui.profile.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
-    <fragment
-        android:id="@+id/historyFragment"
-        android:name="com.dev.firedetector.ui.history.HistoryFragment"
-        android:label="fragment_history"
-        tools:layout="@layout/fragment_history" />
+
 </navigation>

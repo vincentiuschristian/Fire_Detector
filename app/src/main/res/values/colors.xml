@@ -19,4 +19,5 @@
     <color name="outline">#2F2F2F</color>
     <color name="icon">#272D36</color>
     <color name="transparent">#00FFFFFF</color>
+    <color name="cardview_color">#F5F5F5</color>
 </resources>

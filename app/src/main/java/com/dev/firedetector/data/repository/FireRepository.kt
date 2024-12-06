@@ -11,10 +11,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.tasks.await
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 class FireRepository(private val userPreference: UserPreference) {
     private val auth = FirebaseAuth.getInstance()
@@ -74,77 +72,41 @@ class FireRepository(private val userPreference: UserPreference) {
         }
     }
 
-
-    fun getUserData(onResult: (String?, Exception?) -> Unit) {
-        db.collection(Reference.COLLECTION)
-            .document(auth.currentUser!!.uid)
-            .get()
-            .addOnSuccessListener { documentSnapshot ->
-                val idPerangkat = documentSnapshot.getString("idPerangkat")
-                if (idPerangkat != null) {
-                    onResult(idPerangkat, null)
-                } else {
-                    onResult(null, Exception("ID perangkat tidak ditemukan"))
-                }
-            }
-            .addOnFailureListener { e ->
-                onResult(null, e)
-            }
-    }
-
-
-//    suspend fun getSensorData(): List<DataFire> {
-//        return try {
-//            val querySnapshot = db.collection(Reference.COLLECTION_API).get().await()
-//            querySnapshot.documents.map { documentSnapshot ->
-//                val temp = documentSnapshot.getDouble(Reference.FIELD_TEMP) ?: 0.0
-//                val hum = documentSnapshot.getDouble(Reference.FIELD_HUM) ?: 0.0
-//                val gasLevel = documentSnapshot.getDouble(Reference.FIELD_GAS_LEVEL) ?: 0.0
-//                val flameDetected = documentSnapshot.getBoolean(Reference.FIELD_FLAME_DETECTED)
-//
-//                DataFire(temp = temp, hum = hum, mqValue = gasLevel, flameDetected = flameDetected)
-//            }
-//        } catch (e: Exception) {
-//            emptyList()
-//        }
-//    }
-
-    suspend fun getUserDeviceId(): String {
-        return suspendCoroutine { continuation ->
-            db.collection(Reference.COLLECTION).document(auth.currentUser!!.uid)
+    suspend fun getUserData(): DataUserModel? {
+        return try {
+            val id = userPreference.getIdPerangkat().first().idPerangkat
+            val querySnapshot = db.collection(Reference.COLLECTION)
+                .document(id)
+                .collection(Reference.DATAUSER)
                 .get()
-                .addOnSuccessListener { documentSnapshot ->
-                    val dataUserModel = documentSnapshot.toObject(DataUserModel::class.java)
-                    if (dataUserModel != null && !dataUserModel.idPerangkat.isNullOrEmpty()) {
-                        continuation.resume(dataUserModel.idPerangkat!!)
-                    } else {
-                        continuation.resumeWithException(Exception("ID perangkat tidak ditemukan"))
-                    }
-                }
-                .addOnFailureListener { e ->
-                    continuation.resumeWithException(e)
-                }
+                .await()
+
+            val documentSnapshot = querySnapshot.documents.firstOrNull()
+            documentSnapshot?.toObject(DataUserModel::class.java)
+        } catch (e: Exception) {
+            println("Error fetching user data: ${e.message}") // Debug log
+            null
         }
     }
 
-    // Fetch sensor data using device ID
-    suspend fun getSensorData(idPerangkat: String): List<DataAlatModel> {
+
+    suspend fun getSensorData(): List<DataAlatModel> {
         return try {
+            val id = userPreference.getIdPerangkat().first().idPerangkat
             val querySnapshot = db.collection(Reference.COLLECTION)
-                .document(idPerangkat)
+                .document(id)
                 .collection(Reference.DATAALAT)
-                .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
                 .get()
                 .await()
 
             querySnapshot.documents.map { documentSnapshot ->
                 DataAlatModel(
-                    flameDetected = documentSnapshot.getString("FlameDetected"),
-                    hum = documentSnapshot.getDouble("Humidity"),
-                    mqValue = documentSnapshot.getString("MQValue"),
-                    temp = documentSnapshot.getDouble("Temperature"),
-                    timestamp = documentSnapshot.getString("timestamp"),
-                    deviceId = idPerangkat
+                    flameDetected = documentSnapshot.getString(Reference.FIELD_FLAME_DETECTED),
+                    hum = documentSnapshot.getDouble(Reference.FIELD_HUM),
+                    mqValue = documentSnapshot.getString(Reference.FIELD_GAS_LEVEL),
+                    temp = documentSnapshot.getDouble(Reference.FIELD_TEMP),
+                    timestamp = documentSnapshot.getString(Reference.FIELD_TIMESTAMP),
+                    deviceId = id
                 )
             }
         } catch (e: Exception) {

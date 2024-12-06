@@ -42,7 +42,7 @@ class ProfileFragment : Fragment() {
             showLoading(it)
         }
 
-        viewModel.dataUserModelData.observe(viewLifecycleOwner) { data ->
+        viewModel.userModelData.observe(viewLifecycleOwner) { data ->
             if (data != null) {
                 binding.apply {
                     tvUserName.text = data.username

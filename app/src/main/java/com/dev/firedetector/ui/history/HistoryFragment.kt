@@ -1,6 +1,7 @@
 package com.dev.firedetector.ui.history
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,39 +40,34 @@ class HistoryFragment : Fragment() {
             rvHistory.setHasFixedSize(true)
         }
         showLoading(true)
+        getData()
+        viewModel.getId().observe(viewLifecycleOwner) { userModel ->
+            Log.d("LoginActivity ID", "Saved ID Perangkat: ${userModel.idPerangkat}")
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        getDataHistory()
-
         viewModel.getDataHistory()
     }
 
-    private fun getDataHistory(){
-//        viewModel.getDataHistory()
-//        viewModel.dataHistory.observe(viewLifecycleOwner){result ->
-//            showLoading(false)
-//            if (result.isEmpty()){
-//                binding.tvEmptyHistory.visibility = View.VISIBLE
-//            } else {
-//                adapter.updateData(result)
-//            }
-//        }
+    private fun getData() {
+        viewModel.dataHistory.observe(viewLifecycleOwner) { result ->
+            showLoading(false)
+            Log.d("Data History", "Data History: $result")
+            if (result.isEmpty()) {
+                binding.tvEmptyHistory.visibility = View.VISIBLE
+            } else {
+                adapter.updateData(result)
+            }
+        }
         viewModel.dataHistory.observe(viewLifecycleOwner) { data ->
             adapter.updateData(data)
         }
 
         viewModel.loading.observe(viewLifecycleOwner) {
-          showLoading(it)
+            showLoading(it)
         }
-
-        viewModel.errorMessage.observe(viewLifecycleOwner) { error ->
-            if (error != null) {
-                showSnackbar(error)
-            }
-        }
-
 
     }
 

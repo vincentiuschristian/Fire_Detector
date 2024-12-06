@@ -17,7 +17,6 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/white"
-            app:menu="@menu/menu_home"
             app:title="@string/kondisi_ruangan"
             app:titleCentered="true" />
 
@@ -230,7 +229,7 @@
                         android:fontFamily="@font/plus_jakarta_sans_bold"
                         android:text="@string/baik"
                         android:textColor="@color/primary"
-                        android:textSize="32sp"
+                        android:textSize="24sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -248,7 +247,7 @@
                 android:layout_marginStart="6dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                app:cardBackgroundColor="#F5F5F5"
+                app:cardBackgroundColor="@color/cardview_color"
                 app:cardCornerRadius="12dp"
                 app:contentPadding="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
