@@ -154,6 +154,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_api_terdeteksi" />
 
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginEnd="2dp"
+            android:contentDescription="@string/text_timestamp"
+            android:src="@drawable/baseline_access_time_24"
+            app:layout_constraintTop_toBottomOf="@id/spacer"
+            app:layout_constraintEnd_toStartOf="@+id/tv_timeStamp"
+            app:layout_constraintBottom_toTopOf="@id/divider" />
+
         <TextView
             android:id="@+id/tv_timeStamp"
             android:layout_width="wrap_content"
@@ -165,8 +175,10 @@
             app:layout_constraintEnd_toEndOf="parent"/>
 
         <com.google.android.material.divider.MaterialDivider
+            android:id="@+id/divider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:layout_gravity="bottom"
             app:layout_constraintTop_toBottomOf="@+id/tv_timeStamp"
             app:layout_constraintBottom_toBottomOf="parent"

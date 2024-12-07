@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/white"
-            app:title="History"
+            app:title="@string/history"
             app:titleCentered="true" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -25,9 +25,9 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvHistory"
         android:layout_width="match_parent"
+        android:paddingBottom="24dp"
         tools:listitem="@layout/history_list"
         android:layout_height="match_parent"
-        android:layout_marginBottom="85dp"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
     <ProgressBar

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Pantauin</string>
-    <string name="title_home">Home</string>
+    <string name="title_home">Beranda</string>
     <string name="title_emergency">Emergency</string>
     <string name="title_profile">Profile</string>
     <string name="polisi">Polisi</string>
@@ -42,7 +42,7 @@
     <string name="email">Email</string>
     <string name="sudah_mempunyai_akun">Sudah mempunyai Akun?</string>
     <string name="masuk">Masuk</string>
-    <string name="profile">Profile</string>
+    <string name="profile">Profil</string>
     <string name="logout">Logout</string>
     <string name="name">Name</string>
     <string name="full_name">Full Name</string>
@@ -60,7 +60,7 @@
     <string name="notelp_polisi">tel:089605958454</string>
     <string name="id_perangkat">ID Perangkat</string>
     <string name="lokasi">Lokasi</string>
-    <string name="history">History</string>
+    <string name="history">Riwayat Data Alat</string>
     <string name="location_not_found">Location not found</string>
     <string name="permission_denied">Permintaan akses lokasi ditolak!</string>
     <string name="aman">Aman</string>
