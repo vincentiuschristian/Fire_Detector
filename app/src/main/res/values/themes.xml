@@ -36,6 +36,20 @@
         <item name="android:layout_marginTop">5dp</item>
         <item name="android:textColor">@color/black</item>
     </style>
+
+    <style name="BottomNavigationStyle">
+
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">62dp</item>
+        <item name="itemActiveIndicatorStyle">?attr/background</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:elevation">36dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="labelVisibilityMode">labeled</item>
+        <item name="menu">@menu/bottom_nav_menu</item>
+        <item name="bottomNavigationStyle">@style/Widget.Material3.BottomNavigationView</item>
+
+    </style>
     <!-- Base application theme. -->
     <style name="Base.Theme.FireDetector" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->

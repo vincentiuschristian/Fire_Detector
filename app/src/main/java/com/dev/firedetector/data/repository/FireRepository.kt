@@ -2,7 +2,7 @@ package com.dev.firedetector.data.repository
 
 import com.dev.firedetector.data.model.DataAlatModel
 import com.dev.firedetector.data.model.DataUserModel
-import com.dev.firedetector.data.pref.UserModel
+import com.dev.firedetector.data.pref.IDPerangkatModel
 import com.dev.firedetector.data.pref.UserPreference
 import com.dev.firedetector.util.Reference
 import com.google.firebase.auth.AuthResult
@@ -21,18 +21,6 @@ class FireRepository(private val userPreference: UserPreference) {
     }
 
     fun getUser(): String? = auth.uid
-
-    suspend fun saveIdPerangkat(user: UserModel) {
-        userPreference.saveIdPerangkat(user)
-    }
-
-    suspend fun getIdPerangkat(): Flow<UserModel> {
-        return userPreference.getIdPerangkat()
-    }
-
-    suspend fun deleteIdPerangkat() {
-        userPreference.logout()
-    }
 
     fun login(
         email: String, password: String,
@@ -110,10 +98,22 @@ class FireRepository(private val userPreference: UserPreference) {
                 )
             }
         } catch (e: Exception) {
-            println("Error fetching sensor data: ${e.message}") // Debug log
             emptyList()
         }
     }
+
+    suspend fun saveIdPerangkat(user: IDPerangkatModel) {
+        userPreference.saveIdPerangkat(user)
+    }
+
+    fun getIdPerangkat(): Flow<IDPerangkatModel> {
+        return userPreference.getIdPerangkat()
+    }
+
+    suspend fun deleteIdPerangkat() {
+        userPreference.logout()
+    }
+
 
     fun logout() {
         auth.signOut()

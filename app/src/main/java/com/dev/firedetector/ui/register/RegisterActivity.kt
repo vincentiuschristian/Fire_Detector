@@ -57,7 +57,7 @@ class RegisterActivity : AppCompatActivity() {
                     authViewModel.register(
                         email = email,
                         pass = password,
-                        dataUserModelData = DataUserModel(username = username, email = email, location = location, idPerangkat = idPerangkat),
+                        dataUserModel = DataUserModel(username = username, email = email, location = location, idPerangkat = idPerangkat),
                         idPerangkat = idPerangkat
                     )
 

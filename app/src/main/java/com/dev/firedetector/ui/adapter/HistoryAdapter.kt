@@ -7,9 +7,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dev.firedetector.data.model.DataAlatModel
 import com.dev.firedetector.databinding.HistoryListBinding
 
-class HistoryAdapter(private val dataHistory: ArrayList<DataAlatModel>): RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>(){
-    inner class HistoryViewHolder(private val binding: HistoryListBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(data: DataAlatModel){
+class HistoryAdapter(private val dataHistory: ArrayList<DataAlatModel>) :
+    RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
+    inner class HistoryViewHolder(private val binding: HistoryListBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(data: DataAlatModel) {
             binding.apply {
                 tvTemperature.text = data.temp.toString()
                 tvKelembapan.text = data.hum.toString()
@@ -34,7 +36,7 @@ class HistoryAdapter(private val dataHistory: ArrayList<DataAlatModel>): Recycle
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateData(newData: List<DataAlatModel>){
+    fun updateData(newData: List<DataAlatModel>) {
         dataHistory.clear()
         dataHistory.addAll(newData)
         notifyDataSetChanged()

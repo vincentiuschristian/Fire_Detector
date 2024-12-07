@@ -33,8 +33,8 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnLogout.setOnClickListener {
-            viewModel.logout()
             viewModel.clearIdSaved()
+            viewModel.logout()
             startActivity(Intent(requireActivity(), AuthActivity::class.java))
         }
 

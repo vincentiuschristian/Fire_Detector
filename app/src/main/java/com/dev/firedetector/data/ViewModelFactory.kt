@@ -11,16 +11,17 @@ import com.dev.firedetector.ui.profile.ProfileViewModel
 import com.dev.firedetector.ui.register.AuthViewModel
 
 @Suppress("UNCHECKED_CAST")
-class ViewModelFactory(private val repository: FireRepository): ViewModelProvider.NewInstanceFactory() {
+class ViewModelFactory(private val repository: FireRepository) :
+    ViewModelProvider.NewInstanceFactory() {
 
-    override fun <T : ViewModel> create(modelClass: Class<T>): T = when(modelClass){
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = when (modelClass) {
 
         HomeViewModel::class.java -> HomeViewModel(repository)
         AuthViewModel::class.java -> AuthViewModel(repository)
         ProfileViewModel::class.java -> ProfileViewModel(repository)
         HistoryViewModel::class.java -> HistoryViewModel(repository)
 
-        else ->  throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
+        else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
 
     } as T
 

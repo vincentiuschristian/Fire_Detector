@@ -8,5 +8,4 @@
         android:title="@string/history"
         app:showAsAction="ifRoom"/>
 
-
 </menu>

@@ -12,15 +12,15 @@ import kotlinx.coroutines.flow.map
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
 class UserPreference private constructor(private val dataStore: DataStore<Preferences>){
 
-    suspend fun saveIdPerangkat(userModel: UserModel) {
+    suspend fun saveIdPerangkat(idPerangkatModel: IDPerangkatModel) {
         dataStore.edit { preferences ->
-            preferences[ID_PERANGKAT] = userModel.idPerangkat
+            preferences[ID_PERANGKAT] = idPerangkatModel.idPerangkat
         }
     }
 
-    suspend fun getIdPerangkat() : Flow<UserModel> {
+    fun getIdPerangkat() : Flow<IDPerangkatModel> {
         return dataStore.data.map { preferences ->
-            UserModel(
+            IDPerangkatModel(
                 preferences[ID_PERANGKAT] ?: ""
             )
         }

@@ -69,6 +69,7 @@
             android:id="@+id/etIdPerangkat"
             style="@style/CustomEditText"
             android:layout_width="match_parent"
+            android:inputType="textPersonName"
             android:layout_height="wrap_content"
             android:fontFamily="@font/plus_jakarta_sans_regular"
             android:hint="@string/id_perangkat" />

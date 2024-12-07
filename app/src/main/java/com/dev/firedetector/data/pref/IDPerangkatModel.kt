@@ -1,5 +1,5 @@
 package com.dev.firedetector.data.pref
 
-data class UserModel(
+data class IDPerangkatModel(
     val idPerangkat: String,
 )

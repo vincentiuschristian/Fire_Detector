@@ -12,7 +12,6 @@ import com.dev.firedetector.data.ViewModelFactory
 import com.dev.firedetector.data.model.DataAlatModel
 import com.dev.firedetector.databinding.FragmentHistoryBinding
 import com.dev.firedetector.ui.adapter.HistoryAdapter
-import com.google.android.material.snackbar.Snackbar
 
 class HistoryFragment : Fragment() {
     private var _binding: FragmentHistoryBinding? = null
@@ -74,10 +73,5 @@ class HistoryFragment : Fragment() {
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
-
-    private fun showSnackbar(message: String?) {
-        Snackbar.make(binding.root, message ?: "Unknown Error", Snackbar.LENGTH_SHORT).show()
-    }
-
 
 }
