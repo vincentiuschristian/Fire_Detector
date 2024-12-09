@@ -11,10 +11,11 @@ class HistoryAdapter(private val dataHistory: ArrayList<DataAlatModel>) :
     RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
     inner class HistoryViewHolder(private val binding: HistoryListBinding) :
         RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("SetTextI18n")
         fun bind(data: DataAlatModel) {
             binding.apply {
                 tvTemperature.text = data.temp.toString()
-                tvKelembapan.text = data.hum.toString()
+                tvKelembapan.text = "${data.hum.toString()}%"
                 tvKualitasUdara.text = data.mqValue.toString()
                 tvApiTerdeteksi.text = data.flameDetected.toString()
                 tvTimeStamp.text = data.timestamp.toString()
