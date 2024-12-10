@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev.firedetector.data.model.DataAlatModel
-import com.dev.firedetector.data.pref.IDPerangkatModel
 import com.dev.firedetector.data.repository.FireRepository
 import kotlinx.coroutines.launch
 
@@ -17,23 +16,20 @@ class HistoryViewModel(private val repository: FireRepository) : ViewModel() {
     private val _loading = MutableLiveData<Boolean>()
     val loading: LiveData<Boolean> = _loading
 
+    private val _errorMessage = MutableLiveData<String>()
+    val errorMessage: LiveData<String> get() = _errorMessage
 
     fun getDataHistory() {
         viewModelScope.launch {
-            _loading.postValue(true)
-            val data = repository.getSensorData()
-            _dataHistory.postValue(data)
-            _loading.postValue(false)
+            repository.getSensorData(
+                onDataChanged = { data ->
+                    _dataHistory.postValue(data)
+                },
+                onError = { error ->
+                    println("Error in listener: ${error.message}")
+                }
+            )
         }
     }
 
-    fun getId(): LiveData<IDPerangkatModel> {
-        val idPerangkatLiveData = MutableLiveData<IDPerangkatModel>()
-        viewModelScope.launch {
-            repository.getIdPerangkat().collect { userModel ->
-                idPerangkatLiveData.postValue(userModel)
-            }
-        }
-        return idPerangkatLiveData
-    }
 }

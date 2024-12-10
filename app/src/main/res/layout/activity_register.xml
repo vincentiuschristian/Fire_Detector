@@ -175,6 +175,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_marginEnd="16dp"
+            android:backgroundTint="#222227"
             android:background="@drawable/bg_edit_text"
             android:contentDescription="@string/get_location"
             android:src="@drawable/current_location"

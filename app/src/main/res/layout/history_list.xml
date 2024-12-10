@@ -62,7 +62,7 @@
             android:textStyle="bold"
             android:paddingStart="8dp"
             android:paddingEnd="1dp"
-            android:text="@string/kualitas_udara"
+            android:text="@string/gas_terdeteksi"
             app:layout_constraintStart_toEndOf="@id/iv_kualitas_udara"
             app:layout_constraintTop_toTopOf="@id/iv_kualitas_udara" />
 
@@ -71,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingStart="8dp"
-            android:paddingEnd="1dp"
+            android:paddingEnd="4dp"
             android:text="@string/baik"
             app:layout_constraintBottom_toBottomOf="@id/iv_kualitas_udara"
             app:layout_constraintStart_toEndOf="@id/iv_kualitas_udara" />

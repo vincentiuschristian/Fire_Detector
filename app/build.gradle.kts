@@ -63,4 +63,5 @@ dependencies {
     implementation(libs.play.services.maps)
     implementation (libs.roundedimageview)
     implementation(libs.androidx.datastore.preferences)
+    implementation (libs.androidx.swiperefreshlayout)
 }

@@ -13,6 +13,9 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.tasks.await
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class FireRepository(private val userPreference: UserPreference) {
     private val auth = FirebaseAuth.getInstance()
@@ -77,29 +80,39 @@ class FireRepository(private val userPreference: UserPreference) {
         }
     }
 
+    suspend fun getSensorData(
+        onDataChanged: (List<DataAlatModel>) -> Unit,
+        onError: (Exception) -> Unit
+    ) {
 
-    suspend fun getSensorData(): List<DataAlatModel> {
-        return try {
-            val id = userPreference.getIdPerangkat().first().idPerangkat
-            val querySnapshot = db.collection(Reference.COLLECTION)
-                .document(id)
-                .collection(Reference.DATAALAT)
-                .get()
-                .await()
+        val deviceId = userPreference.getIdPerangkat().first().idPerangkat
+        db.collection(Reference.COLLECTION)
+            .document(deviceId)
+            .collection(Reference.DATAALAT)
+            .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .addSnapshotListener { querySnapshot, error ->
+                if (error != null) {
+                    onError(error)
+                    return@addSnapshotListener
+                }
 
-            querySnapshot.documents.map { documentSnapshot ->
-                DataAlatModel(
-                    flameDetected = documentSnapshot.getString(Reference.FIELD_FLAME_DETECTED),
-                    hum = documentSnapshot.getDouble(Reference.FIELD_HUM),
-                    mqValue = documentSnapshot.getString(Reference.FIELD_GAS_LEVEL),
-                    temp = documentSnapshot.getDouble(Reference.FIELD_TEMP),
-                    timestamp = documentSnapshot.getString(Reference.FIELD_TIMESTAMP),
-                    deviceId = id
-                )
+                val dataList = querySnapshot?.documents?.mapNotNull { document ->
+                    val timestamp = document.getTimestamp(Reference.FIELD_TIMESTAMP)
+                    val formattedTimestamp =
+                        timestamp?.toDate()?.let { convertTimestampToString(it) }
+
+                    DataAlatModel(
+                        flameDetected = document.getString(Reference.FIELD_FLAME_DETECTED),
+                        hum = document.getDouble(Reference.FIELD_HUM),
+                        mqValue = document.getString(Reference.FIELD_GAS_LEVEL),
+                        temp = document.getDouble(Reference.FIELD_TEMP),
+                        timestamp = formattedTimestamp,
+                        deviceId = deviceId
+                    )
+                } ?: emptyList()
+
+                onDataChanged(dataList)
             }
-        } catch (e: Exception) {
-            emptyList()
-        }
     }
 
     suspend fun saveIdPerangkat(user: IDPerangkatModel) {
@@ -112,6 +125,14 @@ class FireRepository(private val userPreference: UserPreference) {
 
     suspend fun deleteIdPerangkat() {
         userPreference.logout()
+    }
+
+    private fun convertTimestampToString(date: Date): String {
+        val format = SimpleDateFormat(
+            "MMMM dd, yyyy 'at' hh:mm:ss a",
+            Locale.getDefault()
+        ) // Format sesuai dengan kebutuhan
+        return format.format(date)
     }
 
 

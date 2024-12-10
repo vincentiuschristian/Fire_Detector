@@ -18,7 +18,8 @@ class HistoryAdapter(private val dataHistory: ArrayList<DataAlatModel>) :
                 tvKelembapan.text = "${data.hum.toString()}%"
                 tvKualitasUdara.text = data.mqValue.toString()
                 tvApiTerdeteksi.text = data.flameDetected.toString()
-                tvTimeStamp.text = data.timestamp.toString()
+                tvTimeStamp.text =
+                    data.timestamp.toString() // Menampilkan timestamp yang sudah diformat
             }
         }
     }

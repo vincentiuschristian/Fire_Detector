@@ -11,18 +11,18 @@
     <string name="call_ambulance">Call Ambulance</string>
     <string name="emergency">Emergency</string>
     <string name="your_location">Your Location</string>
-    <string name="address_dummy">Your address</string>
+    <string name="address_dummy">Alamat Anda</string>
     <string name="temperature">Temperature</string>
     <string name="icon_temperature">icon temperature</string>
     <string name="icon_humidity">icon humidity</string>
     <string name="kelembapan">Kelembapan</string>
     <string name="icon_air_quality">icon air quality</string>
-    <string name="kualitas_udara">Kualitas Udara</string>
+    <string name="gas_terdeteksi">Gas Terdeteksi</string>
     <string name="icon_fire">icon fire</string>
     <string name="api_terdeteksi">Api Terdeteksi</string>
     <string name="api_tidak_terdeteksi">Api Terdeteksi</string>
     <string name="not_detected">-</string>
-    <string name="baik">-</string>
+    <string name="baik">Aman Terkendali</string>
     <string name="_30">-%</string>
     <string name="_40">-°</string>
     <string name="location_icon">Location icon</string>
@@ -44,9 +44,9 @@
     <string name="masuk">Masuk</string>
     <string name="profile">Profil</string>
     <string name="logout">Logout</string>
-    <string name="name">Name</string>
+    <string name="name">Nama</string>
     <string name="full_name">Full Name</string>
-    <string name="location">Location</string>
+    <string name="location">Lokasi</string>
     <string name="telepon_darurat">Telepon Darurat</string>
     <string name="kondisi_ruangan">Kondisi Ruangan</string>
     <string name="logo_aplikasi">Logo Aplikasi</string>
@@ -60,7 +60,7 @@
     <string name="notelp_polisi">tel:089605958454</string>
     <string name="id_perangkat">ID Perangkat</string>
     <string name="lokasi">Lokasi</string>
-    <string name="history">Riwayat Data Alat</string>
+    <string name="history">Riwayat Data</string>
     <string name="location_not_found">Location not found</string>
     <string name="permission_denied">Permintaan akses lokasi ditolak!</string>
     <string name="aman">Aman</string>
@@ -76,42 +76,5 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
-
-    <string name="lorem_ipsum">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
-        volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
-        dui nec risus. Maecenas non sodales nisi, vel dictum dolor. Class aptent taciti sociosqu ad
-        litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse blandit eleifend
-        diam, vel rutrum tellus vulputate quis. Aliquam eget libero aliquet, imperdiet nisl a,
-        ornare ex. Sed rhoncus est ut libero porta lobortis. Fusce in dictum tellus.\n\n
-        Suspendisse interdum ornare ante. Aliquam nec cursus lorem. Morbi id magna felis. Vivamus
-        egestas, est a condimentum egestas, turpis nisl iaculis ipsum, in dictum tellus dolor sed
-        neque. Morbi tellus erat, dapibus ut sem a, iaculis tincidunt dui. Interdum et malesuada
-        fames ac ante ipsum primis in faucibus. Curabitur et eros porttitor, ultricies urna vitae,
-        molestie nibh. Phasellus at commodo eros, non aliquet metus. Sed maximus nisl nec dolor
-        bibendum, vel congue leo egestas.\n\n
-        Sed interdum tortor nibh, in sagittis risus mollis quis. Curabitur mi odio, condimentum sit
-        amet auctor at, mollis non turpis. Nullam pretium libero vestibulum, finibus orci vel,
-        molestie quam. Fusce blandit tincidunt nulla, quis sollicitudin libero facilisis et. Integer
-        interdum nunc ligula, et fermentum metus hendrerit id. Vestibulum lectus felis, dictum at
-        lacinia sit amet, tristique id quam. Cras eu consequat dui. Suspendisse sodales nunc ligula,
-        in lobortis sem porta sed. Integer id ultrices magna, in luctus elit. Sed a pellentesque
-        est.\n\n
-        Aenean nunc velit, lacinia sed dolor sed, ultrices viverra nulla. Etiam a venenatis nibh.
-        Morbi laoreet, tortor sed facilisis varius, nibh orci rhoncus nulla, id elementum leo dui
-        non lorem. Nam mollis ipsum quis auctor varius. Quisque elementum eu libero sed commodo. In
-        eros nisl, imperdiet vel imperdiet et, scelerisque a mauris. Pellentesque varius ex nunc,
-        quis imperdiet eros placerat ac. Duis finibus orci et est auctor tincidunt. Sed non viverra
-        ipsum. Nunc quis augue egestas, cursus lorem at, molestie sem. Morbi a consectetur ipsum, a
-        placerat diam. Etiam vulputate dignissim convallis. Integer faucibus mauris sit amet finibus
-        convallis.\n\n
-        Phasellus in aliquet mi. Pellentesque habitant morbi tristique senectus et netus et
-        malesuada fames ac turpis egestas. In volutpat arcu ut felis sagittis, in finibus massa
-        gravida. Pellentesque id tellus orci. Integer dictum, lorem sed efficitur ullamcorper,
-        libero justo consectetur ipsum, in mollis nisl ex sed nisl. Donec maximus ullamcorper
-        sodales. Praesent bibendum rhoncus tellus nec feugiat. In a ornare nulla. Donec rhoncus
-        libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
-        vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
-    </string>
     <string name="id">ID-</string>
 </resources>

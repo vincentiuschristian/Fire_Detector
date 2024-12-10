@@ -8,7 +8,7 @@ import com.dev.firedetector.data.model.DataAlatModel
 import com.dev.firedetector.data.repository.FireRepository
 import kotlinx.coroutines.launch
 
-class HomeViewModel(private val repository: FireRepository) : ViewModel(){
+class HomeViewModel(private val repository: FireRepository) : ViewModel() {
 
     private val _loading = MutableLiveData<Boolean>()
     val loading: LiveData<Boolean> = _loading
@@ -17,19 +17,24 @@ class HomeViewModel(private val repository: FireRepository) : ViewModel(){
     val sensorData: LiveData<DataAlatModel?> = _sensorData
 
     fun fetchLatestSensorData() {
+        _loading.value = true
         viewModelScope.launch {
-            _loading.value = true
             try {
-                val data = repository.getSensorData()
-                // Ambil data terbaru, misalnya item terakhir dari list
-                _sensorData.value = data.lastOrNull()
+                repository.getSensorData(
+                    onDataChanged = { data ->
+                        _sensorData.value = data.firstOrNull()
+                    },
+                    onError = {
+                        _sensorData.value = null
+                    }
+                )
             } catch (e: Exception) {
-                // Handle error
                 _sensorData.value = null
             } finally {
                 _loading.value = false
             }
         }
+
     }
 
 }

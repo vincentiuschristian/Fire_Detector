@@ -56,7 +56,7 @@ class HomeFragment : Fragment() {
                     cvIsFire.setCardBackgroundColor(
                         ContextCompat.getColor(
                             requireContext(),
-                            if (data.flameDetected.toString() == "Api Tidak Terdeteksi") R.color.red else R.color.cardview_color
+                            if (data.flameDetected.toString() == "Api Terdeteksi") R.color.red else R.color.cardview_color
                         )
                     )
                 }
