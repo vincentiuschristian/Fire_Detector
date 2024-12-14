@@ -64,6 +64,10 @@ class HomeFragment : Fragment() {
             showLoading(it)
         }
 
+        viewModel.getId().observe(viewLifecycleOwner){
+            binding.tvIdPerangkat.text = it.idPerangkat
+        }
+
         viewModel.sensorData.observe(viewLifecycleOwner) { data ->
             if (data != null) {
                 binding.apply {
