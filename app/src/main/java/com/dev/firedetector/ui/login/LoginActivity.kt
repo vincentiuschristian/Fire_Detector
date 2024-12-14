@@ -3,7 +3,6 @@ package com.dev.firedetector.ui.login
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.dev.firedetector.AuthActivity
@@ -14,6 +13,7 @@ import com.dev.firedetector.databinding.ActivityLoginBinding
 import com.dev.firedetector.ui.register.AuthViewModel
 import com.dev.firedetector.ui.register.RegisterActivity
 import com.dev.firedetector.util.Reference
+import com.google.android.material.snackbar.Snackbar
 
 class LoginActivity : AppCompatActivity() {
     private val binding: ActivityLoginBinding by lazy {
@@ -73,6 +73,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
     }
 }

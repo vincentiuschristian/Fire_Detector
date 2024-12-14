@@ -4,7 +4,7 @@
     <string name="title_emergency">Emergency</string>
     <string name="title_profile">Profile</string>
     <string name="polisi">Polisi</string>
-    <string name="ambulance">Ambulance</string>
+    <string name="ambulance">Ambulans</string>
     <string name="warning_text">ⓘ Tombol darurat ini hanya boleh digunakan saat terjadi kebakaran. Penyalahgunaan akan diberikan sanksi sesuai aturan yang berlaku.</string>
     <string name="call_fire_fighter">Call Fire Fighter</string>
     <string name="call_police">Call Police</string>
@@ -56,9 +56,10 @@
     <string name="password_warning">Password must be at least 6 characters!</string>
     <string name="email_warning">Enter a valid email address!</string>
     <string name="empty_field">Kolom tidak boleh kosong!</string>
-    <string name="notelp_damkar">+62811729444</string>
-    <string name="notelp_polisi">tel:089605958454</string>
+    <string name="notelp_polisi">tel:089560056060212</string>
+    <string name="notelp_ambulans">tel:089560056060212</string>
     <string name="id_perangkat">ID Perangkat</string>
+    <string name="id_perangkat_xxx">ID Perangkat:</string>
     <string name="lokasi">Lokasi</string>
     <string name="history">Riwayat Data</string>
     <string name="location_not_found">Location not found</string>
@@ -76,5 +77,6 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
-    <string name="id">ID-</string>
+    <string name="id">IDXXX</string>
+    <string name="layanan_darurat">Layanan Darurat</string>
 </resources>

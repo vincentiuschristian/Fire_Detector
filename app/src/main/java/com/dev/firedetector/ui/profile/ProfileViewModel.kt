@@ -18,10 +18,9 @@ class ProfileViewModel(private val repository: FireRepository) : ViewModel() {
     private val _loading = MutableLiveData<Boolean>()
     val loading: LiveData<Boolean> get() = _loading
 
-    // Fungsi untuk mengambil data pengguna
     fun fetchData() {
         viewModelScope.launch {
-            _loading.value = true // Mulai proses loading
+            _loading.value = true
             try {
                 val userData = repository.getUserData()
                 if (userData != null) {
@@ -32,15 +31,13 @@ class ProfileViewModel(private val repository: FireRepository) : ViewModel() {
             } catch (e: Exception) {
                 _error.postValue("Failed to fetch data: ${e.message}")
             } finally {
-                _loading.postValue(false) // Selesai proses loading
+                _loading.postValue(false)
             }
         }
     }
 
-    // Fungsi untuk logout
     fun logout() = repository.logout()
 
-    // Fungsi untuk menghapus ID perangkat yang tersimpan
     fun clearIdSaved() {
         viewModelScope.launch {
             try {

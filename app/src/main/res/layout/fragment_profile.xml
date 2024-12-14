@@ -16,7 +16,7 @@
             android:id="@+id/topBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/white"
+            android:background="@color/background"
             android:paddingTop="10dp"
             app:title="@string/profile"
             app:titleCentered="true" />
@@ -53,7 +53,7 @@
                 android:layout_marginTop="16dp"
                 android:fontFamily="@font/plus_jakarta_sans_semi_bold"
                 android:text="@string/name"
-                android:textColor="@color/black"
+                android:textColor="@color/color_text"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toTopOf="@id/tv_userEmail"
                 app:layout_constraintStart_toEndOf="@id/img_profile"
@@ -67,7 +67,7 @@
                 android:layout_marginBottom="16dp"
                 android:fontFamily="@font/plus_jakarta_sans_regular"
                 android:text="@string/example_gmail_com"
-                android:textColor="@color/primary"
+                android:textColor="@color/color_text_second"
                 app:layout_constraintBottom_toBottomOf="@id/img_profile"
                 app:layout_constraintStart_toEndOf="@id/img_profile"
                 app:layout_constraintTop_toBottomOf="@id/tv_userName" />
@@ -93,7 +93,7 @@
                 android:layout_marginTop="4dp"
                 android:fontFamily="@font/plus_jakarta_sans_semi_bold"
                 android:text="@string/id"
-                android:textColor="@color/black"
+                android:textColor="@color/color_text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_text_id" />
@@ -119,7 +119,7 @@
                 android:layout_marginTop="4dp"
                 android:fontFamily="@font/plus_jakarta_sans_semi_bold"
                 android:text="@string/name"
-                android:textColor="@color/black"
+                android:textColor="@color/color_text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_name" />
@@ -147,7 +147,7 @@
                 android:layout_marginEnd="16dp"
                 android:fontFamily="@font/plus_jakarta_sans_semi_bold"
                 android:text="@string/address_dummy"
-                android:textColor="@color/black"
+                android:textColor="@color/color_text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvLocation" />
