@@ -33,7 +33,11 @@ class LoginActivity : AppCompatActivity() {
                 val email = etEmail.text.toString()
                 val password = etPassword.text.toString()
 
-                if (Reference.isEmailValid(applicationContext, email) && Reference.isPasswordValid(applicationContext, password)) {
+                if (Reference.isEmailValid(applicationContext, email) && Reference.isPasswordValid(
+                        applicationContext,
+                        password
+                    )
+                ) {
                     authViewModel.saveId(IDPerangkatModel(idPerangkat))
                     authViewModel.login(email, password)
                 } else {

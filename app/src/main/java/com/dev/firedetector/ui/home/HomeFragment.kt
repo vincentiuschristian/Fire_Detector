@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -51,7 +50,7 @@ class HomeFragment : Fragment() {
             }
 
             btnCallAmbulance.setOnClickListener {
-                val ambulance = "tel:0895600560600"
+                val ambulance = getString(R.string.notelp_ambulans)
                 showConfirmationDialog(ambulance)
             }
         }
@@ -64,7 +63,7 @@ class HomeFragment : Fragment() {
             showLoading(it)
         }
 
-        viewModel.getId().observe(viewLifecycleOwner){
+        viewModel.getId().observe(viewLifecycleOwner) {
             binding.tvIdPerangkat.text = it.idPerangkat
         }
 
@@ -72,13 +71,9 @@ class HomeFragment : Fragment() {
             if (data != null) {
                 binding.apply {
                     txtTemperature.text = getString(R.string.text_suhu, data.temp.toString())
-                    Log.d("Data Home", "Data Home: ${data.temp}")
                     txtHumidity.text = getString(R.string.text_kelembapan, data.hum.toString())
-                    txtAirQuality.text = getString(R.string.text_kualitas_udara, data.mqValue)
-                    txtFireDetection.text =
-                        if (data.flameDetected == "Api Terdeteksi") getString(R.string.api_terdeteksi) else getString(
-                            R.string.api_tidak_terdeteksi
-                        )
+                    txtAirQuality.text =  data.mqValue
+                    txtFireDetection.text = data.flameDetected
                     cvIsFire.setCardBackgroundColor(
                         ContextCompat.getColor(
                             requireContext(),

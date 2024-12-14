@@ -40,7 +40,7 @@ class HistoryFragment : Fragment() {
         }
         showLoading(true)
         getData()
-        viewModel.errorMessage.observe(viewLifecycleOwner){
+        viewModel.errorMessage.observe(viewLifecycleOwner) {
             showSnackbar(it)
         }
     }

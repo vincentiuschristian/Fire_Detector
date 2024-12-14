@@ -52,12 +52,21 @@ class RegisterActivity : AppCompatActivity() {
                 val location = etLokasi.text.toString()
 
                 if (username.isNotEmpty() && isEmailValid(applicationContext, email) &&
-                    isPasswordValid(applicationContext, password) && location.isNotEmpty() && idPerangkat.isNotEmpty()) {
+                    isPasswordValid(
+                        applicationContext,
+                        password
+                    ) && location.isNotEmpty() && idPerangkat.isNotEmpty()
+                ) {
 
                     authViewModel.register(
                         email = email,
                         pass = password,
-                        dataUserModel = DataUserModel(username = username, email = email, location = location, idPerangkat = idPerangkat),
+                        dataUserModel = DataUserModel(
+                            username = username,
+                            email = email,
+                            location = location,
+                            idPerangkat = idPerangkat
+                        ),
                         idPerangkat = idPerangkat
                     )
 
@@ -104,7 +113,8 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun getMyLocation() {
         if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION) ||
-            checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+        ) {
 
             showLoading(true)
 
@@ -114,7 +124,13 @@ class RegisterActivity : AppCompatActivity() {
                     if (location != null) {
                         val latitude = location.latitude
                         val longitude = location.longitude
-                        binding.etLokasi.setText(getString(R.string.location_format, latitude, longitude))
+                        binding.etLokasi.setText(
+                            getString(
+                                R.string.location_format,
+                                latitude,
+                                longitude
+                            )
+                        )
                         showSnackbar("Lokasi berhasil didapatkan!")
                     } else {
                         showSnackbar(getString(R.string.location_not_found))
@@ -134,13 +150,17 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun checkPermission(permission: String): Boolean {
-        return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
+        return ContextCompat.checkSelfPermission(
+            this,
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
-                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+            ) {
                 getMyLocation()
             } else {
                 showSnackbar(getString(R.string.permission_denied))

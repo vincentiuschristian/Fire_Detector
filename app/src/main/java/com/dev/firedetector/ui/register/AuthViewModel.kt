@@ -44,15 +44,20 @@ class AuthViewModel(private val repository: FireRepository) : ViewModel() {
 
     fun register(email: String, pass: String, dataUserModel: DataUserModel, idPerangkat: String) {
         _loading.value = true
-        repository.register(dataUserModel, email, pass, idPerangkat, onResult = { success, exception ->
-            if (success) {
-                login(email, pass)
-                _message.postValue("Registration Successful")
-            } else {
-                _loading.postValue(false)
-                _message.postValue(parseFirebaseError(exception!!))
-            }
-        })
+        repository.register(
+            dataUserModel,
+            email,
+            pass,
+            idPerangkat,
+            onResult = { success, exception ->
+                if (success) {
+                    login(email, pass)
+                    _message.postValue("Registration Successful")
+                } else {
+                    _loading.postValue(false)
+                    _message.postValue(parseFirebaseError(exception!!))
+                }
+            })
 
     }
 
@@ -61,11 +66,12 @@ class AuthViewModel(private val repository: FireRepository) : ViewModel() {
             is FirebaseAuthInvalidCredentialsException -> "Periksa kembali email atau kata sandi Anda!"
             is FirebaseAuthUserCollisionException -> "Email ini sudah terdaftar. Silakan gunakan email lain atau coba masuk."
             is FirebaseAuthInvalidUserException -> "Pengguna tidak ditemukan. Silakan periksa kembali email yang Anda masukkan."
-            else -> exception.message ?: "Terjadi kesalahan yang tidak diketahui. Silakan coba lagi."
+            else -> exception.message
+                ?: "Terjadi kesalahan yang tidak diketahui. Silakan coba lagi."
         }
     }
 
-    fun saveId(idPerangkatModel: IDPerangkatModel){
+    fun saveId(idPerangkatModel: IDPerangkatModel) {
         viewModelScope.launch {
             repository.saveIdPerangkat(idPerangkatModel)
         }

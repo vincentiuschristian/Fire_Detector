@@ -70,7 +70,6 @@
     <string name="location_format">%1$.6f, %2$.6f</string>
     <string name="text_suhu">%1$s°C</string>
     <string name="text_kelembapan">%s%%</string>
-    <string name="text_kualitas_udara">%1$s</string>
     <string name="text_timestamp">12:12:12</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
