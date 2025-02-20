@@ -2,8 +2,6 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.googleGmsGoogleServices)
-//    id("com.google.devtools.ksp")
-//    id("kotlin-parcelize")
 }
 
 android {
@@ -64,4 +62,8 @@ dependencies {
     implementation (libs.roundedimageview)
     implementation(libs.androidx.datastore.preferences)
     implementation (libs.androidx.swiperefreshlayout)
+
+    implementation (libs.org.eclipse.paho.client.mqttv3)
+    implementation (libs.org.eclipse.paho.android.service)
+    implementation(libs.gson)
 }

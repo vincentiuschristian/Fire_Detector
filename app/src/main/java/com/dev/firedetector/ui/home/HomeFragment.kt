@@ -86,9 +86,8 @@ class HomeFragment : Fragment() {
 
         profileViewModel.userModelData.observe(viewLifecycleOwner) { data ->
             if (data != null) {
-                binding.apply {
-                    tvName.text = data.username
-                }
+                binding.tvName.text = data.username
+                
             } else {
                 showSnackbar(profileViewModel.error.toString())
             }

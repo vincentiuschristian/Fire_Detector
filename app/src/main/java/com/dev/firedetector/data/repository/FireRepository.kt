@@ -1,26 +1,132 @@
 package com.dev.firedetector.data.repository
 
+import android.content.Context
+import android.util.Log
 import com.dev.firedetector.data.model.DataAlatModel
 import com.dev.firedetector.data.model.DataUserModel
 import com.dev.firedetector.data.pref.IDPerangkatModel
 import com.dev.firedetector.data.pref.UserPreference
-import com.dev.firedetector.util.Reference
+import com.dev.firedetector.util.MqttConnectionState
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.tasks.await
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
+import org.eclipse.paho.android.service.MqttAndroidClient
+import org.eclipse.paho.client.mqttv3.IMqttActionListener
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
+import org.eclipse.paho.client.mqttv3.IMqttToken
+import org.eclipse.paho.client.mqttv3.MqttCallback
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions
+import org.eclipse.paho.client.mqttv3.MqttException
+import org.eclipse.paho.client.mqttv3.MqttMessage
+import java.util.UUID
 
-class FireRepository(private val userPreference: UserPreference) {
+class FireRepository(private val userPreference: UserPreference, context: Context) {
+    private val appContext = context.applicationContext
     private val auth = FirebaseAuth.getInstance()
-    private val db: FirebaseFirestore by lazy {
-        Firebase.firestore
+
+    // MQTT Configuration
+    private val mqttClient: MqttAndroidClient
+    private val _sensorData = MutableStateFlow<List<DataAlatModel>>(emptyList())
+    val sensorData: StateFlow<List<DataAlatModel>> = _sensorData
+
+    // MQTT State Management
+    private val _mqttState = MutableStateFlow<MqttConnectionState>(MqttConnectionState.Disconnected)
+    val mqttState: StateFlow<MqttConnectionState> = _mqttState
+
+    init {
+        val serverURI = "ssl://d7d8ee83.ala.asia-southeast1.emqxsl.com:8883"
+        mqttClient = MqttAndroidClient(
+            appContext,
+            serverURI,
+            "android_client_${UUID.randomUUID()}" // Client ID unik
+        )
+        setupMqttConnection()
+    }
+
+    private fun setupMqttConnection() {
+        mqttClient.setCallback(object : MqttCallback {
+            override  fun messageArrived(topic: String, message: MqttMessage) {
+                handleIncomingMessage(topic, String(message.payload))
+            }
+
+            override fun connectionLost(cause: Throwable?) {
+                _mqttState.value = MqttConnectionState.Disconnected
+                Log.e(TAG, "MQTT Connection Lost: ${cause?.message}")
+            }
+
+            override fun deliveryComplete(token: IMqttDeliveryToken?) {
+                Log.d(TAG, "Message delivery complete")
+            }
+        })
+    }
+
+    fun connectToMQTT() {
+        val options = MqttConnectOptions().apply {
+            isCleanSession = true
+            isAutomaticReconnect = true
+            connectionTimeout = 10
+            keepAliveInterval = 60
+            userName = "firedetect"
+            password = "123".toCharArray()
+        }
+
+        try {
+            mqttClient.connect(options, null, object : IMqttActionListener {
+                override fun onSuccess(asyncActionToken: IMqttToken?) {
+                    _mqttState.value = MqttConnectionState.Connected
+                    subscribeToTopic("fire_detector/data")
+                }
+
+                override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
+                    _mqttState.value = MqttConnectionState.Error(exception)
+                    Log.e(TAG, "MQTT Connection failed: ${exception?.message}")
+                }
+            })
+        } catch (e: MqttException) {
+            _mqttState.value = MqttConnectionState.Error(e)
+            Log.e(TAG, "MQTT Exception: ${e.message}")
+        }
+    }
+
+    private fun handleIncomingMessage(topic: String, payload: String) {
+        try {
+            val data = Gson().fromJson(payload, DataAlatModel::class.java)
+
+            _sensorData.update { currentList ->
+                listOf(data) + currentList.take(99) // Keep last 100 items
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error parsing MQTT message: ${e.message}")
+        }
+    }
+
+    fun subscribeToTopic(topic: String) {
+        try {
+            mqttClient.subscribe(topic, 1, null, object : IMqttActionListener {
+                override fun onSuccess(asyncActionToken: IMqttToken?) {
+                    Log.d(TAG, "Subscribed to $topic")
+                }
+
+                override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
+                    Log.e(TAG, "Subscription failed: ${exception?.message}")
+                }
+            })
+        } catch (e: MqttException) {
+            Log.e(TAG, "Subscription error: ${e.message}")
+        }
+    }
+
+    fun disconnectFromMQTT() {
+        try {
+            mqttClient.disconnect()
+            _mqttState.value = MqttConnectionState.Disconnected
+        } catch (e: MqttException) {
+            Log.e(TAG, "Disconnection error: ${e.message}")
+        }
     }
 
     fun getUser(): String? = auth.uid
@@ -39,80 +145,16 @@ class FireRepository(private val userPreference: UserPreference) {
         dataUserModel: DataUserModel,
         email: String,
         password: String,
-        deviceId: String,
         onResult: (Boolean, Exception?) -> Unit,
     ) {
-        db.collection(Reference.COLLECTION).document(deviceId).get().addOnSuccessListener {
-            auth.createUserWithEmailAndPassword(email, password).addOnSuccessListener {
-                val userId = it.user!!.uid
-
-                db.collection(Reference.COLLECTION).document(deviceId)
-                    .collection(Reference.DATAUSER).document(userId)
-                    .set(dataUserModel.apply { this.email = email })
-                    .addOnSuccessListener {
-                        onResult(true, null)
-                    }
-                    .addOnFailureListener { e ->
-                        onResult(false, e)
-                    }
-            }.addOnFailureListener { authException ->
-                onResult(false, authException)
-            }
-        }.addOnFailureListener { exception ->
-            onResult(false, exception)
+        auth.createUserWithEmailAndPassword(email, password).addOnSuccessListener {
+            val userId = it.user!!.uid
+            dataUserModel.email = email
+            dataUserModel.idPerangkat = userId
+            onResult(true, null)
+        }.addOnFailureListener { authException ->
+            onResult(false, authException)
         }
-    }
-
-    suspend fun getUserData(): DataUserModel? {
-        return try {
-            val id = userPreference.getIdPerangkat().first().idPerangkat
-            val querySnapshot = db.collection(Reference.COLLECTION)
-                .document(id)
-                .collection(Reference.DATAUSER)
-                .get()
-                .await()
-
-            val documentSnapshot = querySnapshot.documents.firstOrNull()
-            documentSnapshot?.toObject(DataUserModel::class.java)
-        } catch (e: Exception) {
-            println("Error fetching user data: ${e.message}") // Debug log
-            null
-        }
-    }
-
-    suspend fun getSensorData(
-        onDataChanged: (List<DataAlatModel>) -> Unit,
-        onError: (Exception) -> Unit
-    ) {
-
-        val deviceId = userPreference.getIdPerangkat().first().idPerangkat
-        db.collection(Reference.COLLECTION)
-            .document(deviceId)
-            .collection(Reference.DATAALAT)
-            .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
-            .addSnapshotListener { querySnapshot, error ->
-                if (error != null) {
-                    onError(error)
-                    return@addSnapshotListener
-                }
-
-                val dataList = querySnapshot?.documents?.mapNotNull { document ->
-                    val timestamp = document.getTimestamp(Reference.FIELD_TIMESTAMP)
-                    val formattedTimestamp =
-                        timestamp?.toDate()?.let { convertTimestampToString(it) }
-
-                    DataAlatModel(
-                        flameDetected = document.getString(Reference.FIELD_FLAME_DETECTED),
-                        hum = document.getDouble(Reference.FIELD_HUM),
-                        mqValue = document.getString(Reference.FIELD_GAS_LEVEL),
-                        temp = document.getDouble(Reference.FIELD_TEMP),
-                        timestamp = formattedTimestamp,
-                        deviceId = deviceId
-                    )
-                } ?: emptyList()
-
-                onDataChanged(dataList)
-            }
     }
 
     suspend fun saveIdPerangkat(user: IDPerangkatModel) {
@@ -127,29 +169,23 @@ class FireRepository(private val userPreference: UserPreference) {
         userPreference.logout()
     }
 
-    private fun convertTimestampToString(date: Date): String {
-        val format = SimpleDateFormat(
-            "MMMM dd, yyyy 'at' hh:mm:ss a",
-            Locale.getDefault()
-        ) // Format sesuai dengan kebutuhan
-        return format.format(date)
-    }
-
-
     fun logout() {
         auth.signOut()
+        mqttClient.disconnect()
     }
 
     companion object {
+        private const val TAG = "FireRepository"
         @Volatile
-        private var instances: FireRepository? = null
+        private var instance: FireRepository? = null
 
-        fun getInstance(userPreference: UserPreference): FireRepository =
-            instances ?: synchronized(this) {
-                instances ?: FireRepository(userPreference)
-                    .also {
-                        instances = it
-                    }
-            }
+        fun getInstance(
+            userPreference: UserPreference,
+            context: Context
+        ): FireRepository = instance ?: synchronized(this) {
+            instance ?: FireRepository(userPreference, context).also { instance = it }
+        }
     }
 }
+
+

@@ -1,10 +1,8 @@
 package com.dev.firedetector.data.model
 
 data class DataAlatModel(
-    val flameDetected: String?,
-    val hum: Double?,
-    val mqValue: String?,
-    val temp: Double?,
-    val timestamp: String?,
-    val deviceId: String,
+    val humidity: Float,
+    val temperature: Float,
+    val flameStatus: String,
+    val mqStatus: String
 )

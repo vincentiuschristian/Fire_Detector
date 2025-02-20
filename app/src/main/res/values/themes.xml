@@ -10,7 +10,6 @@
 
         <item name="colorOutlineVariant">@color/outline</item>
 
-
         <!-- Status bar color. -->
         <!--        <item name="android:statusBarColor">@color/white</item>-->
         <!-- Customize your theme here. -->
