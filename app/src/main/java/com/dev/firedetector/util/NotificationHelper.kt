@@ -6,10 +6,12 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.dev.firedetector.MainActivity
 import com.dev.firedetector.data.pref.UserPreference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -27,6 +29,22 @@ class NotificationHelper(
     private val CHANNEL_ID = "fire_alert_channel"
     private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val lastFlameStatus: MutableMap<String, String> = mutableMapOf()
+    private val notificationReceiver = NotificationReceiver()
+
+    fun registerNotificationReceiver() {
+        val filter = IntentFilter("STOP_NOTIFICATION")
+        ContextCompat.registerReceiver(
+            context, // ⬅️ Gunakan context yang diberikan dari MainActivity
+            notificationReceiver,
+            filter,
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
+    }
+
+    fun unregisterNotificationReceiver() {
+        context.unregisterReceiver(notificationReceiver) // ✅ Unregister receiver
+    }
+
 
     fun createNotificationChannel() {
         val name = "Fire Alert Channel"

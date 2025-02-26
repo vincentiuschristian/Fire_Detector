@@ -54,50 +54,50 @@ class HomeFragment : Fragment() {
                 showConfirmationDialog(ambulance)
             }
         }
-    }
 
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-
-        viewModel.loading.observe(viewLifecycleOwner) {
-            showLoading(it)
-        }
-
-        viewModel.getId().observe(viewLifecycleOwner) {
-            binding.tvIdPerangkat.text = it.idPerangkat
-        }
-
-        viewModel.sensorData.observe(viewLifecycleOwner) { data ->
-            if (data != null) {
-                binding.apply {
-                    txtTemperature.text = getString(R.string.text_suhu, data.temp.toString())
-                    txtHumidity.text = getString(R.string.text_kelembapan, data.hum.toString())
-                    txtAirQuality.text =  data.mqValue
-                    txtFireDetection.text = data.flameDetected
-                    cvIsFire.setCardBackgroundColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            if (data.flameDetected.toString() == "Api Terdeteksi") R.color.red else R.color.cardview_color
-                        )
+        // Observe sensor data
+        viewModel.sensorData.observe(viewLifecycleOwner) { dataList ->
+            val latestData = dataList.firstOrNull()
+            latestData?.let { data ->
+                binding.txtHumidity.text = getString(R.string.text_kelembapan, data.humidity.toString())
+                binding.txtTemperature.text = getString(R.string.text_suhu, data.temperature.toString())
+                binding.txtFireDetection.text = data.flameStatus
+                binding.txtAirQuality.text = data.mqStatus
+                binding.cvIsFire.setCardBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        if (data.flameStatus == "Api Terdeteksi") R.color.red else R.color.cardview_color
                     )
-                }
+                )
+            }
+        }
+
+        // Observe loading state
+        viewModel.loading.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading) {
+                showLoading(true)
+            } else {
+                showLoading(false)
             }
         }
 
         profileViewModel.userModelData.observe(viewLifecycleOwner) { data ->
             if (data != null) {
-                binding.tvName.text = data.username
-                
+                binding.apply {
+                    tvName.text = data.username
+                }
             } else {
                 showSnackbar(profileViewModel.error.toString())
             }
         }
+
+        // Connect to MQTT
+        viewModel.connectToMQTT()
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.fetchLatestSensorData()
-        profileViewModel.fetchData()
+       profileViewModel.fetchData()
     }
 
     private fun calling(number: String) {
@@ -149,6 +149,7 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        viewModel.disconnectFromMQTT()
         _binding = null
     }
 }

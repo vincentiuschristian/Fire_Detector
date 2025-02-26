@@ -14,12 +14,12 @@ class HistoryAdapter(private val dataHistory: ArrayList<DataAlatModel>) :
         @SuppressLint("SetTextI18n")
         fun bind(data: DataAlatModel) {
             binding.apply {
-                tvTemperature.text = data.temp.toString()
-                tvKelembapan.text = "${data.hum.toString()}%"
-                tvKualitasUdara.text = data.mqValue.toString()
-                tvApiTerdeteksi.text = data.flameDetected.toString()
-                tvTimeStamp.text =
-                    data.timestamp.toString()
+                tvTemperature.text = data.temperature.toString()
+                tvKelembapan.text = "${data.humidity}%"
+                tvKualitasUdara.text = data.mqStatus
+                tvApiTerdeteksi.text = data.flameStatus
+//                tvTimeStamp.text =
+//                    data.timestamp.toString()
             }
         }
     }

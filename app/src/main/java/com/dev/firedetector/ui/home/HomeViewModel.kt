@@ -8,37 +8,35 @@ import androidx.lifecycle.viewModelScope
 import com.dev.firedetector.data.model.DataAlatModel
 import com.dev.firedetector.data.pref.IDPerangkatModel
 import com.dev.firedetector.data.repository.FireRepository
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+
 class HomeViewModel(private val repository: FireRepository) : ViewModel() {
 
+    // State untuk loading
     private val _loading = MutableLiveData<Boolean>()
     val loading: LiveData<Boolean> get() = _loading
 
-    private val _sensorData = MutableLiveData<DataAlatModel?>()
-    val sensorData: LiveData<DataAlatModel?> get() = _sensorData
+    // State untuk data sensor terbaru
+    val sensorData: LiveData<List<DataAlatModel>> = repository.sensorData
+        .map { it.take(100) } // Ambil 100 data terbaru
+        .asLiveData()
 
+    // State untuk ID perangkat
     private val _idPerangkat = MutableLiveData<IDPerangkatModel>()
     val idPerangkat: LiveData<IDPerangkatModel> get() = _idPerangkat
 
+    // State untuk error
+    private val _error = MutableLiveData<String?>()
+    val error: LiveData<String?> get() = _error
+
     init {
         fetchIdPerangkat()
-        fetchLatestSensorData()
     }
 
-    fun fetchLatestSensorData() {
-        _loading.value = true
-        repository.getSensorData(
-            onDataChanged = { data ->
-                _sensorData.postValue(data.firstOrNull())
-                _loading.postValue(false)
-            },
-            onError = {
-                _sensorData.postValue(null)
-                _loading.postValue(false)
-            }
-        )
-    }
-
+    /**
+     * Mengambil ID perangkat dari preferences
+     */
     private fun fetchIdPerangkat() {
         viewModelScope.launch {
             repository.getIdPerangkat().collect { id ->
@@ -46,4 +44,21 @@ class HomeViewModel(private val repository: FireRepository) : ViewModel() {
             }
         }
     }
+
+    /**
+     * Memulai koneksi MQTT
+     */
+    fun connectToMQTT() {
+        _loading.value = true
+        repository.connectToMQTT()
+        _loading.value = false
+    }
+
+    /**
+     * Memutuskan koneksi MQTT
+     */
+    fun disconnectFromMQTT() {
+        repository.disconnectFromMQTT()
+    }
+
 }

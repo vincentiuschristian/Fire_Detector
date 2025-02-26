@@ -20,16 +20,16 @@ class HistoryViewModel(private val repository: FireRepository) : ViewModel() {
     val errorMessage: LiveData<String> get() = _errorMessage
 
     fun getDataHistory() {
-        viewModelScope.launch {
-            repository.getSensorData(
-                onDataChanged = { data ->
-                    _dataHistory.postValue(data)
-                },
-                onError = { error ->
-                    println("Error in listener: ${error.message}")
-                }
-            )
-        }
+//        viewModelScope.launch {
+//            repository.getSensorData(
+//                onDataChanged = { data ->
+//                    _dataHistory.postValue(data)
+//                },
+//                onError = { error ->
+//                    println("Error in listener: ${error.message}")
+//                }
+//            )
+//        }
     }
 
 }

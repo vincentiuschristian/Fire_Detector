@@ -11,6 +11,7 @@ import com.dev.firedetector.databinding.ActivityMainBinding
 import com.dev.firedetector.util.NotificationHelper
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
+
 private val Context.dataStore by preferencesDataStore(name = "session")
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -32,9 +33,20 @@ class MainActivity : AppCompatActivity() {
 
         notificationHelper.startListening()
 
+        notificationHelper.registerNotificationReceiver()
+
         val navView: BottomNavigationView = binding.navView
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         navView.setupWithNavController(navController)
+
+
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        notificationHelper.unregisterNotificationReceiver()
     }
 }
+

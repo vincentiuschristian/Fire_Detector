@@ -29,7 +29,14 @@
         android:theme="@style/Theme.FireDetector"
         tools:targetApi="33">
 
-        <service android:name="org.eclipse.paho.android.service.MqttService" />
+        <service
+            android:name="org.eclipse.paho.android.service.MqttService"
+            android:exported="false"
+            tools:ignore="ExportedService">
+            <intent-filter>
+                <action android:name="org.eclipse.paho.android.service.MqttService" />
+            </intent-filter>
+        </service>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -46,7 +53,6 @@
         </activity>
         <activity
             android:name=".ui.register.RegisterActivity"
-            android:exported="true"
             android:foregroundServiceType="location" />
         <activity
             android:name=".ui.login.LoginActivity"

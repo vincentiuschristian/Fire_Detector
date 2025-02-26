@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.googleGmsGoogleServices)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -66,4 +67,8 @@ dependencies {
     implementation (libs.org.eclipse.paho.client.mqttv3)
     implementation (libs.org.eclipse.paho.android.service)
     implementation(libs.gson)
+
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
 }
