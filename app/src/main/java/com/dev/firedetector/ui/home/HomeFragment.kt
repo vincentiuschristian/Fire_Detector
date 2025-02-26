@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ import com.dev.firedetector.R
 import com.dev.firedetector.data.ViewModelFactory
 import com.dev.firedetector.databinding.FragmentHomeBinding
 import com.dev.firedetector.ui.profile.ProfileViewModel
+import com.dev.firedetector.util.Result
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 
@@ -55,49 +57,41 @@ class HomeFragment : Fragment() {
             }
         }
 
-        // Observe sensor data
-        viewModel.sensorData.observe(viewLifecycleOwner) { dataList ->
-            val latestData = dataList.firstOrNull()
-            latestData?.let { data ->
-                binding.txtHumidity.text = getString(R.string.text_kelembapan, data.humidity.toString())
-                binding.txtTemperature.text = getString(R.string.text_suhu, data.temperature.toString())
-                binding.txtFireDetection.text = data.flameStatus
-                binding.txtAirQuality.text = data.mqStatus
-                binding.cvIsFire.setCardBackgroundColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        if (data.flameStatus == "Api Terdeteksi") R.color.red else R.color.cardview_color
-                    )
-                )
-            }
-        }
+        viewModel.latestSensorData.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Success -> {
+                    val data = result.data
+                    if (data != null){
+                        binding.txtHumidity.text = getString(R.string.text_kelembapan, data.humidity.toString())
+                        binding.txtTemperature.text = getString(R.string.text_suhu, data.temperature.toString())
+                        binding.txtFireDetection.text = data.flame_status
 
-        // Observe loading state
-        viewModel.loading.observe(viewLifecycleOwner) { isLoading ->
-            if (isLoading) {
-                showLoading(true)
-            } else {
-                showLoading(false)
-            }
-        }
+                        binding.txtAirQuality.text = data.mq_status
+                        binding.cvIsFire.setCardBackgroundColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                if (data.flame_status == "Api Terdeteksi") R.color.red else R.color.cardview_color
+                            )
+                        )
+                    }
+                    Log.d("Datakuu", "Datanya : ${data?.mq_status}  ${data?.flame_status}")
 
-        profileViewModel.userModelData.observe(viewLifecycleOwner) { data ->
-            if (data != null) {
-                binding.apply {
-                    tvName.text = data.username
                 }
-            } else {
-                showSnackbar(profileViewModel.error.toString())
+                is Result.Error -> {
+                    showSnackbar(result.message)
+                }
             }
         }
 
-        // Connect to MQTT
-        viewModel.connectToMQTT()
+        viewModel.loading.observe(viewLifecycleOwner) { isLoading ->
+            showLoading(isLoading)
+        }
+
     }
 
     override fun onResume() {
         super.onResume()
-       profileViewModel.fetchData()
+        viewModel.getLatestSensorData()
     }
 
     private fun calling(number: String) {
@@ -149,7 +143,6 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        viewModel.disconnectFromMQTT()
         _binding = null
     }
 }

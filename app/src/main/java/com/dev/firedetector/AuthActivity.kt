@@ -1,6 +1,5 @@
 package com.dev.firedetector
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -8,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.dev.firedetector.data.ViewModelFactory
 import com.dev.firedetector.databinding.ActivityAuthBinding
 import com.dev.firedetector.ui.register.AuthViewModel
-import com.dev.firedetector.ui.register.RegisterActivity
 
 class AuthActivity : AppCompatActivity() {
 
@@ -26,7 +24,7 @@ class AuthActivity : AppCompatActivity() {
             showLoading(it)
         }
 
-        viewModel.loggedInUser.observe(this) {
+       /* viewModel.loggedInUser.observe(this) {
             if (it != null) {
                 startActivity(Intent(this, MainActivity::class.java).apply {
                     addFlags(
@@ -40,7 +38,7 @@ class AuthActivity : AppCompatActivity() {
                     finish()
                 })
             }
-        }
+        }*/
     }
 
     private fun showLoading(isLoading: Boolean) {

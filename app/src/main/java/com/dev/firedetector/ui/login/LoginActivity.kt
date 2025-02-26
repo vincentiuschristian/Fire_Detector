@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.dev.firedetector.AuthActivity
+import com.dev.firedetector.MainActivity
 import com.dev.firedetector.R
 import com.dev.firedetector.data.ViewModelFactory
 import com.dev.firedetector.data.pref.IDPerangkatModel
@@ -13,6 +13,7 @@ import com.dev.firedetector.databinding.ActivityLoginBinding
 import com.dev.firedetector.ui.register.AuthViewModel
 import com.dev.firedetector.ui.register.RegisterActivity
 import com.dev.firedetector.util.Reference
+import com.dev.firedetector.util.Result
 import com.google.android.material.snackbar.Snackbar
 
 class LoginActivity : AppCompatActivity() {
@@ -33,17 +34,21 @@ class LoginActivity : AppCompatActivity() {
                 val email = etEmail.text.toString()
                 val password = etPassword.text.toString()
 
+                // Validasi input
                 if (Reference.isEmailValid(applicationContext, email) && Reference.isPasswordValid(
                         applicationContext,
                         password
                     )
                 ) {
+                    // Simpan ID perangkat dan lakukan login
                     authViewModel.saveId(IDPerangkatModel(idPerangkat))
-                    authViewModel.login(email, password)
+                    authViewModel.loginUser(email, password)
                 } else {
                     showToast(getString(R.string.empty_field))
                 }
             }
+
+            // Navigasi ke halaman register
             tvMoveRegister.setOnClickListener {
                 startActivity(Intent(applicationContext, RegisterActivity::class.java))
             }
@@ -57,21 +62,22 @@ class LoginActivity : AppCompatActivity() {
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
 
-        authViewModel.message.observe(this) { message ->
-            if (message != null) {
-                showToast(message)
-            }
-        }
-
-        authViewModel.loggedInUser.observe(this) { user ->
-            if (user != null) {
-                navigateToAuth()
+        // Observasi hasil login
+        authViewModel.loginResult.observe(this) { result ->
+            when (result) {
+                is Result.Success -> {
+                    showToast(result.data?.message ?: "Login berhasil!")
+                    navigateToAuth()
+                }
+                is Result.Error -> {
+                    showToast(result.message ?: "Terjadi kesalahan saat login!")
+                }
             }
         }
     }
 
     private fun navigateToAuth() {
-        startActivity(Intent(this, AuthActivity::class.java).apply {
+        startActivity(Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
         })
     }

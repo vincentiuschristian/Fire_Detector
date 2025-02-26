@@ -10,10 +10,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.dev.firedetector.AuthActivity
 import com.dev.firedetector.R
 import com.dev.firedetector.data.ViewModelFactory
-import com.dev.firedetector.data.model.DataUserModel
 import com.dev.firedetector.databinding.ActivityRegisterBinding
 import com.dev.firedetector.ui.login.LoginActivity
 import com.dev.firedetector.util.Reference.isEmailValid
@@ -22,8 +20,6 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -33,14 +29,13 @@ class RegisterActivity : AppCompatActivity() {
     private val authViewModel: AuthViewModel by viewModels {
         ViewModelFactory.getInstance(applicationContext)
     }
-    private lateinit var auth: FirebaseAuth
+
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        auth = FirebaseAuth.getInstance()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         binding.apply {
@@ -57,36 +52,12 @@ class RegisterActivity : AppCompatActivity() {
                         password
                     ) && location.isNotEmpty() && idPerangkat.isNotEmpty()
                 ) {
+                    authViewModel.registerUser(idPerangkat, username, email, password, location)
 
-                    authViewModel.register(
-                        email = email,
-                        pass = password,
-                        dataUserModel = DataUserModel(
-                            username = username,
-                            email = email,
-                            location = location,
-                            idPerangkat = idPerangkat
-                        ),
-                        idPerangkat = idPerangkat
-                    )
-
-                    authViewModel.loading.observe(this@RegisterActivity) {
-                        showLoading(it)
-                    }
-
-                    authViewModel.message.observe(this@RegisterActivity) { message ->
-                        if (message == "Register Success, Logging In...") {
-                            showSnackbar("Register Success")
-                            finish()
-                        } else {
-                            showSnackbar(message)
-                        }
-                    }
                 } else {
                     showSnackbar(resources.getString(R.string.empty_field))
                 }
             }
-
 
             tvMoveRegister.setOnClickListener {
                 startActivity(Intent(applicationContext, LoginActivity::class.java))
@@ -98,18 +69,6 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        val currentUser = auth.currentUser
-        updateUI(currentUser)
-    }
-
-    private fun updateUI(currentUser: FirebaseUser?) {
-        if (currentUser != null) {
-            startActivity(Intent(applicationContext, AuthActivity::class.java))
-            finish()
-        }
-    }
 
     private fun getMyLocation() {
         if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION) ||

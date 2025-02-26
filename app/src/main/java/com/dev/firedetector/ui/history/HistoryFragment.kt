@@ -8,19 +8,19 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dev.firedetector.data.ViewModelFactory
-import com.dev.firedetector.data.model.DataAlatModel
 import com.dev.firedetector.databinding.FragmentHistoryBinding
 import com.dev.firedetector.ui.adapter.HistoryAdapter
+import com.dev.firedetector.util.Result
 import com.google.android.material.snackbar.Snackbar
 
 class HistoryFragment : Fragment() {
+
     private var _binding: FragmentHistoryBinding? = null
     private val binding get() = _binding!!
     private val viewModel: HistoryViewModel by viewModels {
         ViewModelFactory.getInstance(requireContext())
     }
     private lateinit var adapter: HistoryAdapter
-    private val historyList = ArrayList<DataAlatModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,46 +32,37 @@ class HistoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adapter = HistoryAdapter(historyList)
-        binding.apply {
-            rvHistory.adapter = adapter
-            rvHistory.layoutManager = LinearLayoutManager(requireContext())
-            rvHistory.setHasFixedSize(true)
-        }
-        showLoading(true)
-        getData()
-        viewModel.errorMessage.observe(viewLifecycleOwner) {
-            showSnackbar(it)
-        }
+
+        setupAdapter()
+        observeViewModel()
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.getDataHistory()
+        viewModel.getSensorHistory()
     }
 
-    private fun getData() {
-        viewModel.dataHistory.observe(viewLifecycleOwner) { result ->
-            showLoading(false)
-            if (result.isEmpty()) {
-                binding.tvEmptyHistory.visibility = View.VISIBLE
-            } else {
-                adapter.updateData(result)
+    private fun setupAdapter() {
+        adapter = HistoryAdapter()
+        binding.rvHistory.adapter = adapter
+        binding.rvHistory.layoutManager = LinearLayoutManager(requireContext())
+    }
+
+    private fun observeViewModel() {
+        viewModel.sensorHistory.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Success -> {
+                    result.data?.let { adapter.updateData(it) }
+                }
+                is Result.Error -> {
+                    showSnackbar(result.message)
+                }
             }
         }
-        viewModel.dataHistory.observe(viewLifecycleOwner) { data ->
-            adapter.updateData(data)
+
+        viewModel.loading.observe(viewLifecycleOwner) { isLoading ->
+            showLoading(isLoading)
         }
-
-        viewModel.loading.observe(viewLifecycleOwner) {
-            showLoading(it)
-        }
-
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     private fun showLoading(isLoading: Boolean) {
@@ -82,4 +73,8 @@ class HistoryFragment : Fragment() {
         Snackbar.make(binding.root, message ?: "Unknown Error", Snackbar.LENGTH_SHORT).show()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
