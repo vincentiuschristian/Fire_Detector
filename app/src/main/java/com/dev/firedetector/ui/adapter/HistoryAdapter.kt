@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.dev.firedetector.data.model.SensorDataResponse
+import com.dev.firedetector.data.response.SensorDataResponse
 import com.dev.firedetector.databinding.HistoryListBinding
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -23,8 +23,8 @@ class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() 
             binding.apply {
                 tvTemperature.text = data.temperature.toString() // Menampilkan suhu
                 tvKelembapan.text = "${data.humidity}%" // Menampilkan kelembapan
-                tvKualitasUdara.text = data.mq_status // Menampilkan status kualitas udara
-                tvApiTerdeteksi.text = data.flame_status // Menampilkan status api terdeteksi
+                tvKualitasUdara.text = data.mqStatus // Menampilkan status kualitas udara
+                tvApiTerdeteksi.text = data.flameStatus // Menampilkan status api terdeteksi
 
                 // Format timestamp jika tersedia
                 data.timestamp?.let { timestamp ->

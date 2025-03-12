@@ -15,11 +15,6 @@ import androidx.core.content.ContextCompat
 import com.dev.firedetector.MainActivity
 import com.dev.firedetector.data.pref.UserPreference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 
 class NotificationHelper(
     private val context: Context,
@@ -101,48 +96,48 @@ class NotificationHelper(
 
     fun startListening() {
         // Ambil deviceId dari datastore
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val deviceId = userPreference.getIdPerangkat().first().idPerangkat
-
-                db.collection(Reference.COLLECTION)
-                    .document(deviceId)
-                    .collection(Reference.DATAALAT)
-                    .orderBy("timestamp", Query.Direction.DESCENDING)
-                    .limit(1)
-                    .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-                        if (firebaseFirestoreException != null) {
-                            Log.e("Firestore", "Error: ${firebaseFirestoreException.message}")
-                            return@addSnapshotListener
-                        }
-
-                        querySnapshot?.let { snapshot ->
-                            for (document in snapshot.documents) {
-                                val flameDetected =
-                                    document.getString(Reference.FIELD_FLAME_DETECTED)
-
-                                flameDetected?.let { data ->
-                                    val documentKey = "${deviceId}_${document.id}"
-
-                                    if (lastFlameStatus[documentKey] != data) {
-                                        lastFlameStatus[documentKey] = data
-
-                                        if (data == "Api Terdeteksi") {
-                                            sendFireAlertNotification(
-                                                "Api Terdeteksi!",
-                                                "Api terdeteksi! Segera Periksa Ruangan Anda",
-                                                deviceId
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-            } catch (e: Exception) {
-                Log.e("startListening", "Error fetching deviceId: ${e.message}")
-            }
-        }
+//        CoroutineScope(Dispatchers.IO).launch {
+//            try {
+//                val deviceId = userPreference.getSession().first().idPerangkat
+//
+//                db.collection(Reference.COLLECTION)
+//                    .document(deviceId)
+//                    .collection(Reference.DATAALAT)
+//                    .orderBy("timestamp", Query.Direction.DESCENDING)
+//                    .limit(1)
+//                    .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+//                        if (firebaseFirestoreException != null) {
+//                            Log.e("Firestore", "Error: ${firebaseFirestoreException.message}")
+//                            return@addSnapshotListener
+//                        }
+//
+//                        querySnapshot?.let { snapshot ->
+//                            for (document in snapshot.documents) {
+//                                val flameDetected =
+//                                    document.getString(Reference.FIELD_FLAME_DETECTED)
+//
+//                                flameDetected?.let { data ->
+//                                    val documentKey = "${deviceId}_${document.id}"
+//
+//                                    if (lastFlameStatus[documentKey] != data) {
+//                                        lastFlameStatus[documentKey] = data
+//
+//                                        if (data == "Api Terdeteksi") {
+//                                            sendFireAlertNotification(
+//                                                "Api Terdeteksi!",
+//                                                "Api terdeteksi! Segera Periksa Ruangan Anda",
+//                                                deviceId
+//                                            )
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//            } catch (e: Exception) {
+//                Log.e("startListening", "Error fetching deviceId: ${e.message}")
+//            }
+//        }
     }
 
     fun checkNotificationPermission() {

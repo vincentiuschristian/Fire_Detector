@@ -3,6 +3,7 @@ package com.dev.firedetector.data
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.dev.firedetector.MainViewModel
 import com.dev.firedetector.data.repository.FireRepository
 import com.dev.firedetector.di.Injection
 import com.dev.firedetector.ui.history.HistoryViewModel
@@ -20,6 +21,7 @@ class ViewModelFactory(private val repository: FireRepository) :
         AuthViewModel::class.java -> AuthViewModel(repository)
         ProfileViewModel::class.java -> ProfileViewModel(repository)
         HistoryViewModel::class.java -> HistoryViewModel(repository)
+        MainViewModel::class.java -> MainViewModel(repository)
 
         else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
 

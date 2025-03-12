@@ -60,26 +60,27 @@ class HomeFragment : Fragment() {
         viewModel.latestSensorData.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Success -> {
-                    val data = result.data
-                    if (data != null){
-                        binding.txtHumidity.text = getString(R.string.text_kelembapan, data.humidity.toString())
-                        binding.txtTemperature.text = getString(R.string.text_suhu, data.temperature.toString())
-                        binding.txtFireDetection.text = data.flame_status
+                    binding.txtHumidity.text = getString(R.string.text_kelembapan, result.data.humidity.toString())
+                    binding.txtTemperature.text = getString(R.string.text_suhu, result.data.temperature.toString())
 
-                        binding.txtAirQuality.text = data.mq_status
-                        binding.cvIsFire.setCardBackgroundColor(
-                            ContextCompat.getColor(
-                                requireContext(),
-                                if (data.flame_status == "Api Terdeteksi") R.color.red else R.color.cardview_color
-                            )
+                    val flameStatus = result.data.flameStatus
+                    binding.txtFireDetection.text = flameStatus
+
+                    binding.txtAirQuality.text = result.data.mqStatus
+                    binding.cvIsFire.setCardBackgroundColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            if (flameStatus == "Api Terdeteksi") R.color.red else R.color.cardview_color
                         )
-                    }
-                    Log.d("Datakuu", "Datanya : ${data?.mq_status}  ${data?.flame_status}")
+                    )
+                    Log.d("Datakuu", "Datanya : ${result.data.mqStatus}  $flameStatus")
+                }
 
-                }
                 is Result.Error -> {
-                    showSnackbar(result.message)
+                    showSnackbar(result.error)
                 }
+
+                is Result.Loading -> showLoading(true)
             }
         }
 

@@ -1,10 +1,10 @@
 package com.dev.firedetector.data.api
 
-import com.dev.firedetector.data.model.LoginRequest
-import com.dev.firedetector.data.model.LoginResponse
-import com.dev.firedetector.data.model.RegisterRequest
-import com.dev.firedetector.data.model.RegisterResponse
-import com.dev.firedetector.data.model.SensorDataResponse
+import com.dev.firedetector.data.response.LoginRequest
+import com.dev.firedetector.data.response.LoginResponse
+import com.dev.firedetector.data.response.RegisterRequest
+import com.dev.firedetector.data.response.RegisterResponse
+import com.dev.firedetector.data.response.SensorDataResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET

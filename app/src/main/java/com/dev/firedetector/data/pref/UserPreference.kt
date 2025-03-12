@@ -1,42 +1,57 @@
 package com.dev.firedetector.data.pref
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.dev.firedetector.data.model.UserModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
-class UserPreference(private val dataStore: DataStore<Preferences>){
 
-    suspend fun saveIdPerangkat(idPerangkatModel: IDPerangkatModel) {
+class UserPreference(private val dataStore: DataStore<Preferences>) {
+
+    suspend fun saveSession(user: UserModel) {
         dataStore.edit { preferences ->
-            preferences[ID_PERANGKAT] = idPerangkatModel.idPerangkat
+            preferences[TOKEN_KEY] = user.token
+            preferences[IS_LOGIN_KEY] = true
         }
+        Log.d("UserPreference", "Token berhasil disimpan: ${user.token}")
     }
 
-    fun getIdPerangkat() : Flow<IDPerangkatModel> {
+    fun getSession(): Flow<UserModel> {
         return dataStore.data.map { preferences ->
-            IDPerangkatModel(
-                preferences[ID_PERANGKAT] ?: ""
+            UserModel(
+                preferences[TOKEN_KEY] ?: "",
+                preferences[IS_LOGIN_KEY] ?: false
             )
         }
     }
 
-    suspend fun logout(){
+    fun getToken(): Flow<String> {
+        return dataStore.data.map { preferences ->
+            preferences[TOKEN_KEY] ?: ""
+        }
+    }
+
+    suspend fun logout() {
         dataStore.edit { preferences ->
             preferences.clear()
         }
+        Log.d("UserPreference", "Logout berhasil, data session dihapus")
     }
 
     companion object {
         @Volatile
         private var INSTANCE: UserPreference? = null
 
-        private val ID_PERANGKAT = stringPreferencesKey("id_perangkat")
+        private val TOKEN_KEY = stringPreferencesKey("token")
+        private val IS_LOGIN_KEY = booleanPreferencesKey("isLogin")
 
         fun getInstance(dataStore: DataStore<Preferences>): UserPreference {
             return INSTANCE ?: synchronized(this) {
@@ -46,5 +61,4 @@ class UserPreference(private val dataStore: DataStore<Preferences>){
             }
         }
     }
-
 }

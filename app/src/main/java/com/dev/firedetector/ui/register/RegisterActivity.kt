@@ -53,6 +53,7 @@ class RegisterActivity : AppCompatActivity() {
                     ) && location.isNotEmpty() && idPerangkat.isNotEmpty()
                 ) {
                     authViewModel.registerUser(idPerangkat, username, email, password, location)
+                    showSnackbar("Register")
 
                 } else {
                     showSnackbar(resources.getString(R.string.empty_field))

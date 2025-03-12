@@ -9,7 +9,7 @@ import com.dev.firedetector.data.repository.FireRepository
 object Injection {
     fun provideRepository(context: Context): FireRepository {
         val pref = UserPreference.getInstance(context.dataStore)
-        val apiService = ApiConfig.getApiService()
-        return FireRepository.getInstance(pref, apiService, context)
+        val apiService = ApiConfig.getApiService(pref)
+        return FireRepository.getInstance(pref, apiService)
     }
 }

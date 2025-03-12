@@ -1,24 +1,53 @@
 package com.dev.firedetector.data.api
 
+import com.dev.firedetector.data.pref.UserPreference
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.runBlocking
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-object ApiConfig {
-    var BASE_URL = "http://10.0.2.2:5000/"
+class ApiConfig {
 
-    fun getApiService(): ApiService {
-        val loggingInterceptor =
-            HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
-        val client = OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor)
-            .build()
-        val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(client)
-            .build()
-        return retrofit.create(ApiService::class.java)
+    companion object {
+        @Volatile
+        private var INSTANCE: ApiService? = null
+
+        fun getApiService(userPreference: UserPreference): ApiService {
+            return INSTANCE ?: synchronized(this) {
+                val loggingInterceptor = HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                }
+
+                val authInterceptor = Interceptor { chain ->
+                    val token = runBlocking {
+                        userPreference.getToken().firstOrNull() ?: ""
+                    }
+
+                    val request = chain.request().newBuilder()
+                        .addHeader("Authorization", "Bearer $token")
+                        .build()
+
+                    chain.proceed(request)
+                }
+
+                val client = OkHttpClient.Builder()
+                    .addInterceptor(loggingInterceptor)
+                    .addInterceptor(authInterceptor)
+                    .build()
+
+                val retrofit = Retrofit.Builder()
+                    .baseUrl("http://10.0.2.2:5000/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(client)
+                    .build()
+
+                INSTANCE = retrofit.create(ApiService::class.java)
+                INSTANCE!!
+            }
+        }
     }
 }
+

@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dev.firedetector.data.model.SensorDataResponse
 import com.dev.firedetector.data.repository.FireRepository
+import com.dev.firedetector.data.response.SensorDataResponse
 import com.dev.firedetector.util.Result
 import kotlinx.coroutines.launch
 
@@ -15,6 +15,10 @@ class HomeViewModel(private val repository: FireRepository) : ViewModel() {
 
     private val _loading = MutableLiveData<Boolean>()
     val loading: LiveData<Boolean> get() = _loading
+
+    init {
+        getLatestSensorData()
+    }
 
     fun getLatestSensorData() {
         viewModelScope.launch {

@@ -1,24 +1,55 @@
 package com.dev.firedetector.data.repository
 
-import android.content.Context
+import android.util.Log
+import androidx.datastore.core.IOException
 import com.dev.firedetector.data.api.ApiService
-import com.dev.firedetector.data.model.LoginRequest
-import com.dev.firedetector.data.model.LoginResponse
-import com.dev.firedetector.data.model.RegisterRequest
-import com.dev.firedetector.data.model.RegisterResponse
-import com.dev.firedetector.data.model.SensorDataResponse
-import com.dev.firedetector.data.pref.IDPerangkatModel
+import com.dev.firedetector.data.model.UserModel
 import com.dev.firedetector.data.pref.UserPreference
+import com.dev.firedetector.data.response.LoginRequest
+import com.dev.firedetector.data.response.LoginResponse
+import com.dev.firedetector.data.response.RegisterRequest
+import com.dev.firedetector.data.response.RegisterResponse
+import com.dev.firedetector.data.response.SensorDataResponse
 import com.dev.firedetector.util.Result
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
+import retrofit2.HttpException
 
 class FireRepository(
     private val userPreference: UserPreference,
-    private val apiService: ApiService,
-    context: Context
+    private val apiService: ApiService
 ) {
 
-    // Register
+    suspend fun loginUser(email: String, password: String): Result<LoginResponse> {
+        return try {
+            val response = apiService.loginUser(LoginRequest(email, password))
+
+            if (response.isSuccessful && response.body() != null) {
+                val loginResponse = response.body()!!
+                val token = loginResponse.token
+
+                Log.d("LoginUser", "Token diterima: $token")
+
+                if (!token.isNullOrEmpty()) {
+                    userPreference.saveSession(UserModel(token, true))
+                    Log.d("LoginUser", "Token berhasil disimpan di DataStore")
+                } else {
+                    Log.e("LoginUser", "Token kosong dalam response!")
+                }
+
+                Result.Success(loginResponse)
+            } else {
+                val errorBody = response.errorBody()?.string() ?: "Login gagal!"
+                Log.e("LoginUser", "Error ${response.code()}: $errorBody")
+                Result.Error("Error ${response.code()}: $errorBody")
+            }
+        } catch (e: Exception) {
+            Log.e("LoginUser", "Terjadi kesalahan: ${e.message}")
+            Result.Error("Terjadi kesalahan: ${e.message}")
+        }
+    }
+
     suspend fun registerUser(
         deviceId: String,
         username: String,
@@ -26,75 +57,70 @@ class FireRepository(
         password: String,
         location: String
     ): Result<RegisterResponse> {
-        return try {
-            val response = apiService.registerUser(
-                RegisterRequest(
-                    deviceId,
-                    username,
-                    email,
-                    password,
-                    location
-                )
-            )
-            if (response.isSuccessful && response.body() != null) {
-                Result.Success(response.body()!!)
-            } else {
-                Result.Error(response.body()?.error ?: "Registrasi gagal!")
+        return withContext(Dispatchers.IO) {
+            try {
+                val request = RegisterRequest(deviceId, username, email, password, location)
+                val response = apiService.registerUser(request)
+
+                if (response.isSuccessful) {
+                    Log.d("UserRepository", "Registration successful")
+                    response.body()?.let {
+                        Log.d("UserRepository", "Response body: $it")
+                        Result.Success(it)
+                    } ?: run {
+                        Log.e("UserRepository", "Registration successful but response body is empty")
+                        Result.Error("Registration successful but response body is empty")
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Registration failed!"
+                    Log.e("UserRepository", "Registration failed with code: ${response.code()}, error: $errorBody")
+                    Result.Error("Error ${response.code()}: $errorBody")
+                }
+            } catch (e: HttpException) {
+                Log.e("UserRepository", "HTTP Error: ${e.message()}")
+                Result.Error("HTTP Error: ${e.message()}")
+            } catch (e: IOException) {
+                Log.e("UserRepository", "Network Error: ${e.message}")
+                Result.Error("Network Error: ${e.message}")
+            } catch (e: Exception) {
+                Log.e("UserRepository", "An unexpected error occurred: ${e.message}")
+                Result.Error("An unexpected error occurred: ${e.message}")
             }
-        } catch (e: Exception) {
-            Result.Error(e.message ?: "Terjadi kesalahan pada jaringan!")
         }
     }
 
-    // Login
-    suspend fun loginUser(email: String, password: String): Result<LoginResponse> {
-        return try {
-            val response = apiService.loginUser(LoginRequest(email, password))
-            if (response.isSuccessful && response.body() != null) {
-                Result.Success(response.body()!!)
-            } else {
-                Result.Error(response.body()?.error ?: "Login gagal!")
-            }
-        } catch (e: Exception) {
-            Result.Error(e.message ?: "Terjadi kesalahan pada jaringan!")
-        }
-    }
-
-    // Fungsi untuk mendapatkan data sensor terbaru
     suspend fun getLatestSensorData(): Result<SensorDataResponse> {
         return try {
             val response = apiService.getLatestSensorData()
+
             if (response.isSuccessful && response.body() != null) {
                 Result.Success(response.body()!!)
             } else {
-                Result.Error(response.body()?.toString() ?: "Gagal mendapatkan data sensor terbaru")
+                val errorBody = response.errorBody()?.string() ?: "Gagal mendapatkan data sensor terbaru"
+                Result.Error("Error ${response.code()}: $errorBody")
             }
         } catch (e: Exception) {
-            Result.Error(e.message ?: "Terjadi kesalahan pada jaringan")
+            Result.Error("Terjadi kesalahan pada jaringan: ${e.message}")
         }
     }
 
-    // Fungsi untuk mendapatkan semua data history sensor
     suspend fun getSensorHistory(): Result<List<SensorDataResponse>> {
         return try {
             val response = apiService.getSensorHistory()
+
             if (response.isSuccessful && response.body() != null) {
                 Result.Success(response.body()!!)
             } else {
-                Result.Error(response.body()?.toString() ?: "Gagal mendapatkan data history sensor")
+                val errorBody = response.errorBody()?.string() ?: "Gagal mendapatkan data history sensor"
+                Result.Error("Error ${response.code()}: $errorBody")
             }
         } catch (e: Exception) {
-            Result.Error(e.message ?: "Terjadi kesalahan pada jaringan")
+            Result.Error("Terjadi kesalahan pada jaringan: ${e.message}")
         }
     }
 
-
-    suspend fun saveIdPerangkat(user: IDPerangkatModel) {
-        userPreference.saveIdPerangkat(user)
-    }
-
-    fun getIdPerangkat(): Flow<IDPerangkatModel> {
-        return userPreference.getIdPerangkat()
+    fun getSession(): Flow<UserModel> {
+        return userPreference.getSession()
     }
 
     suspend fun deleteIdPerangkat() {
@@ -109,10 +135,9 @@ class FireRepository(
 
         fun getInstance(
             userPreference: UserPreference,
-            apiService: ApiService,
-            context: Context
+            apiService: ApiService
         ): FireRepository = instance ?: synchronized(this) {
-            instance ?: FireRepository(userPreference, apiService, context).also { instance = it }
+            instance ?: FireRepository(userPreference, apiService).also { instance = it }
         }
     }
 }

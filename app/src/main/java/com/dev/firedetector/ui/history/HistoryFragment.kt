@@ -52,11 +52,10 @@ class HistoryFragment : Fragment() {
         viewModel.sensorHistory.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Success -> {
-                    result.data?.let { adapter.updateData(it) }
+                    result.data.let { adapter.updateData(it) }
                 }
-                is Result.Error -> {
-                    showSnackbar(result.message)
-                }
+                is Result.Error -> showSnackbar(result.error)
+                is Result.Loading -> showLoading(true)
             }
         }
 

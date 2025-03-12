@@ -2,13 +2,12 @@ package com.dev.firedetector.ui.login
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.dev.firedetector.MainActivity
-import com.dev.firedetector.R
 import com.dev.firedetector.data.ViewModelFactory
-import com.dev.firedetector.data.pref.IDPerangkatModel
 import com.dev.firedetector.databinding.ActivityLoginBinding
 import com.dev.firedetector.ui.register.AuthViewModel
 import com.dev.firedetector.ui.register.RegisterActivity
@@ -28,23 +27,23 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        setupListeners()
+        observeViewModel()
+    }
+
+    private fun setupListeners() {
         binding.apply {
             btnLogin.setOnClickListener {
-                val idPerangkat = etIdPerangkat.text.toString().trim()
-                val email = etEmail.text.toString()
-                val password = etPassword.text.toString()
+                val email = etEmail.text.toString().trim()
+                val password = etPassword.text.toString().trim()
 
-                // Validasi input
-                if (Reference.isEmailValid(applicationContext, email) && Reference.isPasswordValid(
-                        applicationContext,
-                        password
-                    )
+
+                if (Reference.isEmailValid(applicationContext, email) &&
+                    Reference.isPasswordValid(applicationContext, password)
                 ) {
-                    // Simpan ID perangkat dan lakukan login
-                    authViewModel.saveId(IDPerangkatModel(idPerangkat))
                     authViewModel.loginUser(email, password)
                 } else {
-                    showToast(getString(R.string.empty_field))
+                    showToast("Email atau kata sandi tidak valid")
                 }
             }
 
@@ -53,30 +52,29 @@ class LoginActivity : AppCompatActivity() {
                 startActivity(Intent(applicationContext, RegisterActivity::class.java))
             }
         }
-
-        observeViewModel()
     }
 
     private fun observeViewModel() {
-        authViewModel.loading.observe(this) { isLoading ->
-            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-        }
 
-        // Observasi hasil login
         authViewModel.loginResult.observe(this) { result ->
             when (result) {
+                is Result.Loading -> {
+                    showLoading(true)
+                }
                 is Result.Success -> {
-                    showToast(result.data?.message ?: "Login berhasil!")
-                    navigateToAuth()
+                    val token = result.data.token
+                    Log.d("LoginActivity", "Login berhasil, token: $token")
+                    showToast("Login Berhasil")
+                    navigateToMain()
                 }
                 is Result.Error -> {
-                    showToast(result.message ?: "Terjadi kesalahan saat login!")
+                    Log.e("LoginActivity", "Login gagal: ${result.error}")
                 }
             }
         }
     }
 
-    private fun navigateToAuth() {
+    private fun navigateToMain() {
         startActivity(Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
         })
@@ -84,5 +82,9 @@ class LoginActivity : AppCompatActivity() {
 
     private fun showToast(message: String) {
         Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 }

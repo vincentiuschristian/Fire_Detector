@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dev.firedetector.data.model.SensorDataResponse
+import com.dev.firedetector.data.response.SensorDataResponse
 import com.dev.firedetector.data.repository.FireRepository
 import com.dev.firedetector.util.Result
 import kotlinx.coroutines.launch
