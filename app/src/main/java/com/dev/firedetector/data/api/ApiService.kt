@@ -5,6 +5,7 @@ import com.dev.firedetector.data.response.LoginResponse
 import com.dev.firedetector.data.response.RegisterRequest
 import com.dev.firedetector.data.response.RegisterResponse
 import com.dev.firedetector.data.response.SensorDataResponse
+import com.dev.firedetector.data.response.UserResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -26,4 +27,7 @@ interface ApiService {
 
     @GET("/api/sensor/history")
     suspend fun getSensorHistory(): Response<List<SensorDataResponse>>
+
+    @GET("/api/user/profile")
+    suspend fun getUser(): Response<UserResponse>
 }

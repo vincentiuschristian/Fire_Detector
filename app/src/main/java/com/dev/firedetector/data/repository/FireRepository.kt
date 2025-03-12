@@ -10,6 +10,7 @@ import com.dev.firedetector.data.response.LoginResponse
 import com.dev.firedetector.data.response.RegisterRequest
 import com.dev.firedetector.data.response.RegisterResponse
 import com.dev.firedetector.data.response.SensorDataResponse
+import com.dev.firedetector.data.response.UserResponse
 import com.dev.firedetector.util.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -89,6 +90,21 @@ class FireRepository(
         }
     }
 
+    suspend fun getUser(): Result<UserResponse> {
+        return try {
+            val response = apiService.getUser()
+
+            if (response.isSuccessful && response.body() != null) {
+                Result.Success(response.body()!!)
+            } else {
+                val errorBody = response.errorBody()?.string() ?: "Gagal mendapatkan data user"
+                Result.Error("Error ${response.code()}: $errorBody")
+            }
+        } catch (e: Exception) {
+            Result.Error("Terjadi kesalahan pada jaringan: ${e.message}")
+        }
+    }
+
     suspend fun getLatestSensorData(): Result<SensorDataResponse> {
         return try {
             val response = apiService.getLatestSensorData()
@@ -126,7 +142,6 @@ class FireRepository(
     suspend fun deleteIdPerangkat() {
         userPreference.logout()
     }
-
 
     companion object {
 
