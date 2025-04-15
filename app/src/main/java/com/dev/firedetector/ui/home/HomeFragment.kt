@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.dev.firedetector.R
 import com.dev.firedetector.data.ViewModelFactory
 import com.dev.firedetector.databinding.FragmentHomeBinding
@@ -21,6 +21,9 @@ import com.dev.firedetector.ui.profile.ProfileViewModel
 import com.dev.firedetector.util.Result
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
 
@@ -32,7 +35,6 @@ class HomeFragment : Fragment() {
     private val profileViewModel: ProfileViewModel by viewModels {
         ViewModelFactory.getInstance(requireContext())
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,6 +59,19 @@ class HomeFragment : Fragment() {
             }
         }
 
+        fetchSensor()
+        fetchUserData()
+        autoRefresh()
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getLatestSensorData()
+        profileViewModel.fetchData()
+    }
+
+    private fun fetchSensor(){
         viewModel.latestSensorData.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Success -> {
@@ -73,7 +88,6 @@ class HomeFragment : Fragment() {
                             if (flameStatus == "Api Terdeteksi") R.color.red else R.color.cardview_color
                         )
                     )
-                    Log.d("Datakuu", "Datanya : ${result.data.mqStatus}  $flameStatus")
                 }
 
                 is Result.Error -> {
@@ -83,16 +97,32 @@ class HomeFragment : Fragment() {
                 is Result.Loading -> showLoading(true)
             }
         }
-
-        viewModel.loading.observe(viewLifecycleOwner) { isLoading ->
-            showLoading(isLoading)
-        }
-
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.getLatestSensorData()
+    private fun autoRefresh(){
+        viewLifecycleOwner.lifecycleScope.launch {
+            while (isActive){
+                viewModel.getLatestSensorData()
+                delay(2000)
+            }
+        }
+    }
+
+    private fun fetchUserData (){
+        profileViewModel.userData.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Success -> {
+                    binding.apply {
+                        tvIdPerangkat.text = result.data.deviceId
+                        tvName.text = result.data.username
+                    }
+                    showLoading(false)
+                }
+
+                is Result.Loading -> showLoading(true)
+                is Result.Error -> showSnackbar(result.error)
+            }
+        }
     }
 
     private fun calling(number: String) {

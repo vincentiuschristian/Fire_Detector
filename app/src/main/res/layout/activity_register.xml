@@ -162,11 +162,14 @@
                 style="@style/CustomEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clickable="false"
-                android:focusable="false"
+                android:enabled="false"
+                android:textIsSelectable="true"
+                android:singleLine="true"
+                android:scrollHorizontally="true"
+                android:ellipsize="end"
                 android:fontFamily="@font/plus_jakarta_sans_regular"
                 android:hint="@string/lokasi"
-                android:inputType="none" />
+                android:inputType="text" />
 
         </com.dev.firedetector.customview.CustomTextInputLayout>
 

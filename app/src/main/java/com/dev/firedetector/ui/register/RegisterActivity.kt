@@ -3,11 +3,16 @@ package com.dev.firedetector.ui.register
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Address
+import android.location.Geocoder
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.dev.firedetector.R
@@ -32,9 +37,16 @@ class RegisterActivity : AppCompatActivity() {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        binding.etLokasi.apply {
+            setHorizontallyScrolling(true) // ✅ Aktifkan scrolling horizontal
+            isSingleLine = true // ✅ Paksa menjadi single line
+            movementMethod = android.text.method.ScrollingMovementMethod.getInstance()
+        }
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -71,11 +83,11 @@ class RegisterActivity : AppCompatActivity() {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun getMyLocation() {
         if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION) ||
             checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
         ) {
-
             showLoading(true)
 
             fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
@@ -84,14 +96,10 @@ class RegisterActivity : AppCompatActivity() {
                     if (location != null) {
                         val latitude = location.latitude
                         val longitude = location.longitude
-                        binding.etLokasi.setText(
-                            getString(
-                                R.string.location_format,
-                                latitude,
-                                longitude
-                            )
-                        )
-                        showSnackbar("Lokasi berhasil didapatkan!")
+                        Log.d("RegisterActivity", "Lokasi diperoleh: $latitude, $longitude")
+
+                        // Mengubah latitude dan longitude menjadi alamat
+                        getAddressFromLocation(latitude, longitude)
                     } else {
                         showSnackbar(getString(R.string.location_not_found))
                     }
@@ -109,6 +117,32 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun getAddressFromLocation(latitude: Double, longitude: Double) {
+        try {
+            val geocoder = Geocoder(this)
+            geocoder.getFromLocation(latitude, longitude, 1, object : Geocoder.GeocodeListener {
+                override fun onGeocode(addresses: MutableList<Address>) {
+                    if (addresses.isNotEmpty()) {
+                        val address = addresses[0]
+                        val addressString = address.getAddressLine(0)
+
+                        binding.etLokasi.setText(addressString)
+                        showSnackbar("Alamat berhasil didapatkan: $addressString")
+                    } else {
+                        showSnackbar("Alamat tidak ditemukan untuk koordinat tersebut.")
+                    }
+                }
+
+                override fun onError(errorMessage: String?) {
+                    showSnackbar("Gagal mendapatkan alamat: $errorMessage")
+                }
+            })
+        } catch (e: Exception) {
+            showSnackbar("Gagal mendapatkan alamat: ${e.message}")
+        }
+    }
+
     private fun checkPermission(permission: String): Boolean {
         return ContextCompat.checkSelfPermission(
             this,
@@ -116,6 +150,7 @@ class RegisterActivity : AppCompatActivity() {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||

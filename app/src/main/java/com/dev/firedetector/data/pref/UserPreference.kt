@@ -21,7 +21,7 @@ class UserPreference(private val dataStore: DataStore<Preferences>) {
             preferences[TOKEN_KEY] = user.token
             preferences[IS_LOGIN_KEY] = true
         }
-        Log.d("UserPreference", "Token berhasil disimpan: ${user.token}")
+        Log.d("UserPreference", "Token dan login status disimpan: ${user.token}, ${user.isLogin}")
     }
 
     fun getSession(): Flow<UserModel> {

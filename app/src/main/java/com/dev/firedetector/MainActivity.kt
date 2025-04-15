@@ -3,6 +3,7 @@ package com.dev.firedetector
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.preferences.preferencesDataStore
@@ -54,13 +55,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun getSession() {
         viewModel.getSession().observe(this) { user ->
-            if (!user.isLogin) {
-                startActivity(Intent(applicationContext, RegisterActivity::class.java))
+            Log.d("MainActivity", "Session token: ${user.token}, isLogin: ${user.isLogin}")
+            if (!user.isLogin || user.token.isEmpty()) {
+                startActivity(Intent(this, RegisterActivity::class.java))
                 finish()
             }
         }
     }
-
     override fun onDestroy() {
         super.onDestroy()
         notificationHelper.unregisterNotificationReceiver()

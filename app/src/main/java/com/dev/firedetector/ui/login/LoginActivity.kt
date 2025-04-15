@@ -28,7 +28,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupListeners()
-        observeViewModel()
+        observeLoginResult()
     }
 
     private fun setupListeners() {
@@ -37,38 +37,49 @@ class LoginActivity : AppCompatActivity() {
                 val email = etEmail.text.toString().trim()
                 val password = etPassword.text.toString().trim()
 
-
-                if (Reference.isEmailValid(applicationContext, email) &&
-                    Reference.isPasswordValid(applicationContext, password)
-                ) {
-                    authViewModel.loginUser(email, password)
-                } else {
-                    showToast("Email atau kata sandi tidak valid")
+                if (email.isEmpty() || password.isEmpty()) {
+                    showSnackbar("Email dan password tidak boleh kosong")
+                    return@setOnClickListener
                 }
+
+                if (!Reference.isEmailValid(applicationContext, email)) {
+                    showSnackbar("Format email tidak valid")
+                    return@setOnClickListener
+                }
+
+                if (!Reference.isPasswordValid(applicationContext, password)) {
+                    showSnackbar("Kata sandi harus minimal 6 karakter")
+                    return@setOnClickListener
+                }
+
+                authViewModel.loginUser(email, password)
             }
 
-            // Navigasi ke halaman register
             tvMoveRegister.setOnClickListener {
-                startActivity(Intent(applicationContext, RegisterActivity::class.java))
+                startActivity(Intent(this@LoginActivity, RegisterActivity::class.java))
             }
         }
     }
 
-    private fun observeViewModel() {
-
+    private fun observeLoginResult() {
         authViewModel.loginResult.observe(this) { result ->
             when (result) {
                 is Result.Loading -> {
                     showLoading(true)
                 }
+
                 is Result.Success -> {
+                    showLoading(false)
                     val token = result.data.token
-                    Log.d("LoginActivity", "Login berhasil, token: $token")
-                    showToast("Login Berhasil")
+                    Log.d("LoginActivity", "Login sukses. Token: $token")
+                    showSnackbar("Login berhasil")
                     navigateToMain()
                 }
+
                 is Result.Error -> {
+                    showLoading(false)
                     Log.e("LoginActivity", "Login gagal: ${result.error}")
+                    showSnackbar("Login gagal: ${result.error}")
                 }
             }
         }
@@ -80,7 +91,7 @@ class LoginActivity : AppCompatActivity() {
         })
     }
 
-    private fun showToast(message: String) {
+    private fun showSnackbar(message: String) {
         Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
     }
 

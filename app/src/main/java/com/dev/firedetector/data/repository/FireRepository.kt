@@ -30,11 +30,9 @@ class FireRepository(
                 val loginResponse = response.body()!!
                 val token = loginResponse.token
 
-                Log.d("LoginUser", "Token diterima: $token")
-
                 if (!token.isNullOrEmpty()) {
                     userPreference.saveSession(UserModel(token, true))
-                    Log.d("LoginUser", "Token berhasil disimpan di DataStore")
+                    Log.d("LoginUser", "Token berhasil disimpan di DataStore: $token")
                 } else {
                     Log.e("LoginUser", "Token kosong dalam response!")
                 }
@@ -46,10 +44,11 @@ class FireRepository(
                 Result.Error("Error ${response.code()}: $errorBody")
             }
         } catch (e: Exception) {
-            Log.e("LoginUser", "Terjadi kesalahan: ${e.message}")
+            Log.e("LoginUser", "Exception: ${e.message}")
             Result.Error("Terjadi kesalahan: ${e.message}")
         }
     }
+
 
     suspend fun registerUser(
         deviceId: String,
