@@ -1,12 +1,14 @@
 package com.dev.firedetector.ui.login
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.dev.firedetector.MainActivity
+import com.dev.firedetector.R
 import com.dev.firedetector.data.ViewModelFactory
 import com.dev.firedetector.databinding.ActivityLoginBinding
 import com.dev.firedetector.ui.register.AuthViewModel
@@ -26,6 +28,13 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            overrideActivityTransition(
+                OVERRIDE_TRANSITION_OPEN,
+                R.anim.slide_in_right,
+                R.anim.slide_out_left
+            )
+        }
 
         setupListeners()
         observeLoginResult()
@@ -70,8 +79,6 @@ class LoginActivity : AppCompatActivity() {
 
                 is Result.Success -> {
                     showLoading(false)
-                    val token = result.data.token
-                    Log.d("LoginActivity", "Login sukses. Token: $token")
                     showSnackbar("Login berhasil")
                     navigateToMain()
                 }
@@ -91,9 +98,9 @@ class LoginActivity : AppCompatActivity() {
         })
     }
 
-    private fun showSnackbar(message: String) {
+    private fun showSnackbar(message: String) =
         Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
-    }
+
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE

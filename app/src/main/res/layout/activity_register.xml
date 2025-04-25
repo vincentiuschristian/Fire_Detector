@@ -164,7 +164,6 @@
                 android:layout_height="wrap_content"
                 android:enabled="false"
                 android:textIsSelectable="true"
-                android:singleLine="true"
                 android:scrollHorizontally="true"
                 android:ellipsize="end"
                 android:fontFamily="@font/plus_jakarta_sans_regular"

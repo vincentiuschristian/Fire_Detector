@@ -7,14 +7,6 @@ import android.widget.Toast
 import com.dev.firedetector.R
 
 object Reference {
-    const val COLLECTION = "Fire"
-    const val DATAUSER = "DataUser"
-    const val DATAALAT = "DataAlat"
-    const val FIELD_TEMP = "Temperature"
-    const val FIELD_HUM = "Humidity"
-    const val FIELD_GAS_LEVEL = "MQValue"
-    const val FIELD_FLAME_DETECTED = "FlameDetected"
-    const val FIELD_TIMESTAMP = "timestamp"
 
     fun isEmailValid(context: Context, email: String): Boolean {
         return if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
@@ -23,6 +15,11 @@ object Reference {
         } else {
             true
         }
+    }
+
+    enum class RoomType(val displayName: String) {
+        RUANG_TAMU("Ruang Tamu"),
+        KAMAR("Kamar")
     }
 
     fun isPasswordValid(context: Context, password: String): Boolean {

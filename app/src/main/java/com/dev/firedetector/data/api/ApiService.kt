@@ -22,11 +22,17 @@ interface ApiService {
         @Body login: LoginRequest
     ): Response<LoginResponse>
 
-    @GET("/api/sensor/latest")
-    suspend fun getLatestSensorData(): Response<SensorDataResponse>
+    @GET("/api/ruangtamu/latest")
+    suspend fun getLatestDataRuangTamu(): Response<SensorDataResponse>
 
-    @GET("/api/sensor/history")
-    suspend fun getSensorHistory(): Response<List<SensorDataResponse>>
+    @GET("/api/ruangtamu/history")
+    suspend fun getSensorHistoryRuangTamu(): Response<List<SensorDataResponse>>
+
+    @GET("/api/kamar/latest")
+    suspend fun getLatestDataKamar(): Response<SensorDataResponse>
+
+    @GET("/api/kamar/history")
+    suspend fun getSensorHistoryKamar(): Response<List<SensorDataResponse>>
 
     @GET("/api/user/profile")
     suspend fun getUser(): Response<UserResponse>

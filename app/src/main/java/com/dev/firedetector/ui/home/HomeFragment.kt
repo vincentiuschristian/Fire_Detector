@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +21,6 @@ import com.dev.firedetector.databinding.FragmentHomeBinding
 import com.dev.firedetector.ui.profile.ProfileViewModel
 import com.dev.firedetector.util.Result
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -59,7 +59,8 @@ class HomeFragment : Fragment() {
             }
         }
 
-        fetchSensor()
+        fetchSensorRuangTamu()
+        fetchSensorKamar()
         fetchUserData()
         autoRefresh()
 
@@ -67,21 +68,24 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.getLatestSensorData()
+        viewModel.getLatestDataRuangTamu()
+        viewModel.getLatestDataKamar()
         profileViewModel.fetchData()
     }
 
-    private fun fetchSensor(){
-        viewModel.latestSensorData.observe(viewLifecycleOwner) { result ->
+    private fun fetchSensorRuangTamu() {
+        viewModel.latestSensorDataRuangTamu.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Success -> {
-                    binding.txtHumidity.text = getString(R.string.text_kelembapan, result.data.humidity.toString())
-                    binding.txtTemperature.text = getString(R.string.text_suhu, result.data.temperature.toString())
+                    binding.txtHumidityRuangtamu.text =
+                        getString(R.string.text_kelembapan, result.data.humidity.toString())
+                    binding.txtTemperatureRuangtamu.text =
+                        getString(R.string.text_suhu, result.data.temperature.toString())
 
                     val flameStatus = result.data.flameStatus
-                    binding.txtFireDetection.text = flameStatus
+                    binding.txtFireDetectionRuangtamu.text = flameStatus
 
-                    binding.txtAirQuality.text = result.data.mqStatus
+                    binding.txtAirQualityRuangtamu.text = result.data.mqStatus
                     binding.cvIsFire.setCardBackgroundColor(
                         ContextCompat.getColor(
                             requireContext(),
@@ -90,25 +94,56 @@ class HomeFragment : Fragment() {
                     )
                 }
 
+                is Result.Loading -> showLoading(true)
                 is Result.Error -> {
-                    showSnackbar(result.error)
+                    showToast("Error Sensor Ruang Tamu : ${result.error}")
+                    Log.d("ERROR HOME = ", result.error)
+                }
+            }
+        }
+    }
+    
+    private fun fetchSensorKamar() {
+        viewModel.latestSensorDataKamar.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Success -> {
+                    binding.txtHumidityKamar.text =
+                        getString(R.string.text_kelembapan, result.data.humidity.toString())
+                    binding.txtTemperatureKamar.text =
+                        getString(R.string.text_suhu, result.data.temperature.toString())
+
+                    val flameStatus = result.data.flameStatus
+                    binding.txtFireDetectionKamar.text = flameStatus
+
+                    binding.txtAirQualityKamar.text = result.data.mqStatus
+                    binding.cvIsFire2.setCardBackgroundColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            if (flameStatus == "Api Terdeteksi") R.color.red else R.color.cardview_color
+                        )
+                    )
                 }
 
                 is Result.Loading -> showLoading(true)
+                is Result.Error -> {
+                    showToast("Error Sensor Kamar : ${result.error}")
+                    Log.d("ERROR HOME = ", result.error)
+                }
             }
         }
     }
 
-    private fun autoRefresh(){
+    private fun autoRefresh() {
         viewLifecycleOwner.lifecycleScope.launch {
-            while (isActive){
-                viewModel.getLatestSensorData()
+            while (isActive) {
+                viewModel.getLatestDataRuangTamu()
+                viewModel.getLatestDataKamar()
                 delay(2000)
             }
         }
     }
 
-    private fun fetchUserData (){
+    private fun fetchUserData() {
         profileViewModel.userData.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Success -> {
@@ -120,7 +155,7 @@ class HomeFragment : Fragment() {
                 }
 
                 is Result.Loading -> showLoading(true)
-                is Result.Error -> showSnackbar(result.error)
+                is Result.Error -> showToast(result.error)
             }
         }
     }
@@ -168,9 +203,9 @@ class HomeFragment : Fragment() {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
-    private fun showSnackbar(message: String?) {
-        Snackbar.make(binding.root, message ?: "Unknown Error", Snackbar.LENGTH_SHORT).show()
-    }
+    private fun showToast(message: String?) =
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+
 
     override fun onDestroyView() {
         super.onDestroyView()

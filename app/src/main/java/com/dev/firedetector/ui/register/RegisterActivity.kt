@@ -21,6 +21,7 @@ import com.dev.firedetector.databinding.ActivityRegisterBinding
 import com.dev.firedetector.ui.login.LoginActivity
 import com.dev.firedetector.util.Reference.isEmailValid
 import com.dev.firedetector.util.Reference.isPasswordValid
+import com.dev.firedetector.util.Result
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -41,15 +42,44 @@ class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-
-        binding.etLokasi.apply {
-            setHorizontallyScrolling(true) // ✅ Aktifkan scrolling horizontal
-            isSingleLine = true // ✅ Paksa menjadi single line
-            movementMethod = android.text.method.ScrollingMovementMethod.getInstance()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            overrideActivityTransition(
+                OVERRIDE_TRANSITION_OPEN,
+                R.anim.slide_in_right,
+                R.anim.slide_out_left
+            )
         }
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
+        binding.apply {
+            tvMoveRegister.setOnClickListener {
+                startActivity(Intent(applicationContext, LoginActivity::class.java))
+            }
+
+            btnLokasi.setOnClickListener {
+                getMyLocation()
+            }
+        }
+        setupListeners()
+        observeRegisterResult()
+    }
+
+    private fun observeRegisterResult(){
+        authViewModel.registerResult.observe(this){result ->
+            when(result){
+                is Result.Loading -> showLoading(true)
+                is Result.Success -> {
+                    showLoading(false)
+                    showSnackbar("Registrasi Berhasil!")
+                    navigateToLogin()
+                }
+                is Result.Error -> showSnackbar(result.error)
+            }
+        }
+    }
+
+    private fun setupListeners(){
         binding.apply {
             btnRegister.setOnClickListener {
                 val idPerangkat = etIdPerangkat.text.toString().trim()
@@ -65,21 +95,12 @@ class RegisterActivity : AppCompatActivity() {
                     ) && location.isNotEmpty() && idPerangkat.isNotEmpty()
                 ) {
                     authViewModel.registerUser(idPerangkat, username, email, password, location)
-                    showSnackbar("Register")
-
                 } else {
                     showSnackbar(resources.getString(R.string.empty_field))
                 }
             }
-
-            tvMoveRegister.setOnClickListener {
-                startActivity(Intent(applicationContext, LoginActivity::class.java))
-            }
-
-            btnLokasi.setOnClickListener {
-                getMyLocation()
-            }
         }
+
     }
 
 
@@ -97,8 +118,6 @@ class RegisterActivity : AppCompatActivity() {
                         val latitude = location.latitude
                         val longitude = location.longitude
                         Log.d("RegisterActivity", "Lokasi diperoleh: $latitude, $longitude")
-
-                        // Mengubah latitude dan longitude menjadi alamat
                         getAddressFromLocation(latitude, longitude)
                     } else {
                         showSnackbar(getString(R.string.location_not_found))
@@ -162,9 +181,13 @@ class RegisterActivity : AppCompatActivity() {
             }
         }
 
-    private fun showSnackbar(message: String?) {
-        Snackbar.make(binding.root, message ?: "Unknown Error", Snackbar.LENGTH_SHORT).show()
+    private fun navigateToLogin() {
+        startActivity(Intent(this, LoginActivity::class.java))
     }
+
+    private fun showSnackbar(message: String?) =
+        Snackbar.make(binding.root, message ?: "Unknown Error", Snackbar.LENGTH_SHORT).show()
+
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE

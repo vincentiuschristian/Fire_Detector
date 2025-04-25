@@ -10,21 +10,34 @@ import com.dev.firedetector.util.Result
 import kotlinx.coroutines.launch
 
 class HomeViewModel(private val repository: FireRepository) : ViewModel() {
-    private val _latestSensorData = MutableLiveData<Result<SensorDataResponse>>()
-    val latestSensorData: LiveData<Result<SensorDataResponse>> get() = _latestSensorData
+    private val _latestSensorDataRuangTamu = MutableLiveData<Result<SensorDataResponse>>()
+    val latestSensorDataRuangTamu: LiveData<Result<SensorDataResponse>> get() = _latestSensorDataRuangTamu
+
+    private val _latestSensorDataKamar = MutableLiveData<Result<SensorDataResponse>>()
+    val latestSensorDataKamar: LiveData<Result<SensorDataResponse>> get() = _latestSensorDataRuangTamu
 
     private val _loading = MutableLiveData<Boolean>()
     val loading: LiveData<Boolean> get() = _loading
 
     init {
-        getLatestSensorData()
+        getLatestDataRuangTamu()
+        getLatestDataKamar()
     }
 
-    fun getLatestSensorData() {
+    fun getLatestDataRuangTamu() {
         viewModelScope.launch {
             _loading.value = true
-            val result = repository.getLatestSensorData()
-            _latestSensorData.postValue(result)
+            val result = repository.getLatestDataRuangTamu()
+            _latestSensorDataRuangTamu.postValue(result)
+            _loading.value = false
+        }
+    }
+
+    fun getLatestDataKamar() {
+        viewModelScope.launch {
+            _loading.value = true
+            val result = repository.getLatestDataKamar()
+            _latestSensorDataKamar.postValue(result)
             _loading.value = false
         }
     }

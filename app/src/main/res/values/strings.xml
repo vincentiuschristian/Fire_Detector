@@ -12,7 +12,7 @@
     <string name="emergency">Emergency</string>
     <string name="your_location">Your Location</string>
     <string name="address_dummy">Alamat Anda</string>
-    <string name="temperature">Temperature</string>
+    <string name="temperature">Suhu Ruangan</string>
     <string name="icon_temperature">icon temperature</string>
     <string name="icon_humidity">icon humidity</string>
     <string name="kelembapan">Kelembapan</string>
@@ -54,7 +54,7 @@
     <string name="welcome">Halo,</string>
     <string name="address_message">Terjadi kebakaran rumah.\n Lokasi: Jl. Anggrek No.1, Gedong Meneng, Kec. Rajabasa, Kota Bandar Lampung \nhttps://maps.app.goo.gl/Se4uSo54XEiWSmie8</string>
     <string name="password_warning">Password must be at least 6 characters!</string>
-    <string name="email_warning">Enter a valid email address!</string>
+    <string name="email_warning">Masukkan Email yang benar!</string>
     <string name="empty_field">Kolom tidak boleh kosong!</string>
     <string name="notelp_polisi">tel:089560056060212</string>
     <string name="notelp_ambulans">tel:089560056060212</string>
@@ -78,4 +78,7 @@
     <string name="previous">Previous</string>
     <string name="id">IDXXX</string>
     <string name="layanan_darurat">Layanan Darurat</string>
+    <string name="ruang_tamu">Ruang Tamu</string>
+    <string name="kamar">Kamar</string>
+    <string name="tablayout">TabLayout</string>
 </resources>

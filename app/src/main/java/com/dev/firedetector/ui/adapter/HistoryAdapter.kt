@@ -11,10 +11,8 @@ import java.util.Locale
 
 class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
 
-    // List untuk menyimpan data history sensor
     private val dataHistory = mutableListOf<SensorDataResponse>()
 
-    // ViewHolder untuk HistoryAdapter
     inner class HistoryViewHolder(private val binding: HistoryListBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -25,8 +23,6 @@ class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() 
                 tvKelembapan.text = "${data.humidity}%" // Menampilkan kelembapan
                 tvKualitasUdara.text = data.mqStatus // Menampilkan status kualitas udara
                 tvApiTerdeteksi.text = data.flameStatus // Menampilkan status api terdeteksi
-
-                // Format timestamp jika tersedia
                 data.timestamp?.let { timestamp ->
                     tvTimeStamp.text = formatTimestamp(timestamp)
                 }
@@ -40,7 +36,7 @@ class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() 
                 val date = inputFormat.parse(timestamp)
                 outputFormat.format(date!!)
             } catch (e: Exception) {
-                timestamp // Jika gagal, tampilkan timestamp asli
+                timestamp
             }
         }
     }
@@ -52,18 +48,16 @@ class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() 
     }
 
     override fun getItemCount(): Int {
-        return dataHistory.size // Jumlah item dalam list
+        return dataHistory.size
     }
 
     override fun onBindViewHolder(holder: HistoryViewHolder, position: Int) {
-        // Bind data ke ViewHolder
         holder.bind(dataHistory[position])
     }
 
-    // Fungsi untuk mengupdate data di adapter
     fun updateData(newData: List<SensorDataResponse>) {
-        dataHistory.clear() // Hapus data lama
-        dataHistory.addAll(newData) // Tambahkan data baru
-        notifyDataSetChanged() // Beri tahu adapter bahwa data telah berubah
+        dataHistory.clear()
+        dataHistory.addAll(newData)
+        notifyDataSetChanged()
     }
 }

@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!-- history_fragment.xml -->
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.history.HistoryFragment">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -20,22 +20,28 @@
             app:title="@string/history"
             app:titleCentered="true" />
 
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:backgroundTint="@color/background"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/tablayout"
+            app:tabGravity="fill"
+            app:tabMode="fixed" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvHistory"
         android:layout_width="match_parent"
-        android:paddingBottom="62dp"
-        tools:listitem="@layout/history_list"
         android:layout_height="match_parent"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+        android:paddingBottom="62dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:indeterminate="true"
         android:visibility="gone" />
 
     <TextView

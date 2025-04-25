@@ -1,7 +1,6 @@
 package com.dev.firedetector.data.pref
 
 import android.content.Context
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -21,7 +20,6 @@ class UserPreference(private val dataStore: DataStore<Preferences>) {
             preferences[TOKEN_KEY] = user.token
             preferences[IS_LOGIN_KEY] = true
         }
-        Log.d("UserPreference", "Token dan login status disimpan: ${user.token}, ${user.isLogin}")
     }
 
     fun getSession(): Flow<UserModel> {
@@ -43,7 +41,6 @@ class UserPreference(private val dataStore: DataStore<Preferences>) {
         dataStore.edit { preferences ->
             preferences.clear()
         }
-        Log.d("UserPreference", "Logout berhasil, data session dihapus")
     }
 
     companion object {

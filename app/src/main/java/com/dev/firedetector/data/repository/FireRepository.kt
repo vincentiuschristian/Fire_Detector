@@ -104,9 +104,9 @@ class FireRepository(
         }
     }
 
-    suspend fun getLatestSensorData(): Result<SensorDataResponse> {
+    suspend fun getLatestDataRuangTamu(): Result<SensorDataResponse> {
         return try {
-            val response = apiService.getLatestSensorData()
+            val response = apiService.getLatestDataRuangTamu()
 
             if (response.isSuccessful && response.body() != null) {
                 Result.Success(response.body()!!)
@@ -119,9 +119,39 @@ class FireRepository(
         }
     }
 
-    suspend fun getSensorHistory(): Result<List<SensorDataResponse>> {
+    suspend fun getSensorHistoryRuangTamu(): Result<List<SensorDataResponse>> {
         return try {
-            val response = apiService.getSensorHistory()
+            val response = apiService.getSensorHistoryRuangTamu()
+
+            if (response.isSuccessful && response.body() != null) {
+                Result.Success(response.body()!!)
+            } else {
+                val errorBody = response.errorBody()?.string() ?: "Gagal mendapatkan data history sensor"
+                Result.Error("Error ${response.code()}: $errorBody")
+            }
+        } catch (e: Exception) {
+            Result.Error("Terjadi kesalahan pada jaringan: ${e.message}")
+        }
+    }
+
+    suspend fun getLatestDataKamar(): Result<SensorDataResponse> {
+        return try {
+            val response = apiService.getLatestDataKamar()
+
+            if (response.isSuccessful && response.body() != null) {
+                Result.Success(response.body()!!)
+            } else {
+                val errorBody = response.errorBody()?.string() ?: "Gagal mendapatkan data sensor terbaru"
+                Result.Error("Error ${response.code()}: $errorBody")
+            }
+        } catch (e: Exception) {
+            Result.Error("Terjadi kesalahan pada jaringan: ${e.message}")
+        }
+    }
+
+    suspend fun getSensorHistoryKamar(): Result<List<SensorDataResponse>> {
+        return try {
+            val response = apiService.getSensorHistoryKamar()
 
             if (response.isSuccessful && response.body() != null) {
                 Result.Success(response.body()!!)
