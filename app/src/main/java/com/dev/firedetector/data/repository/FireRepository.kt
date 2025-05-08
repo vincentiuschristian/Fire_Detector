@@ -104,9 +104,9 @@ class FireRepository(
         }
     }
 
-    suspend fun getLatestDataRuangTamu(): Result<SensorDataResponse> {
+    suspend fun getLatestDataZona1(): Result<SensorDataResponse> {
         return try {
-            val response = apiService.getLatestDataRuangTamu()
+            val response = apiService.getLatestDataZona1()
 
             if (response.isSuccessful && response.body() != null) {
                 Result.Success(response.body()!!)
@@ -119,9 +119,9 @@ class FireRepository(
         }
     }
 
-    suspend fun getSensorHistoryRuangTamu(): Result<List<SensorDataResponse>> {
+    suspend fun getSensorHistoryZona1(): Result<List<SensorDataResponse>> {
         return try {
-            val response = apiService.getSensorHistoryRuangTamu()
+            val response = apiService.getSensorHistoryZona1()
 
             if (response.isSuccessful && response.body() != null) {
                 Result.Success(response.body()!!)
@@ -134,9 +134,9 @@ class FireRepository(
         }
     }
 
-    suspend fun getLatestDataKamar(): Result<SensorDataResponse> {
+    suspend fun getLatestDataZona2(): Result<SensorDataResponse> {
         return try {
-            val response = apiService.getLatestDataKamar()
+            val response = apiService.getLatestDataZona2()
 
             if (response.isSuccessful && response.body() != null) {
                 Result.Success(response.body()!!)
@@ -149,9 +149,9 @@ class FireRepository(
         }
     }
 
-    suspend fun getSensorHistoryKamar(): Result<List<SensorDataResponse>> {
+    suspend fun getSensorHistoryZona2(): Result<List<SensorDataResponse>> {
         return try {
-            val response = apiService.getSensorHistoryKamar()
+            val response = apiService.getSensorHistoryZona2()
 
             if (response.isSuccessful && response.body() != null) {
                 Result.Success(response.body()!!)
@@ -164,13 +164,9 @@ class FireRepository(
         }
     }
 
-    fun getSession(): Flow<UserModel> {
-        return userPreference.getSession()
-    }
+    fun getSession(): Flow<UserModel> = userPreference.getSession()
 
-    suspend fun deleteIdPerangkat() {
-        userPreference.logout()
-    }
+    suspend fun deleteIdPerangkat() = userPreference.logout()
 
     companion object {
 

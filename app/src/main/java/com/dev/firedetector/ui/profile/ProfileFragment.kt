@@ -1,8 +1,6 @@
 package com.dev.firedetector.ui.profile
 
 import android.content.Intent
-import android.media.RingtoneManager
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,12 +8,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.dev.firedetector.R
 import com.dev.firedetector.data.ViewModelFactory
 import com.dev.firedetector.databinding.FragmentProfileBinding
 import com.dev.firedetector.ui.register.RegisterActivity
 import com.dev.firedetector.util.Result
-import com.tapadoo.alerter.Alerter
 
 class ProfileFragment : Fragment() {
 
@@ -62,24 +58,6 @@ class ProfileFragment : Fragment() {
                 is Result.Error -> showToast(result.error)
             }
         }
-
-        val soundUri: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
-
-        binding.tap.setOnClickListener {
-            Alerter.create(requireActivity())
-                .setTitle("PERINGATAN!")
-                .setText("TELAH TERJADI KEBAKARAN")
-                .setIcon(R.drawable.baseline_warning_24)
-                .enableVibration(true)
-                .setDuration(3000)
-                .enableSwipeToDismiss()
-                .setSound(soundUri)
-                .setOnClickListener {
-                    Toast.makeText(requireActivity(), "OnClick Called", Toast.LENGTH_LONG).show()
-                }
-                .show()
-        }
-
     }
 
     override fun onResume() {
@@ -94,7 +72,6 @@ class ProfileFragment : Fragment() {
 
     private fun showToast(message: String?) =
         Toast.makeText(requireContext(), message!!, Toast.LENGTH_SHORT).show()
-
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE

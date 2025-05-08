@@ -17,11 +17,6 @@ object Reference {
         }
     }
 
-    enum class RoomType(val displayName: String) {
-        RUANG_TAMU("Ruang Tamu"),
-        KAMAR("Kamar")
-    }
-
     fun isPasswordValid(context: Context, password: String): Boolean {
         return if (TextUtils.isEmpty(password) || password.length < 6) {
             Toast.makeText(context, R.string.password_warning, Toast.LENGTH_SHORT).show()

@@ -13,23 +13,31 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.dev.firedetector.MainActivity
-import com.dev.firedetector.data.pref.UserPreference
-import com.google.firebase.firestore.FirebaseFirestore
+import com.dev.firedetector.R
+import com.dev.firedetector.data.repository.FireRepository
+import com.dev.firedetector.data.response.SensorDataResponse
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class NotificationHelper(
     private val context: Context,
-    private val userPreference: UserPreference
+    private val repository: FireRepository
 ) {
-
     private val CHANNEL_ID = "fire_alert_channel"
-    private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
-    private val lastFlameStatus: MutableMap<String, String> = mutableMapOf()
+    private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     private val notificationReceiver = NotificationReceiver()
+
+    private val lastStatusMap = mutableMapOf<String, Pair<String?, String?>>(
+        "ruang_tamu" to Pair(null, null),
+        "kamar" to Pair(null, null)
+    )
 
     fun registerNotificationReceiver() {
         val filter = IntentFilter("STOP_NOTIFICATION")
         ContextCompat.registerReceiver(
-            context, // ⬅️ Gunakan context yang diberikan dari MainActivity
+            context,
             notificationReceiver,
             filter,
             ContextCompat.RECEIVER_NOT_EXPORTED
@@ -37,121 +45,132 @@ class NotificationHelper(
     }
 
     fun unregisterNotificationReceiver() {
-        context.unregisterReceiver(notificationReceiver) // ✅ Unregister receiver
+        context.unregisterReceiver(notificationReceiver)
     }
-
 
     fun createNotificationChannel() {
         val name = "Fire Alert Channel"
-        val descriptionText = "Channel for fire alert notifications"
+        val descriptionText = "Channel for fire and smoke alert notifications"
         val importance = NotificationManager.IMPORTANCE_HIGH
         val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
             description = descriptionText
+            enableVibration(true)
+            vibrationPattern = longArrayOf(0, 1000, 500, 1000)
         }
-
-        val notificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
     }
 
-    private fun sendFireAlertNotification(title: String, message: String, deviceId: String) {
-        val notificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    fun startListening() {
+        CoroutineScope(Dispatchers.IO).launch {
+            while (true) {
+                checkBothLocations()
+                delay(2000)
+            }
+        }
+    }
 
+    private suspend fun checkBothLocations() {
+        checkLocation("ruang_tamu", "Ruang Tamu")
+        checkLocation("kamar", "Kamar")
+    }
+
+    private suspend fun checkLocation(locationKey: String, locationName: String) {
+        try {
+            val result = when (locationKey) {
+                "ruang_tamu" -> repository.getLatestDataZona1()
+                "kamar" -> repository.getLatestDataZona2()
+                else -> return
+            }
+
+            if (result is Result.Success) {
+                handleSensorData(result.data, locationKey, locationName)
+            } else if (result is Result.Error) {
+                Log.e("Notification", "Error fetching $locationName data: ${result.error}")
+            }
+        } catch (e: Exception) {
+            Log.e("Notification", "Error checking $locationName: ${e.message}")
+        }
+    }
+
+    private fun handleSensorData(data: SensorDataResponse, locationKey: String, locationName: String) {
+        val currentFlame = data.flameStatus
+        val currentMQ = data.mqStatus
+        val lastStatus = lastStatusMap[locationKey] ?: Pair(null, null)
+
+        if (currentFlame == "terdeteksi" && lastStatus.first != "terdeteksi") {
+            sendAlertNotification(
+                title = "Api Terdeteksi!",
+                message = "Api terdeteksi di $locationName! Segera evakuasi!",
+                notificationId = locationKey.hashCode() + 1,
+                isFire = true
+            )
+        }
+
+        if (currentMQ == "terdeteksi" && lastStatus.second != "terdeteksi") {
+            sendAlertNotification(
+                title = "Asap Terdeteksi!",
+                message = "Asap terdeteksi di $locationName! Periksa sumbernya!",
+                notificationId = locationKey.hashCode() + 2,
+                isFire = false
+            )
+        }
+
+        lastStatusMap[locationKey] = Pair(currentFlame, currentMQ)
+    }
+
+    private fun sendAlertNotification(title: String, message: String, notificationId: Int, isFire: Boolean) {
         val soundUri = Uri.parse("android.resource://${context.packageName}/raw/alarm")
 
         val stopIntent = Intent(context, NotificationReceiver::class.java).apply {
             action = "STOP_NOTIFICATION"
+            putExtra("NOTIFICATION_ID", notificationId)
         }
         val stopPendingIntent = PendingIntent.getBroadcast(
             context,
-            deviceId.hashCode(),
+            notificationId,
             stopIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_dialog_alert)
+            .setSmallIcon(if (isFire) R.drawable.icon_fire else R.drawable.icon_gas)
             .setContentTitle(title)
             .setContentText(message)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setAutoCancel(false)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setCategory(NotificationCompat.CATEGORY_ALARM)
+            .setAutoCancel(true)
             .setSound(soundUri)
             .setVibrate(longArrayOf(0, 1000, 500, 1000))
-            .addAction(android.R.drawable.ic_menu_close_clear_cancel, "OK", stopPendingIntent)
+            .addAction(
+                R.drawable.ic_close,
+                context.getString(R.string.supporting_text),
+                stopPendingIntent
+            )
             .build()
 
-        notificationManager.notify(deviceId.hashCode(), notification)
-    }
-
-    class NotificationReceiver : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent?) {
-            if (intent?.action == "STOP_NOTIFICATION") {
-                val notificationManager =
-                    context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                notificationManager.cancel(1)
-            }
-        }
-    }
-
-    fun startListening() {
-        // Ambil deviceId dari datastore
-//        CoroutineScope(Dispatchers.IO).launch {
-//            try {
-//                val deviceId = userPreference.getSession().first().idPerangkat
-//
-//                db.collection(Reference.COLLECTION)
-//                    .document(deviceId)
-//                    .collection(Reference.DATAALAT)
-//                    .orderBy("timestamp", Query.Direction.DESCENDING)
-//                    .limit(1)
-//                    .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-//                        if (firebaseFirestoreException != null) {
-//                            Log.e("Firestore", "Error: ${firebaseFirestoreException.message}")
-//                            return@addSnapshotListener
-//                        }
-//
-//                        querySnapshot?.let { snapshot ->
-//                            for (document in snapshot.documents) {
-//                                val flameDetected =
-//                                    document.getString(Reference.FIELD_FLAME_DETECTED)
-//
-//                                flameDetected?.let { data ->
-//                                    val documentKey = "${deviceId}_${document.id}"
-//
-//                                    if (lastFlameStatus[documentKey] != data) {
-//                                        lastFlameStatus[documentKey] = data
-//
-//                                        if (data == "Api Terdeteksi") {
-//                                            sendFireAlertNotification(
-//                                                "Api Terdeteksi!",
-//                                                "Api terdeteksi! Segera Periksa Ruangan Anda",
-//                                                deviceId
-//                                            )
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//            } catch (e: Exception) {
-//                Log.e("startListening", "Error fetching deviceId: ${e.message}")
-//            }
-//        }
+        notificationManager.notify(notificationId, notification)
     }
 
     fun checkNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            if (context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                != android.content.pm.PackageManager.PERMISSION_GRANTED) {
                 (context as? MainActivity)?.requestPermissions(
                     arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
                     1001
                 )
-            } else {
-                Log.d("Permission", "Notification permission granted")
             }
-        } else {
-            Log.d("Permission", "Notification permission not required for this API level")
+        }
+    }
+
+    inner class NotificationReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent?.action == "STOP_NOTIFICATION") {
+                val notificationId = intent.getIntExtra("NOTIFICATION_ID", -1)
+                if (notificationId != -1) {
+                    notificationManager.cancel(notificationId)
+                }
+            }
         }
     }
 }

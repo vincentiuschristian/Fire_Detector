@@ -1,6 +1,5 @@
 package com.dev.firedetector.ui.adapter
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -16,13 +15,12 @@ class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() 
     inner class HistoryViewHolder(private val binding: HistoryListBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        @SuppressLint("SetTextI18n")
         fun bind(data: SensorDataResponse) {
             binding.apply {
-                tvTemperature.text = data.temperature.toString() // Menampilkan suhu
-                tvKelembapan.text = "${data.humidity}%" // Menampilkan kelembapan
-                tvKualitasUdara.text = data.mqStatus // Menampilkan status kualitas udara
-                tvApiTerdeteksi.text = data.flameStatus // Menampilkan status api terdeteksi
+                tvTemperature.text = data.temperature.toString()
+                tvKelembapan.text = "${data.humidity}%"
+                tvKualitasUdara.text = data.mqStatus
+                tvApiTerdeteksi.text = data.flameStatus
                 data.timestamp?.let { timestamp ->
                     tvTimeStamp.text = formatTimestamp(timestamp)
                 }
@@ -42,7 +40,6 @@ class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
-        // Inflate layout item history
         val binding = HistoryListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return HistoryViewHolder(binding)
     }

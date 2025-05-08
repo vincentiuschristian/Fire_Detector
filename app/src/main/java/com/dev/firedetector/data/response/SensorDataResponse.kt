@@ -11,6 +11,7 @@ data class SensorDataResponse(
 
     @SerializedName("humidity")
     val humidity: Float,
+
     @SerializedName("mq_status")
     val mqStatus: String,
 

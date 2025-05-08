@@ -23,16 +23,16 @@ interface ApiService {
     ): Response<LoginResponse>
 
     @GET("/api/ruangtamu/latest")
-    suspend fun getLatestDataRuangTamu(): Response<SensorDataResponse>
+    suspend fun getLatestDataZona1(): Response<SensorDataResponse>
 
     @GET("/api/ruangtamu/history")
-    suspend fun getSensorHistoryRuangTamu(): Response<List<SensorDataResponse>>
+    suspend fun getSensorHistoryZona1(): Response<List<SensorDataResponse>>
 
     @GET("/api/kamar/latest")
-    suspend fun getLatestDataKamar(): Response<SensorDataResponse>
+    suspend fun getLatestDataZona2(): Response<SensorDataResponse>
 
     @GET("/api/kamar/history")
-    suspend fun getSensorHistoryKamar(): Response<List<SensorDataResponse>>
+    suspend fun getSensorHistoryZona2(): Response<List<SensorDataResponse>>
 
     @GET("/api/user/profile")
     suspend fun getUser(): Response<UserResponse>

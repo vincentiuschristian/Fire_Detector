@@ -59,8 +59,8 @@ class HomeFragment : Fragment() {
             }
         }
 
-        fetchSensorRuangTamu()
-        fetchSensorKamar()
+        fetchSensorZona1()
+        fetchSensorZona2()
         fetchUserData()
         autoRefresh()
 
@@ -68,13 +68,13 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.getLatestDataRuangTamu()
-        viewModel.getLatestDataKamar()
+        viewModel.getLatestDataZona1()
+        viewModel.getLatestDataZona2()
         profileViewModel.fetchData()
     }
 
-    private fun fetchSensorRuangTamu() {
-        viewModel.latestSensorDataRuangTamu.observe(viewLifecycleOwner) { result ->
+    private fun fetchSensorZona1() {
+        viewModel.latestSensorDataZona1.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Success -> {
                     binding.txtHumidityRuangtamu.text =
@@ -103,19 +103,18 @@ class HomeFragment : Fragment() {
         }
     }
     
-    private fun fetchSensorKamar() {
-        viewModel.latestSensorDataKamar.observe(viewLifecycleOwner) { result ->
-            when (result) {
+    private fun fetchSensorZona2() {
+        viewModel.latestSensorDataZona2.observe(viewLifecycleOwner) { resultSensor ->
+            when (resultSensor) {
                 is Result.Success -> {
                     binding.txtHumidityKamar.text =
-                        getString(R.string.text_kelembapan, result.data.humidity.toString())
+                        getString(R.string.text_kelembapan, resultSensor.data.humidity.toString())
                     binding.txtTemperatureKamar.text =
-                        getString(R.string.text_suhu, result.data.temperature.toString())
+                        getString(R.string.text_suhu, resultSensor.data.temperature.toString())
 
-                    val flameStatus = result.data.flameStatus
+                    val flameStatus = resultSensor.data.flameStatus
                     binding.txtFireDetectionKamar.text = flameStatus
-
-                    binding.txtAirQualityKamar.text = result.data.mqStatus
+                    binding.txtAirQualityKamar.text = resultSensor.data.mqStatus
                     binding.cvIsFire2.setCardBackgroundColor(
                         ContextCompat.getColor(
                             requireContext(),
@@ -125,10 +124,8 @@ class HomeFragment : Fragment() {
                 }
 
                 is Result.Loading -> showLoading(true)
-                is Result.Error -> {
-                    showToast("Error Sensor Kamar : ${result.error}")
-                    Log.d("ERROR HOME = ", result.error)
-                }
+                is Result.Error -> showToast("Error Sensor Kamar : ${resultSensor.error}")
+
             }
         }
     }
@@ -136,8 +133,8 @@ class HomeFragment : Fragment() {
     private fun autoRefresh() {
         viewLifecycleOwner.lifecycleScope.launch {
             while (isActive) {
-                viewModel.getLatestDataRuangTamu()
-                viewModel.getLatestDataKamar()
+                viewModel.getLatestDataZona1()
+                viewModel.getLatestDataZona2()
                 delay(2000)
             }
         }
@@ -198,14 +195,12 @@ class HomeFragment : Fragment() {
         }
     }
 
-
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     private fun showToast(message: String?) =
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-
 
     override fun onDestroyView() {
         super.onDestroyView()

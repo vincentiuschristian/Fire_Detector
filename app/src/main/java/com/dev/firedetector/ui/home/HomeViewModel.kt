@@ -10,34 +10,34 @@ import com.dev.firedetector.util.Result
 import kotlinx.coroutines.launch
 
 class HomeViewModel(private val repository: FireRepository) : ViewModel() {
-    private val _latestSensorDataRuangTamu = MutableLiveData<Result<SensorDataResponse>>()
-    val latestSensorDataRuangTamu: LiveData<Result<SensorDataResponse>> get() = _latestSensorDataRuangTamu
+    private val _latestSensorDataZona1 = MutableLiveData<Result<SensorDataResponse>>()
+    val latestSensorDataZona1: LiveData<Result<SensorDataResponse>> get() = _latestSensorDataZona1
 
-    private val _latestSensorDataKamar = MutableLiveData<Result<SensorDataResponse>>()
-    val latestSensorDataKamar: LiveData<Result<SensorDataResponse>> get() = _latestSensorDataRuangTamu
+    private val _latestSensorDataZona2 = MutableLiveData<Result<SensorDataResponse>>()
+    val latestSensorDataZona2: LiveData<Result<SensorDataResponse>> get() = _latestSensorDataZona2
 
     private val _loading = MutableLiveData<Boolean>()
     val loading: LiveData<Boolean> get() = _loading
 
     init {
-        getLatestDataRuangTamu()
-        getLatestDataKamar()
+        getLatestDataZona1()
+        getLatestDataZona2()
     }
 
-    fun getLatestDataRuangTamu() {
+    fun getLatestDataZona1() {
         viewModelScope.launch {
             _loading.value = true
-            val result = repository.getLatestDataRuangTamu()
-            _latestSensorDataRuangTamu.postValue(result)
+            val result = repository.getLatestDataZona1()
+            _latestSensorDataZona1.postValue(result)
             _loading.value = false
         }
     }
 
-    fun getLatestDataKamar() {
+    fun getLatestDataZona2() {
         viewModelScope.launch {
             _loading.value = true
-            val result = repository.getLatestDataKamar()
-            _latestSensorDataKamar.postValue(result)
+            val result = repository.getLatestDataZona2()
+            _latestSensorDataZona2.postValue(result)
             _loading.value = false
         }
     }

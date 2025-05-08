@@ -78,7 +78,13 @@
     <string name="previous">Previous</string>
     <string name="id">IDXXX</string>
     <string name="layanan_darurat">Layanan Darurat</string>
-    <string name="ruang_tamu">Ruang Tamu</string>
-    <string name="kamar">Kamar</string>
+    <string name="zona_1">Zona 1</string>
+    <string name="zona_2">Zona 2</string>
     <string name="tablayout">TabLayout</string>
+    <string name="stop_alarm">Matikan Alarm</string>
+    <string name="perangkat_1">Perangkat 1</string>
+    <string name="perangkat_2">Perangkat 2</string>
+    <string name="nama_zona">Nama Zona</string>
+    <string name="lokasi_perangkat_iot">Lokasi Perangkat IoT</string>
+    <string name="simpan">Simpan</string>
 </resources>

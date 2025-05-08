@@ -101,7 +101,6 @@ class LoginActivity : AppCompatActivity() {
     private fun showSnackbar(message: String) =
         Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
 
-
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }

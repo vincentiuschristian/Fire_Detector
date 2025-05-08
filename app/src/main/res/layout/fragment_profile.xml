@@ -173,24 +173,6 @@
                 app:layout_constraintVertical_bias="1.0"
                 tools:ignore="RtlHardcoded" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/tap"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:fontFamily="@font/plus_jakarta_sans_regular"
-                android:letterSpacing="0.02"
-                android:text="tap"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                app:backgroundTint="@color/primary"
-                app:cornerRadius="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvUserLocation"
-                tools:ignore="RtlHardcoded" />
-
             <ProgressBar
                 android:id="@+id/progressBar"
                 android:layout_width="match_parent"

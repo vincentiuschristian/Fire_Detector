@@ -10,4 +10,5 @@ class MainViewModel(private val repository: FireRepository) : ViewModel() {
     fun getSession(): LiveData<UserModel> {
         return repository.getSession().asLiveData()
     }
+    fun getRepository(): FireRepository = repository
 }

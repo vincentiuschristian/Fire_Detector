@@ -18,6 +18,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/background"
             app:title="@string/kondisi_ruangan"
+            android:theme="@style/CustomToolbar"
             app:titleCentered="true" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -92,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/plus_jakarta_sans_bold"
                 android:paddingTop="16dp"
-                android:text="@string/ruang_tamu"
+                android:text="@string/zona_1"
                 android:layout_marginStart="16dp"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -327,7 +328,7 @@
                 android:layout_marginStart="16dp"
                 android:fontFamily="@font/plus_jakarta_sans_bold"
                 android:paddingTop="16dp"
-                android:text="@string/kamar"
+                android:text="@string/zona_2"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/cv_air_quality" />

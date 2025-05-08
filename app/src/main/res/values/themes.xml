@@ -13,6 +13,7 @@
         <!-- Status bar color. -->
         <!--        <item name="android:statusBarColor">@color/white</item>-->
         <!-- Customize your theme here. -->
+        <item name="toolbarStyle">@style/CustomToolbar</item>
     </style>
 
     <style name="MaterialAlertDialog_rounded" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
@@ -49,6 +50,19 @@
         <item name="bottomNavigationStyle">@style/Widget.Material3.BottomNavigationView</item>
 
     </style>
+
+    <style name="CustomToolbar" parent="Widget.MaterialComponents.Toolbar">
+        <item name="titleTextAppearance">@style/ToolbarTitleText</item>
+        <item name="fontFamily">@font/plus_jakarta_sans_semi_bold</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="ToolbarTitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="fontFamily">@font/plus_jakarta_sans_medium</item>
+        <item name="android:textSize">20sp</item> <!-- Optional -->
+    </style>
+
     <!-- Base application theme. -->
     <style name="Base.Theme.FireDetector" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->

@@ -32,7 +32,6 @@ class HistoryFragment : Fragment() {
     ): View {
         _binding = FragmentHistoryBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -51,14 +50,14 @@ class HistoryFragment : Fragment() {
     }
 
     private fun setupTabLayout() {
-        binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Ruang Tamu"))
-        binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Kamar"))
+        binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Zona 1"))
+        binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Zona 2"))
 
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 when (tab?.position) {
-                    0 -> viewModel.getHistoryRuangTamu()
-                    1 -> viewModel.getHistoryKamar()
+                    0 -> viewModel.getHistoryZona1()
+                    1 -> viewModel.getHistoryZona2()
                 }
             }
 
@@ -66,11 +65,11 @@ class HistoryFragment : Fragment() {
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
 
-        viewModel.getHistoryRuangTamu()
+        viewModel.getHistoryZona1()
     }
 
     private fun observeViewModel() {
-        viewModel.historyRuangTamu.observe(viewLifecycleOwner) { result ->
+        viewModel.historyZona1.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Success -> {
                     showLoading(false)
@@ -87,7 +86,7 @@ class HistoryFragment : Fragment() {
             }
         }
 
-        viewModel.historyKamar.observe(viewLifecycleOwner) { result ->
+        viewModel.historyZona2.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Success -> {
                     showLoading(false)
