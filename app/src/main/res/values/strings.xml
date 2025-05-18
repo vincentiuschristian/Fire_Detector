@@ -12,7 +12,7 @@
     <string name="emergency">Emergency</string>
     <string name="your_location">Your Location</string>
     <string name="address_dummy">Alamat Anda</string>
-    <string name="temperature">Suhu Ruangan</string>
+    <string name="temperature">Suhu</string>
     <string name="icon_temperature">icon temperature</string>
     <string name="icon_humidity">icon humidity</string>
     <string name="kelembapan">Kelembapan</string>
@@ -44,7 +44,7 @@
     <string name="masuk">Masuk</string>
     <string name="profile">Profil</string>
     <string name="logout">Logout</string>
-    <string name="name">Nama</string>
+    <string name="name">Halo %1$s!</string>
     <string name="full_name">Full Name</string>
     <string name="location">Lokasi</string>
     <string name="telepon_darurat">Telepon Darurat</string>
@@ -58,8 +58,7 @@
     <string name="empty_field">Kolom tidak boleh kosong!</string>
     <string name="notelp_polisi">tel:089560056060212</string>
     <string name="notelp_ambulans">tel:089560056060212</string>
-    <string name="id_perangkat">ID Perangkat</string>
-    <string name="id_perangkat_xxx">ID Perangkat:</string>
+    <string name="id_pengguna">ID Pengguna</string>
     <string name="lokasi">Lokasi</string>
     <string name="history">Riwayat Data</string>
     <string name="location_not_found">Location not found</string>
@@ -87,4 +86,7 @@
     <string name="nama_zona">Nama Zona</string>
     <string name="lokasi_perangkat_iot">Lokasi Perangkat IoT</string>
     <string name="simpan">Simpan</string>
+    <string name="taman_hutan_raya">Taman Hutan Raya</string>
+    <string name="edit">Edit</string>
+    <string name="ikon_lokasi">ikon lokasi</string>
 </resources>

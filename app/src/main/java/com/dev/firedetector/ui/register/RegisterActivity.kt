@@ -35,7 +35,6 @@ class RegisterActivity : AppCompatActivity() {
     private val authViewModel: AuthViewModel by viewModels {
         ViewModelFactory.getInstance(applicationContext)
     }
-
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -57,9 +56,6 @@ class RegisterActivity : AppCompatActivity() {
                 startActivity(Intent(applicationContext, LoginActivity::class.java))
             }
 
-            btnLokasi.setOnClickListener {
-                getMyLocation()
-            }
         }
         setupListeners()
         observeRegisterResult()
@@ -102,7 +98,6 @@ class RegisterActivity : AppCompatActivity() {
         }
 
     }
-
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun getMyLocation() {

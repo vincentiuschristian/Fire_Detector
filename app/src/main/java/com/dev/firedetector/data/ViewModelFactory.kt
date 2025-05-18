@@ -10,6 +10,7 @@ import com.dev.firedetector.ui.history.HistoryViewModel
 import com.dev.firedetector.ui.home.HomeViewModel
 import com.dev.firedetector.ui.profile.ProfileViewModel
 import com.dev.firedetector.ui.register.AuthViewModel
+import com.dev.firedetector.ui.sensor_location.SensorLocationViewModel
 
 @Suppress("UNCHECKED_CAST")
 class ViewModelFactory(private val repository: FireRepository) :
@@ -21,6 +22,7 @@ class ViewModelFactory(private val repository: FireRepository) :
         AuthViewModel::class.java -> AuthViewModel(repository)
         ProfileViewModel::class.java -> ProfileViewModel(repository)
         HistoryViewModel::class.java -> HistoryViewModel(repository)
+        SensorLocationViewModel::class.java -> SensorLocationViewModel(repository)
         MainViewModel::class.java -> MainViewModel(repository)
 
         else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)

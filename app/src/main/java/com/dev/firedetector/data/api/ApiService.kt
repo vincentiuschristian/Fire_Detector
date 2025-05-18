@@ -1,7 +1,11 @@
 package com.dev.firedetector.data.api
 
+import com.dev.firedetector.data.response.DeviceLocationResponse
+import com.dev.firedetector.data.response.DeviceLocationUpdate
+import com.dev.firedetector.data.response.GenericResponse
 import com.dev.firedetector.data.response.LoginRequest
 import com.dev.firedetector.data.response.LoginResponse
+import com.dev.firedetector.data.response.LogoutResponse
 import com.dev.firedetector.data.response.RegisterRequest
 import com.dev.firedetector.data.response.RegisterResponse
 import com.dev.firedetector.data.response.SensorDataResponse
@@ -34,6 +38,19 @@ interface ApiService {
     @GET("/api/kamar/history")
     suspend fun getSensorHistoryZona2(): Response<List<SensorDataResponse>>
 
+    @GET("/api/devices/locations")
+    suspend fun getDeviceLocations(): Response<List<DeviceLocationResponse>>
+
+    @POST("/api/devices/locations/update")
+    suspend fun updateDeviceLocations(
+        @Body locations: List<DeviceLocationUpdate>
+    ): Response<GenericResponse>
+
     @GET("/api/user/profile")
     suspend fun getUser(): Response<UserResponse>
+
+    @POST("/api/logout")
+    suspend fun logout(): Response<LogoutResponse>
+
+
 }

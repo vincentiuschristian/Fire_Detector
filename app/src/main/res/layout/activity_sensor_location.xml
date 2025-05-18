@@ -5,6 +5,7 @@
     android:id="@+id/sensor_location_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".ui.sensor_location.SensorLocationActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -17,11 +18,19 @@
             android:id="@+id/topBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/background"
-            android:theme="@style/CustomToolbar"
             app:menu="@menu/menu_save"
-            app:title="@string/lokasi_perangkat_iot"
-            app:titleCentered="true" />
+            app:titleCentered="true" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lokasi_perangkat_iot"
+                android:fontFamily="@font/plus_jakarta_sans_semi_bold"
+                android:textSize="20sp"
+                android:layout_gravity="center"
+                android:textColor="@color/color_text"/>
+
+        </com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -188,5 +197,15 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@android:color/transparent"
+        android:indeterminate="true"
+        android:translationZ="10dp"
+        android:visibility="gone" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

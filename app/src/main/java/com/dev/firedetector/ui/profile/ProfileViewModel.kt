@@ -29,6 +29,7 @@ class ProfileViewModel(private val repository: FireRepository) : ViewModel() {
 
     fun clearIdSaved() {
         viewModelScope.launch {
+            repository.logout()
             repository.deleteIdPerangkat()
         }
     }

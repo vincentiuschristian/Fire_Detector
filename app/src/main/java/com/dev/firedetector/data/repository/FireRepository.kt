@@ -5,6 +5,8 @@ import androidx.datastore.core.IOException
 import com.dev.firedetector.data.api.ApiService
 import com.dev.firedetector.data.model.UserModel
 import com.dev.firedetector.data.pref.UserPreference
+import com.dev.firedetector.data.response.DeviceLocationResponse
+import com.dev.firedetector.data.response.DeviceLocationUpdate
 import com.dev.firedetector.data.response.LoginRequest
 import com.dev.firedetector.data.response.LoginResponse
 import com.dev.firedetector.data.response.RegisterRequest
@@ -167,6 +169,58 @@ class FireRepository(
     fun getSession(): Flow<UserModel> = userPreference.getSession()
 
     suspend fun deleteIdPerangkat() = userPreference.logout()
+
+    suspend fun getDeviceLocations(): Result<List<DeviceLocationResponse>> {
+        return try {
+            val response = apiService.getDeviceLocations()
+            if (response.isSuccessful && response.body() != null) {
+                Result.Success(response.body()!!)
+            } else {
+                val errorBody = response.errorBody()?.string() ?: "Failed to get device locations"
+                Result.Error("Error ${response.code()}: $errorBody")
+            }
+        } catch (e: HttpException) {
+            Result.Error("HTTP Error: ${e.message()}")
+        } catch (e: IOException) {
+            Result.Error("Network Error: ${e.message}")
+        } catch (e: Exception) {
+            Result.Error("An unexpected error occurred: ${e.message}")
+        }
+    }
+
+    suspend fun updateDeviceLocations(locations: List<DeviceLocationUpdate>): Result<String> {
+        return try {
+            val response = apiService.updateDeviceLocations(locations)
+            if (response.isSuccessful) {
+                val message = response.body()?.message ?: "Locations updated successfully"
+                Result.Success(message)
+            } else {
+                val errorBody = response.errorBody()?.string() ?: "Failed to update locations"
+                Result.Error("Error ${response.code()}: $errorBody")
+            }
+        } catch (e: HttpException) {
+            Result.Error("HTTP Error: ${e.message()}")
+        } catch (e: IOException) {
+            Result.Error("Network Error: ${e.message}")
+        } catch (e: Exception) {
+            Result.Error("An unexpected error occurred: ${e.message}")
+        }
+    }
+
+    suspend fun logout(): Result<String> {
+        return try {
+            val response = apiService.logout()
+            if (response.isSuccessful) {
+                userPreference.logout()
+                Result.Success(response.body()?.message ?: "Logout berhasil")
+            } else {
+                val errorBody = response.errorBody()?.string() ?: "Logout gagal!"
+                Result.Error("Error ${response.code()}: $errorBody")
+            }
+        } catch (e: Exception) {
+            Result.Error("Terjadi kesalahan: ${e.message}")
+        }
+    }
 
     companion object {
 

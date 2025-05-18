@@ -1,6 +1,7 @@
 package com.dev.firedetector.ui.home
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -17,8 +18,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.dev.firedetector.R
 import com.dev.firedetector.data.ViewModelFactory
+import com.dev.firedetector.data.response.DeviceLocationResponse
 import com.dev.firedetector.databinding.FragmentHomeBinding
 import com.dev.firedetector.ui.profile.ProfileViewModel
+import com.dev.firedetector.ui.sensor_location.SensorLocationActivity
+import com.dev.firedetector.ui.sensor_location.SensorLocationViewModel
 import com.dev.firedetector.util.Result
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.delay
@@ -33,6 +37,9 @@ class HomeFragment : Fragment() {
         ViewModelFactory.getInstance(requireContext())
     }
     private val profileViewModel: ProfileViewModel by viewModels {
+        ViewModelFactory.getInstance(requireContext())
+    }
+    private val locationSensorViewModel: SensorLocationViewModel by viewModels {
         ViewModelFactory.getInstance(requireContext())
     }
 
@@ -57,13 +64,18 @@ class HomeFragment : Fragment() {
                 val ambulance = getString(R.string.notelp_ambulans)
                 showConfirmationDialog(ambulance)
             }
+            tvEdit.setOnClickListener {
+                sensorLocationResultLauncher.launch(
+                    Intent(requireContext(), SensorLocationActivity::class.java)
+                )
+            }
         }
 
         fetchSensorZona1()
         fetchSensorZona2()
         fetchUserData()
+        fetchDeviceLocations()
         autoRefresh()
-
     }
 
     override fun onResume() {
@@ -71,6 +83,15 @@ class HomeFragment : Fragment() {
         viewModel.getLatestDataZona1()
         viewModel.getLatestDataZona2()
         profileViewModel.fetchData()
+        locationSensorViewModel.getDeviceLocations()
+    }
+
+    private val sensorLocationResultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            locationSensorViewModel.getDeviceLocations()
+        }
     }
 
     private fun fetchSensorZona1() {
@@ -130,6 +151,39 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun fetchDeviceLocations() {
+        locationSensorViewModel.locationsState.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Success -> {
+                    updateZoneNames(result.data)
+                    showLoading(false)
+                }
+                is Result.Error -> {
+                    Log.e("HomeFragment", "Error fetching device locations: ${result.error}")
+                    binding.tvZona1.text = getString(R.string.zona_1)
+                    binding.tvZona2.text = getString(R.string.zona_2)
+                    showLoading(false)
+                }
+                is Result.Loading -> {
+                    if (locationSensorViewModel.locationsState.value !is Result.Success) {
+                        showLoading(true)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun updateZoneNames(locations: List<DeviceLocationResponse>) {
+        val zona1 = locations.find { it.deviceNumber == 1 }?.zoneName
+            ?: getString(R.string.zona_1)
+        val zona2 = locations.find { it.deviceNumber == 2 }?.zoneName
+            ?: getString(R.string.zona_2)
+
+        binding.tvZona1.text = zona1
+        binding.tvZona2.text = zona2
+    }
+
+
     private fun autoRefresh() {
         viewLifecycleOwner.lifecycleScope.launch {
             while (isActive) {
@@ -145,8 +199,8 @@ class HomeFragment : Fragment() {
             when (result) {
                 is Result.Success -> {
                     binding.apply {
-                        tvIdPerangkat.text = result.data.deviceId
-                        tvName.text = result.data.username
+                        tvLocation.text = result.data.location
+                        tvName.text =  getString(R.string.name, result.data.username)
                     }
                     showLoading(false)
                 }
@@ -155,6 +209,7 @@ class HomeFragment : Fragment() {
                 is Result.Error -> showToast(result.error)
             }
         }
+
     }
 
     private fun calling(number: String) {

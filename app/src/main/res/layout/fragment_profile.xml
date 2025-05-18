@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".ui.profile.ProfileFragment">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -15,11 +16,18 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topBar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/background"
-            android:paddingTop="10dp"
-            app:title="@string/profile"
-            app:titleCentered="true" />
+            android:layout_height="?attr/actionBarSize">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/profile"
+                android:fontFamily="@font/plus_jakarta_sans_semi_bold"
+                android:textSize="20sp"
+                android:layout_gravity="center"
+                android:textColor="@color/color_text"/>
+
+        </com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -79,7 +87,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="36dp"
                 android:fontFamily="@font/plus_jakarta_sans_regular"
-                android:text="@string/id_perangkat"
+                android:text="@string/id_pengguna"
                 android:textColor="@color/primaryContainer"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
