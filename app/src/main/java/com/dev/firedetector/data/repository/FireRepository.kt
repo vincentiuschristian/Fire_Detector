@@ -51,7 +51,6 @@ class FireRepository(
         }
     }
 
-
     suspend fun registerUser(
         deviceId: String,
         username: String,
@@ -166,10 +165,6 @@ class FireRepository(
         }
     }
 
-    fun getSession(): Flow<UserModel> = userPreference.getSession()
-
-    suspend fun deleteIdPerangkat() = userPreference.logout()
-
     suspend fun getDeviceLocations(): Result<List<DeviceLocationResponse>> {
         return try {
             val response = apiService.getDeviceLocations()
@@ -221,6 +216,11 @@ class FireRepository(
             Result.Error("Terjadi kesalahan: ${e.message}")
         }
     }
+
+
+    fun getSession(): Flow<UserModel> = userPreference.getSession()
+
+    suspend fun deleteIdPerangkat() = userPreference.logout()
 
     companion object {
 

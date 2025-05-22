@@ -1,16 +1,17 @@
 package com.dev.firedetector
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.dev.firedetector.data.ViewModelFactory
 import com.dev.firedetector.databinding.ActivityMainBinding
-import com.dev.firedetector.ui.register.RegisterActivity
+import com.dev.firedetector.ui.login.LoginActivity
 import com.dev.firedetector.util.NotificationHelper
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -37,7 +38,6 @@ class MainActivity : AppCompatActivity() {
         val fireRepository = viewModel.getRepository()
         notificationHelper = NotificationHelper(this, fireRepository)
         notificationHelper.createNotificationChannel()
-        notificationHelper.checkNotificationPermission()
         notificationHelper.registerNotificationReceiver()
         notificationHelper.startListening()
 
@@ -47,14 +47,29 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
 
         getSession()
+
     }
 
     private fun getSession() {
         viewModel.getSession().observe(this) { user ->
-            Log.d("MainActivity", "Session token: ${user.token}, isLogin: ${user.isLogin}")
             if (!user.isLogin || user.token.isEmpty()) {
-                startActivity(Intent(this, RegisterActivity::class.java))
+                startActivity(Intent(this, LoginActivity::class.java))
                 finish()
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1001) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Izin notifikasi diizinkan", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Izin notifikasi ditolak", Toast.LENGTH_SHORT).show()
             }
         }
     }

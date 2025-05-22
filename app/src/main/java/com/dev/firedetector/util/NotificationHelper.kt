@@ -1,5 +1,7 @@
 package com.dev.firedetector.util
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -7,7 +9,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.net.Uri
+import android.content.pm.PackageManager
+import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -19,7 +22,11 @@ import com.dev.firedetector.data.response.SensorDataResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class NotificationHelper(
     private val context: Context,
@@ -29,10 +36,17 @@ class NotificationHelper(
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     private val notificationReceiver = NotificationReceiver()
 
-    private val lastStatusMap = mutableMapOf<String, Pair<String?, String?>>(
-        "ruang_tamu" to Pair(null, null),
-        "kamar" to Pair(null, null)
+    private val lastStatusMap = mutableMapOf<String, Triple<String?, String?, Float?>>(
+        "device_1" to Triple(null, null, null),
+        "device_2" to Triple(null, null, null)
     )
+
+    private val zoneNames = mutableMapOf(
+        1 to "Ruang Tamu",
+        2 to "Kamar"
+    )
+
+    private var lastZoneNameUpdate = 0L
 
     fun registerNotificationReceiver() {
         val filter = IntentFilter("STOP_NOTIFICATION")
@@ -45,24 +59,32 @@ class NotificationHelper(
     }
 
     fun unregisterNotificationReceiver() {
-        context.unregisterReceiver(notificationReceiver)
+        try {
+            context.unregisterReceiver(notificationReceiver)
+        } catch (e: IllegalArgumentException) {
+            Log.e("Notification", "Receiver not registered")
+        }
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     fun createNotificationChannel() {
-        val name = "Fire Alert Channel"
-        val descriptionText = "Channel for fire and smoke alert notifications"
-        val importance = NotificationManager.IMPORTANCE_HIGH
-        val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-            description = descriptionText
-            enableVibration(true)
-            vibrationPattern = longArrayOf(0, 1000, 500, 1000)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Fire Alert Channel"
+            val descriptionText = "Channel for fire, gas, and temperature alerts"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+                enableVibration(true)
+                vibrationPattern = longArrayOf(0, 1000, 500, 1000)
+            }
+            notificationManager.createNotificationChannel(channel)
         }
-        notificationManager.createNotificationChannel(channel)
     }
 
     fun startListening() {
         CoroutineScope(Dispatchers.IO).launch {
-            while (true) {
+            loadZoneNames()
+            while (isActive) {
                 checkBothLocations()
                 delay(2000)
             }
@@ -70,56 +92,119 @@ class NotificationHelper(
     }
 
     private suspend fun checkBothLocations() {
-        checkLocation("ruang_tamu", "Ruang Tamu")
-        checkLocation("kamar", "Kamar")
+        updateZoneNamesIfNeeded()
+
+        checkLocation("device_1", 1)
+        checkLocation("device_2", 2)
     }
 
-    private suspend fun checkLocation(locationKey: String, locationName: String) {
+    private suspend fun updateZoneNamesIfNeeded() {
+        val now = System.currentTimeMillis()
+        if (now - lastZoneNameUpdate > 5 * 60 * 1000) {
+            loadZoneNames()
+            lastZoneNameUpdate = now
+            Log.d("Notification", "Zone names updated at ${SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(
+                Date()
+            )}")
+        }
+    }
+
+    private suspend fun loadZoneNames() {
+        when (val result = repository.getDeviceLocations()) {
+            is Result.Success -> {
+                result.data.forEach { location ->
+                    zoneNames[location.deviceNumber] = location.zoneName
+                    Log.d("Notification", "Loaded zone name: ${location.zoneName} for device ${location.deviceNumber}")
+                }
+            }
+            is Result.Error -> {
+                Log.e("Notification", "Error loading zone names: ${result.error}")
+            }
+            else -> {}
+        }
+    }
+
+    private suspend fun checkLocation(deviceKey: String, deviceNumber: Int) {
         try {
-            val result = when (locationKey) {
-                "ruang_tamu" -> repository.getLatestDataZona1()
-                "kamar" -> repository.getLatestDataZona2()
+            val locationName = zoneNames[deviceNumber] ?: when(deviceNumber) {
+                1 -> "Ruang Tamu"
+                2 -> "Kamar"
+                else -> "Unknown Location"
+            }
+
+            val result = when (deviceNumber) {
+                1 -> repository.getLatestDataZona1()
+                2 -> repository.getLatestDataZona2()
                 else -> return
             }
 
-            if (result is Result.Success) {
-                handleSensorData(result.data, locationKey, locationName)
-            } else if (result is Result.Error) {
-                Log.e("Notification", "Error fetching $locationName data: ${result.error}")
+            when (result) {
+                is Result.Success -> handleSensorData(result.data, deviceKey, locationName)
+                is Result.Error -> Log.e("Notification", "Error fetching device $deviceNumber data: ${result.error}")
+                else -> {}
             }
         } catch (e: Exception) {
-            Log.e("Notification", "Error checking $locationName: ${e.message}")
+            Log.e("Notification", "Error checking device $deviceNumber: ${e.message}")
         }
     }
 
-    private fun handleSensorData(data: SensorDataResponse, locationKey: String, locationName: String) {
+    private fun handleSensorData(data: SensorDataResponse, deviceKey: String, locationName: String) {
         val currentFlame = data.flameStatus
         val currentMQ = data.mqStatus
-        val lastStatus = lastStatusMap[locationKey] ?: Pair(null, null)
+        val currentTemp = data.temperature
+        val lastStatus = lastStatusMap[deviceKey] ?: Triple(null, null, null)
 
-        if (currentFlame == "terdeteksi" && lastStatus.first != "terdeteksi") {
+        if (currentFlame == "Api Terdeteksi" && lastStatus.first != "Api Terdeteksi") {
             sendAlertNotification(
-                title = "Api Terdeteksi!",
-                message = "Api terdeteksi di $locationName! Segera evakuasi!",
-                notificationId = locationKey.hashCode() + 1,
-                isFire = true
+                title = "Api Terdeteksi di $locationName!",
+                message = "Terdeteksi api di $locationName! Segera cek ke lokasi!",
+                notificationId = deviceKey.hashCode() + 1
             )
         }
 
-        if (currentMQ == "terdeteksi" && lastStatus.second != "terdeteksi") {
+        if (currentMQ == "Asap Terdeteksi" && lastStatus.second != "Asap Terdeteksi") {
             sendAlertNotification(
-                title = "Asap Terdeteksi!",
-                message = "Asap terdeteksi di $locationName! Periksa sumbernya!",
-                notificationId = locationKey.hashCode() + 2,
-                isFire = false
+                title = "Terdeteksi Asap di $locationName!",
+                message = "Segera cek kondisi di $locationName!",
+                notificationId = deviceKey.hashCode() + 2
             )
         }
 
-        lastStatusMap[locationKey] = Pair(currentFlame, currentMQ)
+        if (currentTemp > 40 && (lastStatus.third == null || lastStatus.third!! <= 40)) {
+            sendAlertNotification(
+                title = "Suhu Tinggi di $locationName!",
+                message = "Suhu mencapai ${currentTemp}°C di $locationName!",
+                notificationId = deviceKey.hashCode() + 3
+            )
+        }
+
+        lastStatusMap[deviceKey] = Triple(currentFlame, currentMQ, currentTemp)
     }
 
-    private fun sendAlertNotification(title: String, message: String, notificationId: Int, isFire: Boolean) {
-        val soundUri = Uri.parse("android.resource://${context.packageName}/raw/alarm")
+    private fun sendAlertNotification(
+        title: String,
+        message: String,
+        notificationId: Int
+    ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.w("Notification", "Notification permission not granted")
+            return
+        }
+
+        val contentIntent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val contentPendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            contentIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
 
         val stopIntent = Intent(context, NotificationReceiver::class.java).apply {
             action = "STOP_NOTIFICATION"
@@ -133,34 +218,25 @@ class NotificationHelper(
         )
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(if (isFire) R.drawable.icon_fire else R.drawable.icon_gas)
+            .setSmallIcon(android.R.drawable.stat_sys_warning)
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setAutoCancel(true)
-            .setSound(soundUri)
+            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
             .setVibrate(longArrayOf(0, 1000, 500, 1000))
+            .setOnlyAlertOnce(false)
+            .setContentIntent(contentPendingIntent)
             .addAction(
                 R.drawable.ic_close,
-                context.getString(R.string.supporting_text),
+                "Tutup",
                 stopPendingIntent
             )
             .build()
 
         notificationManager.notify(notificationId, notification)
-    }
-
-    fun checkNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
-                != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                (context as? MainActivity)?.requestPermissions(
-                    arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
-                    1001
-                )
-            }
-        }
+        Log.d("Notification", "Notification sent: $title - $message")
     }
 
     inner class NotificationReceiver : BroadcastReceiver() {
@@ -169,6 +245,7 @@ class NotificationHelper(
                 val notificationId = intent.getIntExtra("NOTIFICATION_ID", -1)
                 if (notificationId != -1) {
                     notificationManager.cancel(notificationId)
+                    Log.d("Notification", "Notification $notificationId dismissed")
                 }
             }
         }

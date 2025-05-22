@@ -89,4 +89,6 @@
     <string name="taman_hutan_raya">Taman Hutan Raya</string>
     <string name="edit">Edit</string>
     <string name="ikon_lokasi">ikon lokasi</string>
+    <string name="nama">Nama Pengguna</string>
+    <string name="nama_profile">Nama</string>
 </resources>

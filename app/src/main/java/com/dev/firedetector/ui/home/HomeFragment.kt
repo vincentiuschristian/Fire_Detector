@@ -23,7 +23,9 @@ import com.dev.firedetector.databinding.FragmentHomeBinding
 import com.dev.firedetector.ui.profile.ProfileViewModel
 import com.dev.firedetector.ui.sensor_location.SensorLocationActivity
 import com.dev.firedetector.ui.sensor_location.SensorLocationViewModel
+import com.dev.firedetector.util.DangerConditions
 import com.dev.firedetector.util.Result
+import com.dev.firedetector.util.setDangerState
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -98,21 +100,20 @@ class HomeFragment : Fragment() {
         viewModel.latestSensorDataZona1.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Success -> {
-                    binding.txtHumidityRuangtamu.text =
-                        getString(R.string.text_kelembapan, result.data.humidity.toString())
-                    binding.txtTemperatureRuangtamu.text =
-                        getString(R.string.text_suhu, result.data.temperature.toString())
+                    val data = result.data
+                    binding.apply {
+                        txtHumidityRuangtamu.text = getString(R.string.text_kelembapan, data.humidity.toString())
+                        txtTemperatureRuangtamu.text = getString(R.string.text_suhu, data.temperature.toString())
+                        txtFireDetectionRuangtamu.text = data.flameStatus
+                        txtAirQualityRuangtamu.text = data.mqStatus
 
-                    val flameStatus = result.data.flameStatus
-                    binding.txtFireDetectionRuangtamu.text = flameStatus
-
-                    binding.txtAirQualityRuangtamu.text = result.data.mqStatus
-                    binding.cvIsFire.setCardBackgroundColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            if (flameStatus == "Api Terdeteksi") R.color.red else R.color.cardview_color
+                        val conditions = DangerConditions.fromSensorData(
+                            data.temperature,
+                            data.mqStatus,
+                            data.flameStatus
                         )
-                    )
+                        updateCardColors(conditions, isZona1 = true)
+                    }
                 }
 
                 is Result.Loading -> showLoading(true)
@@ -128,26 +129,40 @@ class HomeFragment : Fragment() {
         viewModel.latestSensorDataZona2.observe(viewLifecycleOwner) { resultSensor ->
             when (resultSensor) {
                 is Result.Success -> {
-                    binding.txtHumidityKamar.text =
-                        getString(R.string.text_kelembapan, resultSensor.data.humidity.toString())
-                    binding.txtTemperatureKamar.text =
-                        getString(R.string.text_suhu, resultSensor.data.temperature.toString())
+                    val data = resultSensor.data
+                    binding.apply {
+                        txtHumidityKamar.text = getString(R.string.text_kelembapan, data.humidity.toString())
+                        txtTemperatureKamar.text = getString(R.string.text_suhu, data.temperature.toString())
+                        txtFireDetectionKamar.text = data.flameStatus
+                        txtAirQualityKamar.text = data.mqStatus
 
-                    val flameStatus = resultSensor.data.flameStatus
-                    binding.txtFireDetectionKamar.text = flameStatus
-                    binding.txtAirQualityKamar.text = resultSensor.data.mqStatus
-                    binding.cvIsFire2.setCardBackgroundColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            if (flameStatus == "Api Terdeteksi") R.color.red else R.color.cardview_color
+                        val conditions = DangerConditions.fromSensorData(
+                            data.temperature,
+                            data.mqStatus,
+                            data.flameStatus
                         )
-                    )
+                        updateCardColors(conditions, isZona1 = false)
+                    }
                 }
 
                 is Result.Loading -> showLoading(true)
                 is Result.Error -> showToast("Error Sensor Kamar : ${resultSensor.error}")
 
             }
+        }
+    }
+
+    private fun updateCardColors(conditions: DangerConditions, isZona1: Boolean) {
+        val context = requireContext()
+
+        if (isZona1) {
+            binding.cvTemperature.setDangerState(conditions.isHighTemperature, context)
+            binding.cvAirQuality.setDangerState(conditions.isGasDetected, context)
+            binding.cvIsFire.setDangerState(conditions.isFireDetected, context)
+        } else {
+            binding.cvTemperature2.setDangerState(conditions.isHighTemperature, context)
+            binding.cvAirQuality2.setDangerState(conditions.isGasDetected, context)
+            binding.cvIsFire2.setDangerState(conditions.isFireDetected, context)
         }
     }
 
@@ -159,7 +174,6 @@ class HomeFragment : Fragment() {
                     showLoading(false)
                 }
                 is Result.Error -> {
-                    Log.e("HomeFragment", "Error fetching device locations: ${result.error}")
                     binding.tvZona1.text = getString(R.string.zona_1)
                     binding.tvZona2.text = getString(R.string.zona_2)
                     showLoading(false)

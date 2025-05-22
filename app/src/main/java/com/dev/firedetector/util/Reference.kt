@@ -4,7 +4,9 @@ import android.content.Context
 import android.text.TextUtils
 import android.util.Patterns
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import com.dev.firedetector.R
+import com.google.android.material.card.MaterialCardView
 
 object Reference {
 
@@ -27,8 +29,8 @@ object Reference {
     }
 }
 
-sealed class MqttConnectionState {
-    data object Connected : MqttConnectionState()
-    data object Disconnected : MqttConnectionState()
-    data class Error(val exception: Throwable?) : MqttConnectionState()
+fun MaterialCardView.setDangerState(isDanger: Boolean, context: Context) {
+    val colorRes = if (isDanger) R.color.red else R.color.cardview_color
+    setCardBackgroundColor(ContextCompat.getColor(context, colorRes))
 }
+
