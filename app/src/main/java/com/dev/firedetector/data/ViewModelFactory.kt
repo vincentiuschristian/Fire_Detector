@@ -1,5 +1,6 @@
 package com.dev.firedetector.data
 
+import android.app.Application
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -13,21 +14,37 @@ import com.dev.firedetector.ui.register.AuthViewModel
 import com.dev.firedetector.ui.sensor_location.SensorLocationViewModel
 
 @Suppress("UNCHECKED_CAST")
-class ViewModelFactory(private val repository: FireRepository) :
-    ViewModelProvider.NewInstanceFactory() {
+class ViewModelFactory(
+    private val repository: FireRepository,
+    private val application: Application? = null
+) : ViewModelProvider.NewInstanceFactory() {
 
-    override fun <T : ViewModel> create(modelClass: Class<T>): T = when (modelClass) {
-
-        HomeViewModel::class.java -> HomeViewModel(repository)
-        AuthViewModel::class.java -> AuthViewModel(repository)
-        ProfileViewModel::class.java -> ProfileViewModel(repository)
-        HistoryViewModel::class.java -> HistoryViewModel(repository)
-        SensorLocationViewModel::class.java -> SensorLocationViewModel(repository)
-        MainViewModel::class.java -> MainViewModel(repository)
-
-        else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
-
-    } as T
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return when {
+            modelClass.isAssignableFrom(AuthViewModel::class.java) -> {
+                requireNotNull(application) {
+                    "Application context is required for AuthViewModel"
+                }
+                AuthViewModel(repository, application) as T
+            }
+            modelClass.isAssignableFrom(HomeViewModel::class.java) -> {
+                HomeViewModel(repository) as T
+            }
+            modelClass.isAssignableFrom(ProfileViewModel::class.java) -> {
+                ProfileViewModel(repository) as T
+            }
+            modelClass.isAssignableFrom(HistoryViewModel::class.java) -> {
+                HistoryViewModel(repository) as T
+            }
+            modelClass.isAssignableFrom(SensorLocationViewModel::class.java) -> {
+                SensorLocationViewModel(repository) as T
+            }
+            modelClass.isAssignableFrom(MainViewModel::class.java) -> {
+                MainViewModel(repository) as T
+            }
+            else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
+        }
+    }
 
     companion object {
         @Volatile
@@ -35,12 +52,14 @@ class ViewModelFactory(private val repository: FireRepository) :
 
         @JvmStatic
         fun getInstance(context: Context): ViewModelFactory {
-            if (INSTANCE == null) {
-                synchronized(ViewModelFactory::class.java) {
-                    INSTANCE = ViewModelFactory(Injection.provideRepository(context))
-                }
+            return INSTANCE ?: synchronized(this) {
+                val application = context.applicationContext as Application
+                INSTANCE = ViewModelFactory(
+                    repository = Injection.provideRepository(context),
+                    application = application
+                )
+                INSTANCE!!
             }
-            return INSTANCE as ViewModelFactory
         }
     }
 }

@@ -3,7 +3,6 @@ package com.dev.firedetector.ui.login
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -13,7 +12,6 @@ import com.dev.firedetector.data.ViewModelFactory
 import com.dev.firedetector.databinding.ActivityLoginBinding
 import com.dev.firedetector.ui.register.AuthViewModel
 import com.dev.firedetector.ui.register.RegisterActivity
-import com.dev.firedetector.util.Reference
 import com.dev.firedetector.util.Result
 import com.google.android.material.snackbar.Snackbar
 
@@ -28,6 +26,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             overrideActivityTransition(
                 OVERRIDE_TRANSITION_OPEN,
@@ -37,7 +36,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         setupListeners()
-        observeLoginResult()
+        observeViewModel()
     }
 
     private fun setupListeners() {
@@ -45,22 +44,6 @@ class LoginActivity : AppCompatActivity() {
             btnLogin.setOnClickListener {
                 val email = etEmail.text.toString().trim()
                 val password = etPassword.text.toString().trim()
-
-                if (email.isEmpty() || password.isEmpty()) {
-                    showSnackbar("Email dan password tidak boleh kosong")
-                    return@setOnClickListener
-                }
-
-                if (!Reference.isEmailValid(applicationContext, email)) {
-                    showSnackbar("Format email tidak valid")
-                    return@setOnClickListener
-                }
-
-                if (!Reference.isPasswordValid(applicationContext, password)) {
-                    showSnackbar("Kata sandi harus minimal 6 karakter")
-                    return@setOnClickListener
-                }
-
                 authViewModel.loginUser(email, password)
             }
 
@@ -70,24 +53,22 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun observeLoginResult() {
+    private fun observeViewModel() {
         authViewModel.loginResult.observe(this) { result ->
             when (result) {
-                is Result.Loading -> {
-                    showLoading(true)
-                }
-
+                is Result.Loading -> showLoading(true)
                 is Result.Success -> {
                     showLoading(false)
-                    showSnackbar("Login berhasil")
                     navigateToMain()
                 }
+                is Result.Error -> showLoading(false)
+            }
+        }
 
-                is Result.Error -> {
-                    showLoading(false)
-                    Log.e("LoginActivity", "Login gagal: ${result.error}")
-                    showSnackbar("Login gagal: ${result.error}")
-                }
+        authViewModel.snackbarMessage.observe(this) { message ->
+            message?.let {
+                showSnackbar(it)
+                authViewModel.resetSnackbar()
             }
         }
     }
@@ -98,10 +79,18 @@ class LoginActivity : AppCompatActivity() {
         })
     }
 
-    private fun showSnackbar(message: String) =
-        Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+    private fun showSnackbar(message: String) {
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
+            .setAction("Tutup") {  }
+            .show()
+    }
 
     private fun showLoading(isLoading: Boolean) {
-        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        binding.apply {
+            progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            btnLogin.isEnabled = !isLoading
+            etEmail.isEnabled = !isLoading
+            etPassword.isEnabled = !isLoading
+        }
     }
 }

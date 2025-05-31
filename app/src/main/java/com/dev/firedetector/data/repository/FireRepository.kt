@@ -17,6 +17,7 @@ import com.dev.firedetector.util.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import retrofit2.HttpException
 
 class FireRepository(
@@ -35,19 +36,34 @@ class FireRepository(
                 if (!token.isNullOrEmpty()) {
                     userPreference.saveSession(UserModel(token, true))
                     Log.d("LoginUser", "Token berhasil disimpan di DataStore: $token")
+                    Result.Success(loginResponse)
                 } else {
                     Log.e("LoginUser", "Token kosong dalam response!")
+                    Result.Error("Gagal login: Token tidak valid dari server")
                 }
-
-                Result.Success(loginResponse)
             } else {
-                val errorBody = response.errorBody()?.string() ?: "Login gagal!"
-                Log.e("LoginUser", "Error ${response.code()}: $errorBody")
-                Result.Error("Error ${response.code()}: $errorBody")
+                when (response.code()) {
+                    400 -> Result.Error("Email dan password harus diisi")
+                    401 -> Result.Error("Email atau password salah")
+                    500 -> Result.Error("Server error: Gagal memproses login")
+                    else -> {
+                        val errorBody = try {
+                            response.errorBody()?.string()?.let {
+                                val json = JSONObject(it)
+                                json.getString("error") ?: "Login gagal"
+                            } ?: "Login gagal"
+                        } catch (e: Exception) {
+                            "Login gagal"
+                        }
+                        Result.Error("Error ${response.code()}: $errorBody")
+                    }
+                }
             }
+        } catch (e: IOException) {
+            Result.Error("Koneksi jaringan bermasalah. Periksa koneksi internet Anda")
         } catch (e: Exception) {
             Log.e("LoginUser", "Exception: ${e.message}")
-            Result.Error("Terjadi kesalahan: ${e.message}")
+            Result.Error("Terjadi kesalahan: ${e.message ?: "Unknown error"}")
         }
     }
 
@@ -64,28 +80,34 @@ class FireRepository(
                 val response = apiService.registerUser(request)
 
                 if (response.isSuccessful) {
-                    Log.d("UserRepository", "Registration successful")
                     response.body()?.let {
-                        Log.d("UserRepository", "Response body: $it")
                         Result.Success(it)
-                    } ?: run {
-                        Log.e("UserRepository", "Registration successful but response body is empty")
-                        Result.Error("Registration successful but response body is empty")
-                    }
+                    } ?: Result.Error("Registrasi berhasil tetapi tidak ada data yang diterima")
                 } else {
-                    val errorBody = response.errorBody()?.string() ?: "Registration failed!"
-                    Log.e("UserRepository", "Registration failed with code: ${response.code()}, error: $errorBody")
-                    Result.Error("Error ${response.code()}: $errorBody")
+                    when (response.code()) {
+                        400 -> {
+                            val errorBody = response.errorBody()?.string() ?: "Data registrasi tidak lengkap"
+                            try {
+                                val json = JSONObject(errorBody)
+                                Result.Error(json.getString("error") ?: "Data registrasi tidak valid")
+                            } catch (e: Exception) {
+                                Result.Error(errorBody)
+                            }
+                        }
+                        409 -> Result.Error("Email atau username sudah terdaftar")
+                        500 -> Result.Error("Server error: Gagal memproses registrasi")
+                        else -> {
+                            val errorBody = response.errorBody()?.string() ?: "Registrasi gagal"
+                            Result.Error("Error ${response.code()}: $errorBody")
+                        }
+                    }
                 }
             } catch (e: HttpException) {
-                Log.e("UserRepository", "HTTP Error: ${e.message()}")
-                Result.Error("HTTP Error: ${e.message()}")
+                Result.Error("Error server: ${e.message()}")
             } catch (e: IOException) {
-                Log.e("UserRepository", "Network Error: ${e.message}")
-                Result.Error("Network Error: ${e.message}")
+                Result.Error("Tidak dapat terhubung ke server. Periksa koneksi internet Anda")
             } catch (e: Exception) {
-                Log.e("UserRepository", "An unexpected error occurred: ${e.message}")
-                Result.Error("An unexpected error occurred: ${e.message}")
+                Result.Error("Terjadi kesalahan tak terduga: ${e.message ?: "Unknown error"}")
             }
         }
     }
@@ -112,11 +134,26 @@ class FireRepository(
             if (response.isSuccessful && response.body() != null) {
                 Result.Success(response.body()!!)
             } else {
-                val errorBody = response.errorBody()?.string() ?: "Gagal mendapatkan data sensor terbaru"
-                Result.Error("Error ${response.code()}: $errorBody")
+                when (response.code()) {
+                    401 -> Result.Error("Sesi telah berakhir, silakan login kembali")
+                    404 -> Result.Error("Data sensor terbaru tidak ditemukan")
+                    503 -> Result.Error("Server sibuk, coba lagi nanti")
+                    else -> {
+                        val errorBody = try {
+                            response.errorBody()?.string()?.let {
+                                JSONObject(it).getString("message") ?: "Gagal memuat data sensor"
+                            } ?: "Gagal memuat data sensor"
+                        } catch (e: Exception) {
+                            "Gagal memuat data sensor"
+                        }
+                        Result.Error("Error ${response.code()}: $errorBody")
+                    }
+                }
             }
+        } catch (e: IOException) {
+            Result.Error("Tidak dapat terhubung ke server. Periksa koneksi internet Anda")
         } catch (e: Exception) {
-            Result.Error("Terjadi kesalahan pada jaringan: ${e.message}")
+            Result.Error("Terjadi kesalahan: ${e.message ?: "Gagal memuat data sensor"}")
         }
     }
 
@@ -127,11 +164,25 @@ class FireRepository(
             if (response.isSuccessful && response.body() != null) {
                 Result.Success(response.body()!!)
             } else {
-                val errorBody = response.errorBody()?.string() ?: "Gagal mendapatkan data history sensor"
-                Result.Error("Error ${response.code()}: $errorBody")
+                when (response.code()) {
+                    401 -> Result.Error("Sesi telah berakhir, silakan login kembali")
+                    404 -> Result.Error("Riwayat sensor tidak ditemukan")
+                    else -> {
+                        val errorBody = try {
+                            response.errorBody()?.string()?.let {
+                                JSONObject(it).getString("message") ?: "Gagal memuat riwayat sensor"
+                            } ?: "Gagal memuat riwayat sensor"
+                        } catch (e: Exception) {
+                            "Gagal memuat riwayat sensor"
+                        }
+                        Result.Error("Error ${response.code()}: $errorBody")
+                    }
+                }
             }
+        } catch (e: IOException) {
+            Result.Error("Tidak dapat terhubung ke server. Periksa koneksi internet Anda")
         } catch (e: Exception) {
-            Result.Error("Terjadi kesalahan pada jaringan: ${e.message}")
+            Result.Error("Terjadi kesalahan: ${e.message ?: "Gagal memuat riwayat sensor"}")
         }
     }
 
@@ -142,11 +193,26 @@ class FireRepository(
             if (response.isSuccessful && response.body() != null) {
                 Result.Success(response.body()!!)
             } else {
-                val errorBody = response.errorBody()?.string() ?: "Gagal mendapatkan data sensor terbaru"
-                Result.Error("Error ${response.code()}: $errorBody")
+                when (response.code()) {
+                    401 -> Result.Error("Sesi telah berakhir, silakan login kembali")
+                    404 -> Result.Error("Data sensor terbaru tidak ditemukan")
+                    503 -> Result.Error("Server sibuk, coba lagi nanti")
+                    else -> {
+                        val errorBody = try {
+                            response.errorBody()?.string()?.let {
+                                JSONObject(it).getString("message") ?: "Gagal memuat data sensor"
+                            } ?: "Gagal memuat data sensor"
+                        } catch (e: Exception) {
+                            "Gagal memuat data sensor"
+                        }
+                        Result.Error("Error ${response.code()}: $errorBody")
+                    }
+                }
             }
+        } catch (e: IOException) {
+            Result.Error("Tidak dapat terhubung ke server. Periksa koneksi internet Anda")
         } catch (e: Exception) {
-            Result.Error("Terjadi kesalahan pada jaringan: ${e.message}")
+            Result.Error("Terjadi kesalahan: ${e.message ?: "Gagal memuat data sensor"}")
         }
     }
 
@@ -157,11 +223,25 @@ class FireRepository(
             if (response.isSuccessful && response.body() != null) {
                 Result.Success(response.body()!!)
             } else {
-                val errorBody = response.errorBody()?.string() ?: "Gagal mendapatkan data history sensor"
-                Result.Error("Error ${response.code()}: $errorBody")
+                when (response.code()) {
+                    401 -> Result.Error("Sesi telah berakhir, silakan login kembali")
+                    404 -> Result.Error("Riwayat sensor tidak ditemukan")
+                    else -> {
+                        val errorBody = try {
+                            response.errorBody()?.string()?.let {
+                                JSONObject(it).getString("message") ?: "Gagal memuat riwayat sensor"
+                            } ?: "Gagal memuat riwayat sensor"
+                        } catch (e: Exception) {
+                            "Gagal memuat riwayat sensor"
+                        }
+                        Result.Error("Error ${response.code()}: $errorBody")
+                    }
+                }
             }
+        } catch (e: IOException) {
+            Result.Error("Tidak dapat terhubung ke server. Periksa koneksi internet Anda")
         } catch (e: Exception) {
-            Result.Error("Terjadi kesalahan pada jaringan: ${e.message}")
+            Result.Error("Terjadi kesalahan: ${e.message ?: "Gagal memuat riwayat sensor"}")
         }
     }
 

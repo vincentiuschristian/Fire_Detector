@@ -17,7 +17,7 @@
     <string name="icon_humidity">icon humidity</string>
     <string name="kelembapan">Kelembapan</string>
     <string name="icon_air_quality">icon air quality</string>
-    <string name="gas_terdeteksi">Gas Terdeteksi</string>
+    <string name="asap_terdeteksi">Asap Terdeteksi</string>
     <string name="icon_fire">icon fire</string>
     <string name="api_terdeteksi">Api Terdeteksi</string>
     <string name="api_tidak_terdeteksi">Api Terdeteksi</string>
@@ -54,7 +54,7 @@
     <string name="welcome">Halo,</string>
     <string name="address_message">Terjadi kebakaran rumah.\n Lokasi: Jl. Anggrek No.1, Gedong Meneng, Kec. Rajabasa, Kota Bandar Lampung \nhttps://maps.app.goo.gl/Se4uSo54XEiWSmie8</string>
     <string name="password_warning">Password must be at least 6 characters!</string>
-    <string name="email_warning">Masukkan Email yang benar!</string>
+    <string name="email_warning">Format email tidak valid!</string>
     <string name="empty_field">Kolom tidak boleh kosong!</string>
     <string name="notelp_polisi">tel:089560056060212</string>
     <string name="notelp_ambulans">tel:089560056060212</string>
@@ -91,4 +91,10 @@
     <string name="ikon_lokasi">ikon lokasi</string>
     <string name="nama">Nama Pengguna</string>
     <string name="nama_profile">Nama</string>
+    <string name="email_already_registered">Email sudah terdaftar</string>
+    <string name="username_taken">Username sudah digunakan</string>
+    <string name="network_error">Gagal terhubung ke server</string>
+    <string name="invalid_credentials">Email atau password salah</string>
+    <string name="timeout_error">Waktu koneksi habis</string>
+    <string name="general_error">Terjadi kesalahan: %1$s</string>
 </resources>

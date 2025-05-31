@@ -62,7 +62,7 @@
             android:textStyle="bold"
             android:paddingStart="8dp"
             android:paddingEnd="1dp"
-            android:text="@string/gas_terdeteksi"
+            android:text="@string/asap_terdeteksi"
             app:layout_constraintStart_toEndOf="@id/iv_kualitas_udara"
             app:layout_constraintTop_toTopOf="@id/iv_kualitas_udara" />
 
