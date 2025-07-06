@@ -35,6 +35,7 @@ class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+    private var deviceLocations: List<DeviceLocationResponse> = emptyList()
     private val viewModel: HomeViewModel by viewModels {
         ViewModelFactory.getInstance(requireContext())
     }
@@ -65,6 +66,12 @@ class HomeFragment : Fragment() {
             btnCallAmbulance.setOnClickListener {
                 val ambulance = getString(R.string.notelp_ambulans)
                 showConfirmationDialog(ambulance)
+            }
+            btnMapsZona1.setOnClickListener {
+                openMapsForZone(1)
+            }
+            btnMapsZona2.setOnClickListener {
+                openMapsForZone(2)
             }
             tvEdit.setOnClickListener {
                 sensorLocationResultLauncher.launch(
@@ -124,7 +131,7 @@ class HomeFragment : Fragment() {
             }
         }
     }
-    
+
     private fun fetchSensorZona2() {
         viewModel.latestSensorDataZona2.observe(viewLifecycleOwner) { resultSensor ->
             when (resultSensor) {
@@ -170,6 +177,7 @@ class HomeFragment : Fragment() {
         locationSensorViewModel.locationsState.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Success -> {
+                    deviceLocations = result.data
                     updateZoneNames(result.data)
                     showLoading(false)
                 }
@@ -197,13 +205,50 @@ class HomeFragment : Fragment() {
         binding.tvZona2.text = zona2
     }
 
+    private fun openMapsForZone(deviceNumber: Int) {
+        val location = deviceLocations.find { it.deviceNumber == deviceNumber }
+
+        if (location?.deviceLocation.isNullOrBlank()) {
+            Toast.makeText(requireContext(), "Lokasi belum tersedia", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        try {
+            val coordinates = location!!.deviceLocation!!.split(",")
+            if (coordinates.size != 2) {
+                throw IllegalArgumentException("Format lokasi tidak valid")
+            }
+
+            val latitude = coordinates[0].trim().toDouble()
+            val longitude = coordinates[1].trim().toDouble()
+
+            val gmmIntentUri = Uri.parse("geo:$latitude,$longitude?q=$latitude,$longitude(${location.zoneName})")
+            val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+            mapIntent.setPackage("com.google.android.apps.maps")
+
+            if (mapIntent.resolveActivity(requireActivity().packageManager) != null) {
+                startActivity(mapIntent)
+            } else {
+                val webIntent = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://www.google.com/maps/search/?api=1&query=$latitude,$longitude")
+                )
+                startActivity(webIntent)
+            }
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "Gagal membuka peta: ${e.message}", Toast.LENGTH_SHORT).show()
+            Log.e("Maps", "Error opening maps", e)
+        }
+    }
+
+
 
     private fun autoRefresh() {
         viewLifecycleOwner.lifecycleScope.launch {
             while (isActive) {
                 viewModel.getLatestDataZona1()
                 viewModel.getLatestDataZona2()
-                delay(2000)
+                delay(1000)
             }
         }
     }

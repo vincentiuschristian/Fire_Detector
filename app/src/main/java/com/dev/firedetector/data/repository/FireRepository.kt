@@ -60,7 +60,7 @@ class FireRepository(
                 }
             }
         } catch (e: IOException) {
-            Result.Error("Koneksi jaringan bermasalah. Periksa koneksi internet Anda")
+            Result.Error("Koneksi atau Server bermasalah!")
         } catch (e: Exception) {
             Log.e("LoginUser", "Exception: ${e.message}")
             Result.Error("Terjadi kesalahan: ${e.message ?: "Unknown error"}")

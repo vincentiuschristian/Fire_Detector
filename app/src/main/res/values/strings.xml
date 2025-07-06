@@ -97,4 +97,5 @@
     <string name="invalid_credentials">Email atau password salah</string>
     <string name="timeout_error">Waktu koneksi habis</string>
     <string name="general_error">Terjadi kesalahan: %1$s</string>
+    <string name="lihat_di_maps">Lihat di Maps</string>
 </resources>

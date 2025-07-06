@@ -12,8 +12,8 @@ data class DangerConditions(
             flameStatus: String
         ): DangerConditions {
             return DangerConditions(
-                isHighTemperature = temperature > 40,
-                isGasDetected = mqStatus == "Asap Terdeteksi",
+                isHighTemperature = temperature > 45,
+                isGasDetected = mqStatus == "Terdeteksi",
                 isFireDetected = flameStatus == "Api Terdeteksi"
             )
         }

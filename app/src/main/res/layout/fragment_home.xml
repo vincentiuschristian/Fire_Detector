@@ -57,10 +57,10 @@
             <ImageView
                 android:id="@+id/ivLocation"
                 android:layout_width="18dp"
-                android:contentDescription="@string/ikon_lokasi"
                 android:layout_height="18dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="4dp"
+                android:contentDescription="@string/ikon_lokasi"
                 android:src="@drawable/map_pin"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvName" />
@@ -72,18 +72,18 @@
                 android:layout_marginStart="4dp"
                 android:fontFamily="@font/plus_jakarta_sans_bold"
                 android:textColor="@color/color_text"
-                tools:text="@string/taman_hutan_raya"
                 app:layout_constraintBottom_toBottomOf="@+id/ivLocation"
                 app:layout_constraintStart_toEndOf="@id/ivLocation"
-                app:layout_constraintTop_toTopOf="@+id/ivLocation" />
+                app:layout_constraintTop_toTopOf="@+id/ivLocation"
+                tools:text="@string/taman_hutan_raya" />
 
             <TextView
                 android:id="@+id/tvEdit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:fontFamily="@font/plus_jakarta_sans_medium"
                 android:text="@string/edit"
-                android:layout_marginStart="8dp"
                 android:textColor="@color/color_text_link"
                 app:layout_constraintBottom_toBottomOf="@+id/tvLocation"
                 app:layout_constraintStart_toEndOf="@+id/tvLocation"
@@ -108,17 +108,17 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="6dp"
+                android:elevation="2dp"
+                android:translationZ="1dp"
                 app:cardBackgroundColor="@color/cardview_color"
                 app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
                 app:contentPadding="8dp"
                 app:layout_constraintEnd_toStartOf="@id/cv_humidity"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvZona1"
-                app:cardElevation="4dp"
-                app:strokeWidth="0dp"
                 app:strokeColor="@android:color/transparent"
-                android:translationZ="1dp"
-                android:elevation="2dp">
+                app:strokeWidth="0dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -168,17 +168,17 @@
                 android:layout_marginStart="6dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="16dp"
+                android:elevation="2dp"
+                android:translationZ="1dp"
                 app:cardBackgroundColor="@color/cardview_color"
                 app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
                 app:contentPadding="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/cv_temperature"
                 app:layout_constraintTop_toBottomOf="@id/tvZona1"
-                app:cardElevation="4dp"
-                app:strokeWidth="0dp"
                 app:strokeColor="@android:color/transparent"
-                android:translationZ="1dp"
-                android:elevation="2dp">
+                app:strokeWidth="0dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -228,17 +228,17 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="6dp"
+                android:elevation="2dp"
+                android:translationZ="1dp"
                 app:cardBackgroundColor="@color/cardview_color"
                 app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
                 app:contentPadding="8dp"
                 app:layout_constraintEnd_toStartOf="@id/cv_is_fire"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cv_temperature"
-                app:cardElevation="4dp"
-                app:strokeWidth="0dp"
                 app:strokeColor="@android:color/transparent"
-                android:translationZ="1dp"
-                android:elevation="2dp">
+                app:strokeWidth="0dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -287,17 +287,17 @@
                 android:layout_marginStart="6dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
+                android:elevation="2dp"
+                android:translationZ="1dp"
                 app:cardBackgroundColor="@color/cardview_color"
                 app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
                 app:contentPadding="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/cv_air_quality"
                 app:layout_constraintTop_toBottomOf="@id/cv_humidity"
-                app:cardElevation="4dp"
-                app:strokeWidth="0dp"
                 app:strokeColor="@android:color/transparent"
-                android:translationZ="1dp"
-                android:elevation="2dp">
+                app:strokeWidth="0dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="166dp"
@@ -338,6 +338,29 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_maps_zona1"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="@font/plus_jakarta_sans_medium"
+                android:text="@string/lihat_di_maps"
+                android:textColor="@color/primary"
+                android:textSize="14sp"
+                app:backgroundTint="@android:color/transparent"
+                app:cornerRadius="12dp"
+                app:icon="@drawable/map_pin"
+                app:iconGravity="textStart"
+                app:iconTint="@color/primary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cv_is_fire"
+                app:layout_constraintWidth_default="percent"
+                app:strokeColor="@color/primary"
+                app:strokeWidth="1dp" />
+
             <TextView
                 android:id="@+id/tvZona2"
                 android:layout_width="wrap_content"
@@ -348,7 +371,7 @@
                 android:text="@string/zona_2"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cv_air_quality" />
+                app:layout_constraintTop_toBottomOf="@+id/btn_maps_zona1" />
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cv_temperature_2"
@@ -357,17 +380,17 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="6dp"
+                android:elevation="2dp"
+                android:translationZ="1dp"
                 app:cardBackgroundColor="@color/cardview_color"
                 app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
                 app:contentPadding="8dp"
                 app:layout_constraintEnd_toStartOf="@id/cv_humidity_2"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvZona2"
-                app:cardElevation="4dp"
-                app:strokeWidth="0dp"
                 app:strokeColor="@android:color/transparent"
-                android:translationZ="1dp"
-                android:elevation="2dp">
+                app:strokeWidth="0dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -417,17 +440,17 @@
                 android:layout_marginStart="6dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
+                android:elevation="2dp"
+                android:translationZ="1dp"
                 app:cardBackgroundColor="@color/cardview_color"
                 app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
                 app:contentPadding="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/cv_temperature_2"
                 app:layout_constraintTop_toBottomOf="@id/tvZona2"
-                app:cardElevation="4dp"
-                app:strokeWidth="0dp"
                 app:strokeColor="@android:color/transparent"
-                android:translationZ="1dp"
-                android:elevation="2dp">
+                app:strokeWidth="0dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -477,17 +500,17 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="6dp"
+                android:elevation="2dp"
+                android:translationZ="1dp"
                 app:cardBackgroundColor="@color/cardview_color"
                 app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
                 app:contentPadding="8dp"
                 app:layout_constraintEnd_toStartOf="@id/cv_is_fire2"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cv_temperature_2"
-                app:cardElevation="4dp"
-                app:strokeWidth="0dp"
                 app:strokeColor="@android:color/transparent"
-                android:translationZ="1dp"
-                android:elevation="2dp">
+                app:strokeWidth="0dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -536,17 +559,17 @@
                 android:layout_marginStart="6dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
+                android:elevation="2dp"
+                android:translationZ="1dp"
                 app:cardBackgroundColor="@color/cardview_color"
                 app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
                 app:contentPadding="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cv_humidity_2"
                 app:layout_constraintStart_toEndOf="@id/cv_air_quality_2"
-                app:cardElevation="4dp"
-                app:strokeWidth="0dp"
+                app:layout_constraintTop_toBottomOf="@id/cv_humidity_2"
                 app:strokeColor="@android:color/transparent"
-                android:translationZ="1dp"
-                android:elevation="2dp">
+                app:strokeWidth="0dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="166dp"
@@ -587,6 +610,29 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_maps_zona2"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="@font/plus_jakarta_sans_medium"
+                android:text="@string/lihat_di_maps"
+                android:textColor="@color/primary"
+                android:textSize="14sp"
+                app:backgroundTint="@android:color/transparent"
+                app:cornerRadius="12dp"
+                app:icon="@drawable/map_pin"
+                app:iconGravity="textStart"
+                app:iconTint="@color/primary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cv_is_fire2"
+                app:layout_constraintWidth_default="percent"
+                app:strokeColor="@color/primary"
+                app:strokeWidth="1dp" />
+
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guidelineVertical"
                 android:layout_width="wrap_content"
@@ -608,7 +654,7 @@
                 android:text="@string/layanan_darurat"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cv_air_quality_2" />
+                app:layout_constraintTop_toBottomOf="@id/btn_maps_zona2" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_polisi"
@@ -616,8 +662,6 @@
                 android:layout_height="52dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.46"
                 android:layout_marginEnd="4dp"
                 android:fontFamily="@font/plus_jakarta_sans_medium"
                 android:text="@string/polisi"
@@ -628,7 +672,9 @@
                 app:layout_constraintEnd_toStartOf="@+id/guidelineVertical"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_layanan_darurat" />
+                app:layout_constraintTop_toBottomOf="@id/text_layanan_darurat"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.46" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_call_ambulance"
@@ -637,8 +683,6 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.46"
                 android:fontFamily="@font/plus_jakarta_sans_medium"
                 android:text="@string/ambulance"
                 android:textColor="@color/onprimary"
@@ -647,7 +691,9 @@
                 app:cornerRadius="12dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/guidelineVertical"
-                app:layout_constraintTop_toBottomOf="@id/text_layanan_darurat" />
+                app:layout_constraintTop_toBottomOf="@id/text_layanan_darurat"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.46" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

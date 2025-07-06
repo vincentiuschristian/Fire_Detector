@@ -1,7 +1,6 @@
 package com.dev.firedetector.util
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -10,7 +9,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.media.RingtoneManager
+import android.media.AudioAttributes
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -24,9 +24,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class NotificationHelper(
     private val context: Context,
@@ -41,12 +38,20 @@ class NotificationHelper(
         "device_2" to Triple(null, null, null)
     )
 
+    private val lastNotificationTimeMap = mutableMapOf<Int, Long>()
+    private val notificationCooldown = 5000L
+
     private val zoneNames = mutableMapOf(
         1 to "Ruang Tamu",
         2 to "Kamar"
     )
 
     private var lastZoneNameUpdate = 0L
+
+    init {
+        createNotificationChannel()
+        registerNotificationReceiver()
+    }
 
     fun registerNotificationReceiver() {
         val filter = IntentFilter("STOP_NOTIFICATION")
@@ -66,19 +71,24 @@ class NotificationHelper(
         }
     }
 
-    @SuppressLint("ObsoleteSdkInt")
     fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Fire Alert Channel"
-            val descriptionText = "Channel for fire, gas, and temperature alerts"
-            val importance = NotificationManager.IMPORTANCE_HIGH
-            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-                description = descriptionText
-                enableVibration(true)
-                vibrationPattern = longArrayOf(0, 1000, 500, 1000)
-            }
-            notificationManager.createNotificationChannel(channel)
+        notificationManager.deleteNotificationChannel(CHANNEL_ID)
+
+        val name = "Fire Alert Channel"
+        val descriptionText = "Channel for fire, gas, and temperature alerts"
+        val importance = NotificationManager.IMPORTANCE_HIGH
+        val soundUri = Uri.parse("android.resource://${context.packageName}/${R.raw.alarm_siren_sound}")
+
+        val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+            description = descriptionText
+            enableVibration(true)
+            vibrationPattern = longArrayOf(0, 1000, 500, 1000)
+            setSound(soundUri, AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_ALARM)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build())
         }
+        notificationManager.createNotificationChannel(channel)
     }
 
     fun startListening() {
@@ -103,9 +113,6 @@ class NotificationHelper(
         if (now - lastZoneNameUpdate > 5 * 60 * 1000) {
             loadZoneNames()
             lastZoneNameUpdate = now
-            Log.d("Notification", "Zone names updated at ${SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(
-                Date()
-            )}")
         }
     }
 
@@ -114,7 +121,6 @@ class NotificationHelper(
             is Result.Success -> {
                 result.data.forEach { location ->
                     zoneNames[location.deviceNumber] = location.zoneName
-                    Log.d("Notification", "Loaded zone name: ${location.zoneName} for device ${location.deviceNumber}")
                 }
             }
             is Result.Error -> {
@@ -152,9 +158,8 @@ class NotificationHelper(
         val currentFlame = data.flameStatus
         val currentMQ = data.mqStatus
         val currentTemp = data.temperature
-        val lastStatus = lastStatusMap[deviceKey] ?: Triple(null, null, null)
 
-        if (currentFlame == "Api Terdeteksi" && lastStatus.first != "Api Terdeteksi") {
+        if (currentFlame == "Api Terdeteksi") {
             sendAlertNotification(
                 title = "Api Terdeteksi di $locationName!",
                 message = "Terdeteksi api di $locationName! Segera cek ke lokasi!",
@@ -162,7 +167,7 @@ class NotificationHelper(
             )
         }
 
-        if (currentMQ == "Asap Terdeteksi" && lastStatus.second != "Asap Terdeteksi") {
+        if (currentMQ == "Terdeteksi") {
             sendAlertNotification(
                 title = "Terdeteksi Asap di $locationName!",
                 message = "Segera cek kondisi di $locationName!",
@@ -170,7 +175,7 @@ class NotificationHelper(
             )
         }
 
-        if (currentTemp > 40 && (lastStatus.third == null || lastStatus.third!! <= 40)) {
+        if (currentTemp > 40) {
             sendAlertNotification(
                 title = "Suhu Tinggi di $locationName!",
                 message = "Suhu mencapai ${currentTemp}°C di $locationName!",
@@ -186,6 +191,13 @@ class NotificationHelper(
         message: String,
         notificationId: Int
     ) {
+        val currentTime = System.currentTimeMillis()
+        val lastTime = lastNotificationTimeMap[notificationId] ?: 0
+        if (currentTime - lastTime < notificationCooldown) {
+            return
+        }
+        lastNotificationTimeMap[notificationId] = currentTime
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(
                 context,
@@ -217,6 +229,8 @@ class NotificationHelper(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        val soundUri = Uri.parse("android.resource://${context.packageName}/${R.raw.alarm_siren_sound}")
+
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.stat_sys_warning)
             .setContentTitle(title)
@@ -224,7 +238,7 @@ class NotificationHelper(
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setAutoCancel(true)
-            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
+            .setSound(soundUri)
             .setVibrate(longArrayOf(0, 1000, 500, 1000))
             .setOnlyAlertOnce(false)
             .setContentIntent(contentPendingIntent)
@@ -236,7 +250,6 @@ class NotificationHelper(
             .build()
 
         notificationManager.notify(notificationId, notification)
-        Log.d("Notification", "Notification sent: $title - $message")
     }
 
     inner class NotificationReceiver : BroadcastReceiver() {
@@ -245,7 +258,6 @@ class NotificationHelper(
                 val notificationId = intent.getIntExtra("NOTIFICATION_ID", -1)
                 if (notificationId != -1) {
                     notificationManager.cancel(notificationId)
-                    Log.d("Notification", "Notification $notificationId dismissed")
                 }
             }
         }
