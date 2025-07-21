@@ -1,25 +1,10 @@
 package com.dev.firedetector.ui.history
 
-import android.content.res.ColorStateList
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.dev.firedetector.R
-import com.dev.firedetector.data.ViewModelFactory
-import com.dev.firedetector.databinding.FragmentHistoryBinding
-import com.dev.firedetector.ui.adapter.HistoryAdapter
-import com.dev.firedetector.util.Result
-import com.google.android.material.tabs.TabLayout
 
 class HistoryFragment : Fragment() {
 
-    private var _binding: FragmentHistoryBinding? = null
+/*    private var _binding: FragmentHistoryBinding? = null
     private val binding get() = _binding!!
     private val viewModel: HistoryViewModel by viewModels {
         ViewModelFactory.getInstance(requireContext())
@@ -118,5 +103,5 @@ class HistoryFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
+    }*/
 }

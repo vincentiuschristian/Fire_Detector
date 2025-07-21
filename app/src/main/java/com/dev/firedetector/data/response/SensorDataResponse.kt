@@ -1,24 +1,32 @@
 package com.dev.firedetector.data.response
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class SensorDataResponse(
-    @SerializedName("id")
-    val id: Int,
-
     @SerializedName("temperature")
-    val temperature: Float,
+    val temperature: Double,
 
     @SerializedName("humidity")
-    val humidity: Float,
+    val humidity: Double,
 
-    @SerializedName("mq_status")
+    @SerializedName("MQ")
     val mqStatus: String,
 
-    @SerializedName("flame_status")
+    @SerializedName("Flame")
     val flameStatus: String,
 
-    @SerializedName("timestamp")
-    val timestamp: String?
+    @SerializedName("latitude")
+    val latitude: Double,
 
-)
+    @SerializedName("longitude")
+    val longitude: Double,
+
+    @SerializedName("mac_address")
+    val macAddress: String,
+
+    @SerializedName("timestamp")
+    val timestamp: String
+) : Parcelable

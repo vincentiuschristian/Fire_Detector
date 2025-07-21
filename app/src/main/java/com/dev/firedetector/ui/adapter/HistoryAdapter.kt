@@ -21,7 +21,7 @@ class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() 
                 tvKelembapan.text = "${data.humidity}%"
                 tvKualitasUdara.text = data.mqStatus
                 tvApiTerdeteksi.text = data.flameStatus
-                data.timestamp?.let { timestamp ->
+                data.timestamp.let { timestamp ->
                     tvTimeStamp.text = formatTimestamp(timestamp)
                 }
             }

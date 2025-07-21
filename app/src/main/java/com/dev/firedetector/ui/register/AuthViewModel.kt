@@ -117,4 +117,7 @@ class AuthViewModel(
     fun resetSnackbar() {
         _snackbarMessage.value = null
     }
+
+    val fireRepository: FireRepository
+        get() = repository
 }

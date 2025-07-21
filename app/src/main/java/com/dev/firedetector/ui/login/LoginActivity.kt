@@ -6,14 +6,17 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.dev.firedetector.MainActivity
 import com.dev.firedetector.R
 import com.dev.firedetector.data.ViewModelFactory
 import com.dev.firedetector.databinding.ActivityLoginBinding
 import com.dev.firedetector.ui.register.AuthViewModel
 import com.dev.firedetector.ui.register.RegisterActivity
+import com.dev.firedetector.ui.sensor_location.SensorLocationActivity
 import com.dev.firedetector.util.Result
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
     private val binding: ActivityLoginBinding by lazy {
@@ -74,10 +77,38 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun navigateToMain() {
-        startActivity(Intent(this, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-        })
+        lifecycleScope.launch {
+            when (val result = authViewModel.fireRepository.getDeviceLocations()) {
+                is Result.Success -> {
+                    val lokasiKosong = result.data.all { it.deviceLocation.isNullOrBlank() }
+
+                    val intent = if (lokasiKosong) {
+                        Intent(this@LoginActivity, SensorLocationActivity::class.java)
+                    } else {
+                        Intent(this@LoginActivity, MainActivity::class.java)
+                    }
+
+                    startActivity(intent.apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    })
+                }
+
+                is Result.Error -> {
+                    showSnackbar("Gagal memeriksa lokasi sensor: ${result.error}")
+                    startActivity(Intent(applicationContext, MainActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                    })
+                }
+
+                else -> {
+                    startActivity(Intent(this@LoginActivity, MainActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    })
+                }
+            }
+        }
     }
+
 
     private fun showSnackbar(message: String) {
         Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)

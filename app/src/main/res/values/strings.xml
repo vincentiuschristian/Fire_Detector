@@ -77,7 +77,7 @@
     <string name="previous">Previous</string>
     <string name="id">IDXXX</string>
     <string name="layanan_darurat">Layanan Darurat</string>
-    <string name="zona_1">Zona 1</string>
+    <string name="mac_address">Mac Address: %1$s</string>
     <string name="zona_2">Zona 2</string>
     <string name="tablayout">TabLayout</string>
     <string name="stop_alarm">Matikan Alarm</string>
@@ -98,4 +98,13 @@
     <string name="timeout_error">Waktu koneksi habis</string>
     <string name="general_error">Terjadi kesalahan: %1$s</string>
     <string name="lihat_di_maps">Lihat di Maps</string>
+    <string name="kosong">Loading</string>
+    <string name="title_activity_sensor_map">SensorMapActivity</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="suhu">Suhu :</string>
+    <string name="kelembapan_dialog">Kelembapan :</string>
+    <string name="asap">Asap :</string>
+    <string name="last_updated">Last Updated: %1$s</string>
+    <string name="buka_di_google_maps">Buka di Google Maps</string>
 </resources>

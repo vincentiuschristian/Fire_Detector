@@ -1,6 +1,6 @@
 package com.dev.firedetector.util
 
-sealed class Result<out R> private constructor() {
+sealed class Result<out R> {
     data class Success<out T>(val data: T) : Result<T>()
     data class Error(val error: String) : Result<Nothing>()
     data object Loading : Result<Nothing>()

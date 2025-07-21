@@ -2,8 +2,11 @@ package com.dev.firedetector.data.repository
 
 import android.util.Log
 import androidx.datastore.core.IOException
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.dev.firedetector.data.api.ApiService
 import com.dev.firedetector.data.model.UserModel
+import com.dev.firedetector.data.mqtt.MqttClientHelper
 import com.dev.firedetector.data.pref.UserPreference
 import com.dev.firedetector.data.response.DeviceLocationResponse
 import com.dev.firedetector.data.response.DeviceLocationUpdate
@@ -127,124 +130,27 @@ class FireRepository(
         }
     }
 
-    suspend fun getLatestDataZona1(): Result<SensorDataResponse> {
-        return try {
-            val response = apiService.getLatestDataZona1()
+    fun getMqttLiveData(): LiveData<Result<List<SensorDataResponse>>> {
+        val resultLiveData = MutableLiveData<Result<List<SensorDataResponse>>>()
+        val cachedList = mutableListOf<SensorDataResponse>()
+        resultLiveData.value = Result.Loading
 
-            if (response.isSuccessful && response.body() != null) {
-                Result.Success(response.body()!!)
-            } else {
-                when (response.code()) {
-                    401 -> Result.Error("Sesi telah berakhir, silakan login kembali")
-                    404 -> Result.Error("Data sensor terbaru tidak ditemukan")
-                    503 -> Result.Error("Server sibuk, coba lagi nanti")
-                    else -> {
-                        val errorBody = try {
-                            response.errorBody()?.string()?.let {
-                                JSONObject(it).getString("message") ?: "Gagal memuat data sensor"
-                            } ?: "Gagal memuat data sensor"
-                        } catch (e: Exception) {
-                            "Gagal memuat data sensor"
-                        }
-                        Result.Error("Error ${response.code()}: $errorBody")
-                    }
+        MqttClientHelper.sensorLiveData.observeForever { item ->
+            if (item != null) {
+                val existingIndex = cachedList.indexOfFirst { it.macAddress == item.macAddress }
+                if (existingIndex != -1) {
+                    cachedList[existingIndex] = item
+                } else {
+                    cachedList.add(item)
                 }
-            }
-        } catch (e: IOException) {
-            Result.Error("Tidak dapat terhubung ke server. Periksa koneksi internet Anda")
-        } catch (e: Exception) {
-            Result.Error("Terjadi kesalahan: ${e.message ?: "Gagal memuat data sensor"}")
-        }
-    }
-
-    suspend fun getSensorHistoryZona1(): Result<List<SensorDataResponse>> {
-        return try {
-            val response = apiService.getSensorHistoryZona1()
-
-            if (response.isSuccessful && response.body() != null) {
-                Result.Success(response.body()!!)
+                resultLiveData.postValue(Result.Success(cachedList.toList()))
             } else {
-                when (response.code()) {
-                    401 -> Result.Error("Sesi telah berakhir, silakan login kembali")
-                    404 -> Result.Error("Riwayat sensor tidak ditemukan")
-                    else -> {
-                        val errorBody = try {
-                            response.errorBody()?.string()?.let {
-                                JSONObject(it).getString("message") ?: "Gagal memuat riwayat sensor"
-                            } ?: "Gagal memuat riwayat sensor"
-                        } catch (e: Exception) {
-                            "Gagal memuat riwayat sensor"
-                        }
-                        Result.Error("Error ${response.code()}: $errorBody")
-                    }
-                }
+                resultLiveData.postValue(Result.Error("Data kosong dari MQTT"))
             }
-        } catch (e: IOException) {
-            Result.Error("Tidak dapat terhubung ke server. Periksa koneksi internet Anda")
-        } catch (e: Exception) {
-            Result.Error("Terjadi kesalahan: ${e.message ?: "Gagal memuat riwayat sensor"}")
         }
+
+        return resultLiveData
     }
-
-    suspend fun getLatestDataZona2(): Result<SensorDataResponse> {
-        return try {
-            val response = apiService.getLatestDataZona2()
-
-            if (response.isSuccessful && response.body() != null) {
-                Result.Success(response.body()!!)
-            } else {
-                when (response.code()) {
-                    401 -> Result.Error("Sesi telah berakhir, silakan login kembali")
-                    404 -> Result.Error("Data sensor terbaru tidak ditemukan")
-                    503 -> Result.Error("Server sibuk, coba lagi nanti")
-                    else -> {
-                        val errorBody = try {
-                            response.errorBody()?.string()?.let {
-                                JSONObject(it).getString("message") ?: "Gagal memuat data sensor"
-                            } ?: "Gagal memuat data sensor"
-                        } catch (e: Exception) {
-                            "Gagal memuat data sensor"
-                        }
-                        Result.Error("Error ${response.code()}: $errorBody")
-                    }
-                }
-            }
-        } catch (e: IOException) {
-            Result.Error("Tidak dapat terhubung ke server. Periksa koneksi internet Anda")
-        } catch (e: Exception) {
-            Result.Error("Terjadi kesalahan: ${e.message ?: "Gagal memuat data sensor"}")
-        }
-    }
-
-    suspend fun getSensorHistoryZona2(): Result<List<SensorDataResponse>> {
-        return try {
-            val response = apiService.getSensorHistoryZona2()
-
-            if (response.isSuccessful && response.body() != null) {
-                Result.Success(response.body()!!)
-            } else {
-                when (response.code()) {
-                    401 -> Result.Error("Sesi telah berakhir, silakan login kembali")
-                    404 -> Result.Error("Riwayat sensor tidak ditemukan")
-                    else -> {
-                        val errorBody = try {
-                            response.errorBody()?.string()?.let {
-                                JSONObject(it).getString("message") ?: "Gagal memuat riwayat sensor"
-                            } ?: "Gagal memuat riwayat sensor"
-                        } catch (e: Exception) {
-                            "Gagal memuat riwayat sensor"
-                        }
-                        Result.Error("Error ${response.code()}: $errorBody")
-                    }
-                }
-            }
-        } catch (e: IOException) {
-            Result.Error("Tidak dapat terhubung ke server. Periksa koneksi internet Anda")
-        } catch (e: Exception) {
-            Result.Error("Terjadi kesalahan: ${e.message ?: "Gagal memuat riwayat sensor"}")
-        }
-    }
-
     suspend fun getDeviceLocations(): Result<List<DeviceLocationResponse>> {
         return try {
             val response = apiService.getDeviceLocations()

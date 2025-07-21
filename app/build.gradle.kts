@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.googleGmsGoogleServices)
     id("kotlin-parcelize")
+    alias(libs.plugins.googleAndroidLibrariesMapsplatformSecretsGradlePlugin)
 }
 
 android {
@@ -64,8 +65,8 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation (libs.androidx.swiperefreshlayout)
 
-    implementation (libs.org.eclipse.paho.client.mqttv3)
-    implementation (libs.org.eclipse.paho.android.service)
+    implementation(libs.org.eclipse.paho.mqttv5.client)
+    implementation(libs.org.eclipse.paho.android.service)
     implementation(libs.gson)
 
     implementation(libs.retrofit)

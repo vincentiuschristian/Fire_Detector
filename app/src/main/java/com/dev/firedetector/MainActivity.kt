@@ -1,5 +1,6 @@
 package com.dev.firedetector
 
+import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -7,9 +8,11 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.dev.firedetector.data.ViewModelFactory
+import com.dev.firedetector.data.mqtt.MqttClientHelper
 import com.dev.firedetector.databinding.ActivityMainBinding
 import com.dev.firedetector.ui.login.LoginActivity
 import com.dev.firedetector.util.NotificationHelper
@@ -17,8 +20,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 class MainActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityMainBinding
     private lateinit var notificationHelper: NotificationHelper
+
     private val viewModel: MainViewModel by viewModels {
         ViewModelFactory.getInstance(applicationContext)
     }
@@ -27,6 +32,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             overrideActivityTransition(
                 OVERRIDE_TRANSITION_OPEN,
@@ -35,19 +41,30 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        val fireRepository = viewModel.getRepository()
-        notificationHelper = NotificationHelper(this, fireRepository)
+        notificationHelper = NotificationHelper(this)
         notificationHelper.createNotificationChannel()
         notificationHelper.registerNotificationReceiver()
-        notificationHelper.startListening()
+        notificationHelper.clearAllNotifications()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1001)
+            }
+        }
+
+        MqttClientHelper.sensorLiveData.observe(this) { sensorData ->
+            notificationHelper.handleIncomingSensorData(sensorData)
+        }
 
         val navView: BottomNavigationView = binding.navView
-
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         navView.setupWithNavController(navController)
 
         getSession()
-
     }
 
     private fun getSession() {
@@ -79,4 +96,3 @@ class MainActivity : AppCompatActivity() {
         notificationHelper.unregisterNotificationReceiver()
     }
 }
-
