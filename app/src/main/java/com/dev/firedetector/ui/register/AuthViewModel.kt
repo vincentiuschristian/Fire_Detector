@@ -27,7 +27,7 @@ class AuthViewModel(
     private val _snackbarMessage = MutableLiveData<String?>()
     val snackbarMessage: LiveData<String?> get() = _snackbarMessage
 
-    fun registerUser(deviceId: String, username: String, email: String, password: String, location: String) {
+    fun registerUser(username: String, email: String, password: String, location: String) {
         viewModelScope.launch {
             _registerResult.value = Result.Loading
 
@@ -48,7 +48,7 @@ class AuthViewModel(
                 }
                 else -> {
                     try {
-                        val result = repository.registerUser(deviceId, username, email, password, location)
+                        val result = repository.registerUser(username, email, password, location)
                         _registerResult.value = result
 
                         if (result is Result.Error) {

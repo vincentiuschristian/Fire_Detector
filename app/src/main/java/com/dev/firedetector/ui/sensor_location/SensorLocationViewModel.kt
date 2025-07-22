@@ -11,7 +11,7 @@ import com.dev.firedetector.util.Result
 import kotlinx.coroutines.launch
 
 class SensorLocationViewModel (private val repository: FireRepository) : ViewModel() {
-    private val _locationsState = MutableLiveData<Result<List<DeviceLocationResponse>>>()
+/*    private val _locationsState = MutableLiveData<Result<List<DeviceLocationResponse>>>()
     val locationsState: LiveData<Result<List<DeviceLocationResponse>>> = _locationsState
 
     private val _updateState = MutableLiveData<Result<String>>()
@@ -39,5 +39,5 @@ class SensorLocationViewModel (private val repository: FireRepository) : ViewMod
                 _updateState.value = Result.Error(e.message ?: "Unknown error")
             }
         }
-    }
+    }*/
 }

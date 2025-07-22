@@ -1,53 +1,33 @@
 package com.dev.firedetector.data.api
 
-import com.dev.firedetector.data.response.DeviceLocationResponse
-import com.dev.firedetector.data.response.DeviceLocationUpdate
-import com.dev.firedetector.data.response.GenericResponse
 import com.dev.firedetector.data.response.LoginRequest
 import com.dev.firedetector.data.response.LoginResponse
 import com.dev.firedetector.data.response.LogoutResponse
 import com.dev.firedetector.data.response.RegisterRequest
 import com.dev.firedetector.data.response.RegisterResponse
-import com.dev.firedetector.data.response.SensorDataResponse
 import com.dev.firedetector.data.response.UserResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface ApiService {
-    @POST("/api/register")
+    @POST("/users/register")
     suspend fun registerUser(
         @Body user: RegisterRequest
     ): Response<RegisterResponse>
 
-    @POST("/api/login")
+    @POST("/users/login")
     suspend fun loginUser(
         @Body login: LoginRequest
     ): Response<LoginResponse>
 
-    @GET("/api/ruangtamu/latest")
-    suspend fun getLatestDataZona1(): Response<SensorDataResponse>
-
-    @GET("/api/ruangtamu/history")
-    suspend fun getSensorHistoryZona1(): Response<List<SensorDataResponse>>
-
-    @GET("/api/kamar/latest")
-    suspend fun getLatestDataZona2(): Response<SensorDataResponse>
-
-    @GET("/api/kamar/history")
-    suspend fun getSensorHistoryZona2(): Response<List<SensorDataResponse>>
-
-    @GET("/api/devices/locations")
-    suspend fun getDeviceLocations(): Response<List<DeviceLocationResponse>>
-
-    @POST("/api/devices/locations/update")
-    suspend fun updateDeviceLocations(
-        @Body locations: List<DeviceLocationUpdate>
-    ): Response<GenericResponse>
-
     @GET("/api/user/profile")
-    suspend fun getUser(): Response<UserResponse>
+    suspend fun getUser(
+        @Header("Authorization") token: String
+    ): Response<UserResponse>
+
 
     @POST("/api/logout")
     suspend fun logout(): Response<LogoutResponse>

@@ -1,7 +1,6 @@
 package com.dev.firedetector.ui.sensor_location
 
 import android.Manifest
-import android.app.Activity
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
@@ -17,7 +16,6 @@ import com.dev.firedetector.data.ViewModelFactory
 import com.dev.firedetector.data.response.DeviceLocationResponse
 import com.dev.firedetector.data.response.DeviceLocationUpdate
 import com.dev.firedetector.databinding.ActivitySensorLocationBinding
-import com.dev.firedetector.util.Result
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -50,15 +48,15 @@ class SensorLocationActivity : AppCompatActivity() {
 
         setupToolbar()
         setupLocationButtons()
-        setupObservers()
+       // setupObservers()
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.getDeviceLocations()
+        //viewModel.getDeviceLocations()
     }
 
-    private fun setupObservers() {
+/*    private fun setupObservers() {
         viewModel.locationsState.observe(this) { result ->
             when (result) {
                 is Result.Loading -> showLoading(true)
@@ -90,7 +88,7 @@ class SensorLocationActivity : AppCompatActivity() {
                 }
             }
         }
-    }
+    }*/
 
 
     private fun setupToolbar() {
@@ -205,7 +203,7 @@ class SensorLocationActivity : AppCompatActivity() {
             )
         )
 
-        viewModel.updateDeviceLocations(locations)
+     //   viewModel.updateDeviceLocations(locations)
     }
 
     private fun showSnackbar(message: String) =

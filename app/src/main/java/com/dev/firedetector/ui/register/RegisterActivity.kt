@@ -67,17 +67,12 @@ class RegisterActivity : AppCompatActivity() {
             }
 
             btnRegister.setOnClickListener {
-                val idPerangkat = etIdPerangkat.text.toString().trim()
                 val username = etUsername.text.toString().trim()
                 val email = etEmail.text.toString().trim()
                 val password = etPassword.text.toString().trim()
                 val location = etLokasi.text.toString().trim()
 
                 when {
-                    idPerangkat.isEmpty() -> {
-                        etIdPerangkat.requestFocus()
-                        showSnackbar("ID Perangkat harus diisi")
-                    }
                     username.isEmpty() -> {
                         etUsername.requestFocus()
                         showSnackbar("Username harus diisi")
@@ -93,7 +88,7 @@ class RegisterActivity : AppCompatActivity() {
                         showSnackbar("Lokasi harus diisi")
                     }
                     else -> {
-                        authViewModel.registerUser(idPerangkat, username, email, password, location)
+                        authViewModel.registerUser(username, email, password, location)
                     }
                 }
             }
@@ -117,7 +112,6 @@ class RegisterActivity : AppCompatActivity() {
         binding.apply {
             progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
             btnRegister.isEnabled = !isLoading
-            etIdPerangkat.isEnabled = !isLoading
             etUsername.isEnabled = !isLoading
             etEmail.isEnabled = !isLoading
             etPassword.isEnabled = !isLoading

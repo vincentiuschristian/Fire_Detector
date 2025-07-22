@@ -24,7 +24,6 @@ class HomeViewModel(private val repository: FireRepository) : ViewModel() {
         } else {
             currentList.add(data)
         }
-
         _sensorDataList.postValue(currentList)
     }
 

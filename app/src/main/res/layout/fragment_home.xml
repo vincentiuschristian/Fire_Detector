@@ -77,18 +77,6 @@
                 app:layout_constraintTop_toTopOf="@+id/ivLocation"
                 tools:text="@string/taman_hutan_raya" />
 
-            <TextView
-                android:id="@+id/tvEdit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:fontFamily="@font/plus_jakarta_sans_medium"
-                android:text="@string/edit"
-                android:textColor="@color/color_text_link"
-                app:layout_constraintBottom_toBottomOf="@+id/tvLocation"
-                app:layout_constraintStart_toEndOf="@+id/tvLocation"
-                app:layout_constraintTop_toTopOf="@+id/tvLocation" />
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvList"
                 android:layout_width="match_parent"
@@ -97,7 +85,7 @@
                 tools:listitem="@layout/list_item"
                 android:nestedScrollingEnabled="false"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvEdit"
+                app:layout_constraintTop_toBottomOf="@id/tvLocation"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
             <androidx.constraintlayout.widget.Guideline

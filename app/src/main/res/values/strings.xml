@@ -100,8 +100,6 @@
     <string name="lihat_di_maps">Lihat di Maps</string>
     <string name="kosong">Loading</string>
     <string name="title_activity_sensor_map">SensorMapActivity</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="suhu">Suhu :</string>
     <string name="kelembapan_dialog">Kelembapan :</string>
     <string name="asap">Asap :</string>

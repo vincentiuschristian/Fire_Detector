@@ -74,10 +74,9 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        profileViewModel.fetchData()
+      //  profileViewModel.fetchData()
         fetchSensor()
     }
-
 
     private fun fetchSensor() {
         viewModel.getSensorListLiveData().observe(viewLifecycleOwner) { result ->
@@ -86,7 +85,6 @@ class HomeFragment : Fragment() {
                     showLoading(false)
                     adapter.submitList(result.data)
                 }
-
                 is Result.Loading -> showLoading(true)
                 is Result.Error -> {
                     showLoading(false)
@@ -97,6 +95,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun fetchUserData() {
+/*
         profileViewModel.userData.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Success -> {
@@ -111,6 +110,7 @@ class HomeFragment : Fragment() {
                 is Result.Error -> showToast(result.error)
             }
         }
+*/
 
     }
 

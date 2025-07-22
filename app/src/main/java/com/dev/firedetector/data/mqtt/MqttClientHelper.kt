@@ -14,11 +14,10 @@ import org.eclipse.paho.mqttv5.common.MqttException
 import org.eclipse.paho.mqttv5.common.MqttMessage
 import org.eclipse.paho.mqttv5.common.packet.MqttProperties
 
-object MqttClientHelper {
-    private const val serverUri = "ssl://d7d8ee83.ala.asia-southeast1.emqxsl.com:8883"
+class MqttClientHelper {
+    private val serverUri = "ssl://d7d8ee83.ala.asia-southeast1.emqxsl.com:8883"
     private val clientId = "android_client_${System.currentTimeMillis()}"
-    private const val TOPIC = "fire_detector/#"
-
+    private val topic = "fire_detector/#"
     private val mqttClient = MqttAsyncClient(serverUri, clientId, null)
 
     private val _sensorLiveData = MutableLiveData<SensorDataResponse>()
@@ -59,7 +58,7 @@ object MqttClientHelper {
             override fun deliveryComplete(token: IMqttToken) {}
             override fun connectComplete(reconnect: Boolean, serverURI: String) {
                 Log.d("MQTT", "Connected to $serverURI")
-                subscribe()
+                mqttClient.subscribe(topic, 1)
             }
 
             override fun authPacketArrived(reasonCode: Int, properties: MqttProperties) {}
@@ -68,8 +67,10 @@ object MqttClientHelper {
         mqttClient.connect(options)
     }
 
-    private fun subscribe() {
-        mqttClient.subscribe(TOPIC, 1)
-        Log.d("MQTT", "Subscribed to $TOPIC")
+    fun disconnect() {
+        if (mqttClient.isConnected) {
+            mqttClient.disconnect()
+        }
     }
 }
+

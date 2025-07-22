@@ -11,19 +11,13 @@ import kotlinx.coroutines.launch
 
 class ProfileViewModel(private val repository: FireRepository) : ViewModel() {
 
-    private val _userData = MutableLiveData<Result<UserResponse>>()
-    val userData: LiveData<Result<UserResponse>> get() = _userData
+    private val _userResult = MutableLiveData<Result<UserResponse>>()
+    val userResult: LiveData<Result<UserResponse>> = _userResult
 
-    private val _loading = MutableLiveData<Boolean>()
-    val loading: LiveData<Boolean> get() = _loading
-
-
-    fun fetchData() {
+    fun loadUserProfile() {
         viewModelScope.launch {
-            _loading.value = true
-            val result = repository.getUser()
-            _userData.postValue(result)
-            _loading.value = false
+            _userResult.value = Result.Loading
+            _userResult.value = repository.getUser()
         }
     }
 

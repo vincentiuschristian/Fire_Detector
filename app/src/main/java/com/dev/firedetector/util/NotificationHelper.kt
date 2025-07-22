@@ -80,7 +80,7 @@ class NotificationHelper(
         val currentMQ = data.mqStatus
         val currentTemp = data.temperature.toFloat()
 
-        val locationDesc = "Mac: ${data.macAddress}\nLokasi: ${data.latitude}, ${data.longitude}"
+        val locationDesc = "Mac: ${data.macAddress}"
 
         val lastStatus = lastStatusMap[sensorId]
 
@@ -100,7 +100,6 @@ class NotificationHelper(
             )
         }
 
-        // 🌡️ Suhu tinggi
         if (currentTemp > 45 && (lastStatus?.third == null || kotlin.math.abs(currentTemp - lastStatus.third!!) > 1f)) {
             sendAlertNotification(
                 title = "Suhu Tinggi Terdeteksi!",

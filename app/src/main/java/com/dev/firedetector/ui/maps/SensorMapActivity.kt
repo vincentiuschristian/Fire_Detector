@@ -2,12 +2,14 @@ package com.dev.firedetector.ui.maps
 
 import android.os.Build
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.dev.firedetector.R
-import com.dev.firedetector.data.mqtt.MqttClientHelper
+import com.dev.firedetector.data.ViewModelFactory
 import com.dev.firedetector.data.response.SensorDataResponse
 import com.dev.firedetector.databinding.ActivitySensorMapBinding
+import com.dev.firedetector.ui.home.HomeViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -22,6 +24,9 @@ class SensorMapActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivitySensorMapBinding
     private var currentMarker: Marker? = null
     private lateinit var selectedSensor: SensorDataResponse
+    private val viewModel: HomeViewModel by viewModels {
+        ViewModelFactory.getInstance(applicationContext)
+    }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,10 +55,10 @@ class SensorMapActivity : AppCompatActivity(), OnMapReadyCallback {
             true
         }
 
-        MqttClientHelper.sensorLiveData.observe(this) { incoming ->
-            if (incoming.macAddress == selectedSensor.macAddress) {
-                selectedSensor = incoming
-                updateMarker(incoming)
+        viewModel.sensorDataList.observe(this) { list ->
+            list.find { it.macAddress == selectedSensor.macAddress }?.let { updatedData ->
+                selectedSensor = updatedData
+                updateMarker(updatedData)
             }
         }
     }

@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.dev.firedetector.data.ViewModelFactory
-import com.dev.firedetector.data.mqtt.MqttClientHelper
 import com.dev.firedetector.databinding.ActivityMainBinding
 import com.dev.firedetector.ui.login.LoginActivity
 import com.dev.firedetector.util.NotificationHelper
@@ -56,9 +55,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        MqttClientHelper.sensorLiveData.observe(this) { sensorData ->
-            notificationHelper.handleIncomingSensorData(sensorData)
-        }
 
         val navView: BottomNavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)

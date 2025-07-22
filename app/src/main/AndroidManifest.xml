@@ -19,6 +19,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
+        android:name=".util.MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true"
@@ -52,6 +53,8 @@
             </intent-filter>
         </service>
 
+
+
         <activity
             android:name=".ui.register.RegisterActivity"
             android:exported="true"
@@ -68,6 +71,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".MqttForegroundService"
+            android:foregroundServiceType="connectedDevice"
+            android:exported="false" />
     </application>
 
 </manifest>

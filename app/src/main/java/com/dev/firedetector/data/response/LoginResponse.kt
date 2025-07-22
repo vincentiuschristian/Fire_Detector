@@ -14,15 +14,12 @@ data class LoginResponse(
     @SerializedName("message")
     val message: String,
 
-    @SerializedName("username")
-    val username: String? = null,
-
-    @SerializedName("device_id")
-    val deviceId: String? = null,
-
     @SerializedName("token")
     val token: String? = null,
 
-    @SerializedName("error")
-    val error: String? = null
+    @SerializedName("role")
+    val role: String? = null,
+
+    @SerializedName("mac_address")
+    val macAddress: List<String>? = null
 )

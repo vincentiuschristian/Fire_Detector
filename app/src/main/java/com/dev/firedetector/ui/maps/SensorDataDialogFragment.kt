@@ -17,8 +17,7 @@ class SensorDataDialogFragment : BottomSheetDialogFragment() {
 
     private var _binding: FragmentSensorDataDialogBinding? = null
     private val binding get() = _binding!!
-    private var macAddress: String? = null
-    private var currentSensor: SensorDataResponse? = null
+    private lateinit var mqttClientHelper: MqttClientHelper
 
     companion object {
         private const val ARG_MAC = "mac_address"
@@ -41,14 +40,19 @@ class SensorDataDialogFragment : BottomSheetDialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        macAddress = arguments?.getString(ARG_MAC)
+        super.onViewCreated(view, savedInstanceState)
 
-        macAddress?.let { mac ->
-            MqttClientHelper.sensorLiveData.observe(viewLifecycleOwner) { sensor ->
-                if (sensor.macAddress == mac) {
-                    currentSensor = sensor
-                    showSensorData(sensor)
-                }
+        val macAddress = arguments?.getString(ARG_MAC)
+        if (macAddress == null) {
+            Toast.makeText(requireContext(), "MAC Address tidak ditemukan", Toast.LENGTH_SHORT).show()
+            dismiss()
+            return
+        }
+        mqttClientHelper = MqttClientHelper()
+
+        mqttClientHelper.sensorLiveData.observe(viewLifecycleOwner) { data ->
+            if (data.macAddress == macAddress) {
+                showSensorData(data)
             }
         }
     }

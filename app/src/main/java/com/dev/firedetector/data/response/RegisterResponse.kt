@@ -3,9 +3,6 @@ package com.dev.firedetector.data.response
 import com.google.gson.annotations.SerializedName
 
 data class RegisterRequest(
-    @SerializedName("device_id")
-    val deviceId: String,
-
     @SerializedName("username")
     val username: String,
 
@@ -16,13 +13,13 @@ data class RegisterRequest(
     val password: String,
 
     @SerializedName("location")
-    val location: String
+    val location: String,
+
+    @SerializedName("role")
+    val role: String
 )
 
 data class RegisterResponse(
     @SerializedName("message")
-    val message: String,
-
-    @SerializedName("error")
-    val error: String? = null
+    val message: String
 )

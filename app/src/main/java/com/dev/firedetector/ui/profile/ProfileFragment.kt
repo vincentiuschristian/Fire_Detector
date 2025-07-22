@@ -38,19 +38,15 @@ class ProfileFragment : Fragment() {
             startActivity(Intent(requireActivity(), RegisterActivity::class.java))
         }
 
-        viewModel.loading.observe(viewLifecycleOwner) {
-            showLoading(it)
-        }
-
-        viewModel.userData.observe(viewLifecycleOwner) { result ->
+        viewModel.userResult.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Success -> {
+                    val userData = result.data.data
                     binding.apply {
-                        tvIdPerangkat.text = result.data.deviceId
-                        tvUserName.text = result.data.username
-                        tvUserEmail.text = result.data.email
-                        tvUserFullName.text = result.data.username
-                        tvUserLocation.text = result.data.location
+                        tvUserName.text = userData.username
+                        tvUserEmail.text = userData.email
+                        tvUserFullName.text = userData.username
+                        tvUserLocation.text = userData.lokasi
                     }
                 }
 
@@ -62,7 +58,7 @@ class ProfileFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.fetchData()
+        viewModel.loadUserProfile()
     }
 
     override fun onDestroyView() {
