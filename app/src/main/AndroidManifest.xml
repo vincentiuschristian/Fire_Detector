@@ -17,6 +17,9 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
 
     <application
         android:name=".util.MyApplication"
@@ -31,6 +34,9 @@
         android:theme="@style/Theme.FireDetector"
         android:usesCleartextTraffic="true"
         tools:targetApi="33">
+        <activity
+            android:name=".ui.history.HistoryActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -40,9 +46,6 @@
             android:name=".ui.maps.SensorMapActivity"
             android:exported="false"
             android:label="@string/title_activity_sensor_map" />
-        <activity
-            android:name=".ui.sensor_location.SensorLocationActivity"
-            android:exported="false" />
 
         <service
             android:name="org.eclipse.paho.android.service.MqttService"
@@ -52,8 +55,6 @@
                 <action android:name="org.eclipse.paho.android.service.MqttService" />
             </intent-filter>
         </service>
-
-
 
         <activity
             android:name=".ui.register.RegisterActivity"
@@ -73,9 +74,10 @@
         </activity>
 
         <service
-            android:name=".MqttForegroundService"
-            android:foregroundServiceType="connectedDevice"
-            android:exported="false" />
+            android:name=".util.MqttForegroundService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
     </application>
 
 </manifest>

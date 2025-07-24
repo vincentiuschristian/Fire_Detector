@@ -10,11 +10,11 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.media.AudioAttributes
-import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import com.dev.firedetector.MainActivity
 import com.dev.firedetector.R
 import com.dev.firedetector.data.response.SensorDataResponse
@@ -49,7 +49,7 @@ class NotificationHelper(
         try {
             context.unregisterReceiver(notificationReceiver)
         } catch (e: IllegalArgumentException) {
-            Log.e("Notification", "Receiver not registered")
+            Log.e("Notification", "Receiver not registered : ${e.toString()}")
         }
     }
 
@@ -59,7 +59,8 @@ class NotificationHelper(
         val name = "Fire Alert Channel"
         val descriptionText = "Channel for fire, gas, and temperature alerts"
         val importance = NotificationManager.IMPORTANCE_HIGH
-        val soundUri = Uri.parse("android.resource://${context.packageName}/${R.raw.alarm_siren_sound}")
+        val soundUri =
+            "android.resource://${context.packageName}/${R.raw.alarm_siren_sound}".toUri()
 
         val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
             description = descriptionText
@@ -75,6 +76,7 @@ class NotificationHelper(
     }
 
     fun handleIncomingSensorData(data: SensorDataResponse) {
+        Log.d("NotificationHelper", "Handling data: $data")
         val sensorId = data.macAddress
         val currentFlame = data.flameStatus
         val currentMQ = data.mqStatus
@@ -83,8 +85,10 @@ class NotificationHelper(
         val locationDesc = "Mac: ${data.macAddress}"
 
         val lastStatus = lastStatusMap[sensorId]
+        Log.d("NotificationHelper", "LastStatus: $lastStatus, Current: Flame=$currentFlame, MQ=$currentMQ, Temp=$currentTemp")
 
-        if (currentFlame == "Api Terdeteksi" && lastStatus?.first != currentFlame) {
+        if (currentFlame == "Api Terdeteksi") {
+            Log.d("NotificationHelper", "Flame trigger masuk")
             sendAlertNotification(
                 title = "Api Terdeteksi!",
                 message = "$locationDesc\nSegera cek lokasi!",
@@ -92,7 +96,9 @@ class NotificationHelper(
             )
         }
 
+
         if (currentMQ == "Terdeteksi" && lastStatus?.second != currentMQ) {
+            Log.d("NotificationHelper", "Triggering MQ Notification")
             sendAlertNotification(
                 title = "Asap/Gas Terdeteksi!",
                 message = "$locationDesc\nSegera periksa area!",
@@ -101,6 +107,7 @@ class NotificationHelper(
         }
 
         if (currentTemp > 45 && (lastStatus?.third == null || kotlin.math.abs(currentTemp - lastStatus.third!!) > 1f)) {
+            Log.d("NotificationHelper", "Triggering Temp Notification")
             sendAlertNotification(
                 title = "Suhu Tinggi Terdeteksi!",
                 message = "$locationDesc\nSuhu saat ini: ${currentTemp}°C",
@@ -110,6 +117,8 @@ class NotificationHelper(
 
         lastStatusMap[sensorId] = Triple(currentFlame, currentMQ, currentTemp)
     }
+
+
 
     private fun sendAlertNotification(
         title: String,
@@ -131,6 +140,8 @@ class NotificationHelper(
             Log.w("Notification", "Notification permission not granted")
             return
         }
+
+        Log.d("NotificationHelper", "Sending notification: $title, ID: $notificationId")
 
         val contentIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -155,7 +166,8 @@ class NotificationHelper(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val soundUri = Uri.parse("android.resource://${context.packageName}/${R.raw.alarm_siren_sound}")
+        val soundUri =
+            "android.resource://${context.packageName}/${R.raw.alarm_siren_sound}".toUri()
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.stat_sys_warning)

@@ -12,7 +12,7 @@ data class RegisterRequest(
     @SerializedName("password")
     val password: String,
 
-    @SerializedName("location")
+    @SerializedName("lokasi")
     val location: String,
 
     @SerializedName("role")

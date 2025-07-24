@@ -7,7 +7,7 @@ data class DangerConditions(
 ) {
     companion object {
         fun fromSensorData(
-            temperature: Float,
+            temperature: Double,
             mqStatus: String,
             flameStatus: String
         ): DangerConditions {

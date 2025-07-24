@@ -14,6 +14,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.dev.firedetector.data.ViewModelFactory
 import com.dev.firedetector.databinding.ActivityMainBinding
 import com.dev.firedetector.ui.login.LoginActivity
+import com.dev.firedetector.util.MqttForegroundService
 import com.dev.firedetector.util.NotificationHelper
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -52,9 +53,12 @@ class MainActivity : AppCompatActivity() {
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
                 requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1001)
+            } else {
+                startMqttService()
             }
+        } else {
+            startMqttService()
         }
-
 
         val navView: BottomNavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
@@ -81,10 +85,16 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == 1001) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Izin notifikasi diizinkan", Toast.LENGTH_SHORT).show()
+                startMqttService()
             } else {
                 Toast.makeText(this, "Izin notifikasi ditolak", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun startMqttService() {
+        val serviceIntent = Intent(this, MqttForegroundService::class.java)
+        ContextCompat.startForegroundService(this, serviceIntent)
     }
 
     override fun onDestroy() {

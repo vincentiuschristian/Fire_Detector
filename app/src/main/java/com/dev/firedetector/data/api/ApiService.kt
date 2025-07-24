@@ -1,5 +1,6 @@
 package com.dev.firedetector.data.api
 
+import com.dev.firedetector.data.response.HistoryResponse
 import com.dev.firedetector.data.response.LoginRequest
 import com.dev.firedetector.data.response.LoginResponse
 import com.dev.firedetector.data.response.LogoutResponse
@@ -11,6 +12,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface ApiService {
     @POST("/users/register")
@@ -23,12 +25,24 @@ interface ApiService {
         @Body login: LoginRequest
     ): Response<LoginResponse>
 
-    @GET("/api/user/profile")
-    suspend fun getUser(
+    @GET("/user/profile")
+    suspend fun getUserProfile(
         @Header("Authorization") token: String
     ): Response<UserResponse>
 
-
-    @POST("/api/logout")
+    @POST("users/logout")
     suspend fun logout(): Response<LogoutResponse>
+
+    @GET("/sensor/history/{mac}")
+    suspend fun getHistory(
+        @Header("Authorization") token: String,
+        @Path("mac") macAddress: String
+    ): HistoryResponse
+
+    @GET("/sensor/history/{mac}")
+    suspend fun getFilteredHistory(
+        @Header("Authorization") token: String,
+        @Path("mac") macAddress: String,
+        @retrofit2.http.Query("range") range: String
+    ): HistoryResponse
 }

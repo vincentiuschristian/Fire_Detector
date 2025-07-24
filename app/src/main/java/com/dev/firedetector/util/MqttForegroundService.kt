@@ -6,9 +6,13 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.Observer
 import com.dev.firedetector.R
 import com.dev.firedetector.data.mqtt.MqttClientHelper
+import com.dev.firedetector.data.mqtt.MqttManager
+import com.dev.firedetector.data.response.SensorDataResponse
 
 class MqttForegroundService : Service() {
 
@@ -19,9 +23,13 @@ class MqttForegroundService : Service() {
         super.onCreate()
         startForegroundService()
         notificationHelper = NotificationHelper(applicationContext)
-        mqttClientHelper =
-            MqttClientHelper()
+
+        mqttClientHelper = MqttManager.mqttClientHelper
+        mqttClientHelper.sensorLiveData.observeForever(sensorObserver)
+
+        Log.d("MqttService", "Service created & observer registered")
     }
+
 
     private fun startForegroundService() {
         val channelId = "mqtt_foreground_channel"
@@ -42,11 +50,19 @@ class MqttForegroundService : Service() {
         startForeground(101, notification)
     }
 
-    override fun onBind(intent: Intent?): IBinder? = null
+    private val sensorObserver = Observer<SensorDataResponse> { data ->
+        data.let {
+            notificationHelper.handleIncomingSensorData(it)
+        }
+    }
 
     override fun onDestroy() {
         super.onDestroy()
         mqttClientHelper.disconnect()
+        mqttClientHelper.sensorLiveData.removeObserver(sensorObserver)
     }
+
+    override fun onBind(intent: Intent?): IBinder? = null
 }
+
 

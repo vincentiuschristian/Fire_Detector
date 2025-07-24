@@ -1,23 +1,29 @@
 package com.dev.firedetector.ui.maps
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.net.toUri
+import androidx.fragment.app.activityViewModels
 import com.dev.firedetector.R
-import com.dev.firedetector.data.mqtt.MqttClientHelper
+import com.dev.firedetector.data.ViewModelFactory
 import com.dev.firedetector.data.response.SensorDataResponse
 import com.dev.firedetector.databinding.FragmentSensorDataDialogBinding
+import com.dev.firedetector.ui.home.HomeViewModel
+import com.dev.firedetector.util.Result
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class SensorDataDialogFragment : BottomSheetDialogFragment() {
 
     private var _binding: FragmentSensorDataDialogBinding? = null
     private val binding get() = _binding!!
-    private lateinit var mqttClientHelper: MqttClientHelper
+    private lateinit var macAddress: String
+    private val viewModel: HomeViewModel by activityViewModels {
+        ViewModelFactory.getInstance(requireContext())
+    }
 
     companion object {
         private const val ARG_MAC = "mac_address"
@@ -42,17 +48,18 @@ class SensorDataDialogFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val macAddress = arguments?.getString(ARG_MAC)
-        if (macAddress == null) {
+        macAddress = arguments?.getString(ARG_MAC) ?: run {
             Toast.makeText(requireContext(), "MAC Address tidak ditemukan", Toast.LENGTH_SHORT).show()
             dismiss()
             return
         }
-        mqttClientHelper = MqttClientHelper()
 
-        mqttClientHelper.sensorLiveData.observe(viewLifecycleOwner) { data ->
-            if (data.macAddress == macAddress) {
-                showSensorData(data)
+        viewModel.getSensorListLiveData().observe(viewLifecycleOwner) { result ->
+            if (result is Result.Success) {
+                val data = result.data.find { it.macAddress == macAddress }
+                if (data != null) {
+                    showSensorData(data)
+                }
             }
         }
     }
@@ -68,7 +75,7 @@ class SensorDataDialogFragment : BottomSheetDialogFragment() {
             btnOpenInMaps.setOnClickListener {
                 val lat = data.latitude
                 val lng = data.longitude
-                val uri = Uri.parse("geo:$lat,$lng?q=$lat,$lng(Lokasi Sensor)")
+                val uri = "geo:$lat,$lng?q=$lat,$lng(Lokasi Sensor)".toUri()
                 val intent = Intent(Intent.ACTION_VIEW, uri).apply {
                     setPackage("com.google.android.apps.maps")
                 }

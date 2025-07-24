@@ -1,31 +1,18 @@
 package com.dev.firedetector.ui.history
 
-/*class HistoryViewModel(private val repository: FireRepository) : ViewModel() {
-    private val _historyZona1 = MutableLiveData<Result<List<SensorDataResponse>>>()
-    val historyZona1: LiveData<Result<List<SensorDataResponse>>> get() = _historyZona1
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import com.dev.firedetector.data.repository.FireRepository
+import com.dev.firedetector.data.response.HistoryResponse
+import com.dev.firedetector.util.Result
 
-    private val _historyZona2 = MutableLiveData<Result<List<SensorDataResponse>>>()
-    val historyZona2: LiveData<Result<List<SensorDataResponse>>> get() = _historyZona2
+class HistoryViewModel(private val repository: FireRepository) : ViewModel() {
 
-    private val _loading = MutableLiveData<Boolean>()
-    val loading: LiveData<Boolean> get() = _loading
-
-    fun getHistoryZona1() {
-        viewModelScope.launch {
-            _loading.value = true
-            val result = repository.getSensorHistoryZona1()
-            _historyZona1.postValue(result)
-            _loading.value = false
-        }
+    fun getHistory(macAddress: String): LiveData<Result<HistoryResponse>> {
+        return repository.getSensorHistory(macAddress)
     }
 
-    fun getHistoryZona2() {
-        viewModelScope.launch {
-            _loading.value = true
-            val result = repository.getSensorHistoryZona2()
-            _historyZona2.postValue(result)
-            _loading.value = false
-        }
+    fun getFilteredHistory(macAddress: String, range: String): LiveData<Result<HistoryResponse>> {
+        return repository.getFilteredHistory(macAddress, range)
     }
-
-}*/
+}

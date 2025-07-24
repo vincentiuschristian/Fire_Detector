@@ -4,10 +4,12 @@ import android.util.Log
 import androidx.datastore.core.IOException
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
 import com.dev.firedetector.data.api.ApiService
 import com.dev.firedetector.data.model.UserModel
-import com.dev.firedetector.data.mqtt.MqttClientHelper
+import com.dev.firedetector.data.mqtt.MqttManager
 import com.dev.firedetector.data.pref.UserPreference
+import com.dev.firedetector.data.response.HistoryResponse
 import com.dev.firedetector.data.response.LoginRequest
 import com.dev.firedetector.data.response.LoginResponse
 import com.dev.firedetector.data.response.RegisterRequest
@@ -17,15 +19,18 @@ import com.dev.firedetector.data.response.UserResponse
 import com.dev.firedetector.util.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import retrofit2.HttpException
 
 class FireRepository(
     private val userPreference: UserPreference,
-    private val apiService: ApiService,
-    private val mqttClientHelper: MqttClientHelper
+    private val apiService: ApiService
 ) {
+    private val mqttClientHelper = MqttManager.mqttClientHelper
+
 
     suspend fun loginUser(email: String, password: String): Result<LoginResponse> {
         return try {
@@ -34,14 +39,15 @@ class FireRepository(
             if (response.isSuccessful && response.body() != null) {
                 val loginResponse = response.body()!!
                 val token = loginResponse.token
+                val macList = loginResponse.macAddress ?: emptyList()
 
-                if (!token.isNullOrEmpty()) {
-                    userPreference.saveSession(UserModel(token, true))
-                    Log.d("LoginUser", "Token berhasil disimpan di DataStore: $token")
+                if (token != null) {
+                    userPreference.saveSession(UserModel(token, true), macList)
+                    mqttClientHelper.subscribeTopics(macList)
+                    Log.d("LoginUser", "Token & MAC list disimpan, MQTT subscribe dipanggil")
                     Result.Success(loginResponse)
                 } else {
-                    Log.e("LoginUser", "Token kosong dalam response!")
-                    Result.Error("Gagal login: Token tidak valid dari server")
+                    Result.Error("Token tidak valid dari server")
                 }
             } else {
                 when (response.code()) {
@@ -54,18 +60,27 @@ class FireRepository(
                                 val json = JSONObject(it)
                                 json.getString("error") ?: "Login gagal"
                             } ?: "Login gagal"
-                        } catch (e: Exception) {
+                        } catch (_: Exception) {
                             "Login gagal"
                         }
                         Result.Error("Error ${response.code()}: $errorBody")
                     }
                 }
             }
-        } catch (e: IOException) {
+        } catch (_: IOException) {
             Result.Error("Koneksi atau Server bermasalah!")
         } catch (e: Exception) {
             Log.e("LoginUser", "Exception: ${e.message}")
             Result.Error("Terjadi kesalahan: ${e.message ?: "Unknown error"}")
+        }
+    }
+
+    suspend fun initializeMqttSubscriptionsIfLoggedIn() {
+        val user = userPreference.getSession().firstOrNull()
+        if (user?.isLogin == true) {
+            val macList = userPreference.getMacList().firstOrNull() ?: emptyList()
+            mqttClientHelper.subscribeTopics(macList)
+            Log.d("MQTT", "Subscribed automatically on startup with MAC list: $macList")
         }
     }
 
@@ -96,7 +111,7 @@ class FireRepository(
                                     json.getString("error") ?: "Data registrasi tidak valid"
                                 )
                             } catch (e: Exception) {
-                                Result.Error(errorBody)
+                                Result.Error(e.toString())
                             }
                         }
 
@@ -110,7 +125,7 @@ class FireRepository(
                 }
             } catch (e: HttpException) {
                 Result.Error("Error server: ${e.message()}")
-            } catch (e: IOException) {
+            } catch (_: IOException) {
                 Result.Error("Tidak dapat terhubung ke server. Periksa koneksi internet Anda")
             } catch (e: Exception) {
                 Result.Error("Terjadi kesalahan tak terduga: ${e.message ?: "Unknown error"}")
@@ -120,18 +135,18 @@ class FireRepository(
 
     suspend fun getUser(): Result<UserResponse> {
         return try {
-            val token = userPreference.getToken()
-            val response = apiService.getUser("Bearer $token")
+            val token = userPreference.getToken().firstOrNull() ?: ""
+            Log.d("Get User Data", "Token User: $token")
+
+            val response = apiService.getUserProfile("Bearer $token")
+            Log.d("API Response", "Code: ${response.code()}, Body: ${response.body()}")
 
             if (response.isSuccessful) {
-                val body = response.body()
-                if (body != null) {
-                    Result.Success(body)
-                } else {
-                    Result.Error("Data kosong")
-                }
+                response.body()?.let {
+                    Result.Success(it)
+                } ?: Result.Error("Data user kosong")
             } else {
-                Result.Error("Gagal mendapatkan data user: ${response.message()}")
+                Result.Error("Gagal mendapatkan data user: ${response.code()} ${response.message()}")
             }
         } catch (e: Exception) {
             Result.Error("Terjadi kesalahan: ${e.message}")
@@ -140,12 +155,21 @@ class FireRepository(
 
     fun getMqttLiveData(): LiveData<Result<List<SensorDataResponse>>> {
         val resultLiveData = MutableLiveData<Result<List<SensorDataResponse>>>()
-
+        val cachedList = mutableListOf<SensorDataResponse>()
         resultLiveData.value = Result.Loading
 
-        mqttClientHelper.sensorDataListLiveData.observeForever { itemList ->
-            if (itemList.isNotEmpty()) {
-                resultLiveData.postValue(Result.Success(itemList))
+        mqttClientHelper.sensorLiveData.observeForever { item ->
+            Log.d("MQTT_REPO", "Received: ${item?.macAddress} | CachedListSize: ${cachedList.size}")
+
+            if (item != null) {
+                val index = cachedList.indexOfFirst { it.macAddress == item.macAddress }
+                if (index != -1) {
+                    cachedList[index] = item
+                } else {
+                    cachedList.add(item)
+                }
+                Log.d("MQTT_REPO", "Updated CachedList: $cachedList")
+                resultLiveData.postValue(Result.Success(cachedList.toList()))
             } else {
                 resultLiveData.postValue(Result.Error("Data kosong dari MQTT"))
             }
@@ -154,11 +178,40 @@ class FireRepository(
         return resultLiveData
     }
 
+    fun getSensorHistory(macAddress: String): LiveData<Result<HistoryResponse>> = liveData {
+        emit(Result.Loading)
+        try {
+            val user = userPreference.getSession().first()
+            val token = "Bearer ${user.token}"
+            val response = apiService.getHistory(token, macAddress)
+            emit(Result.Success(response))
+        } catch (_: HttpException) {
+            emit(Result.Error("Failed to load history"))
+        } catch (_: Exception) {
+            emit(Result.Error("Internet Connection Problem"))
+        }
+    }
+
+    fun getFilteredHistory(mac: String, range: String): LiveData<Result<HistoryResponse>> = liveData {
+        emit(Result.Loading)
+        try {
+            val user = userPreference.getSession().first()
+            val token = "Bearer ${user.token}"
+            val response = apiService.getFilteredHistory(token, mac, range)
+            emit(Result.Success(response))
+        } catch (_: HttpException) {
+            emit(Result.Error("Failed to load filtered history"))
+        } catch (_: Exception) {
+            emit(Result.Error("Internet Connection Problem"))
+        }
+    }
+
     suspend fun logout(): Result<String> {
         return try {
             val response = apiService.logout()
             if (response.isSuccessful) {
                 userPreference.logout()
+                Log.d("Logout Berhasil", "Token berhasil dihapus: ${userPreference.getToken()}")
                 Result.Success(response.body()?.message ?: "Logout berhasil")
             } else {
                 val errorBody = response.errorBody()?.string() ?: "Logout gagal!"
@@ -168,7 +221,6 @@ class FireRepository(
             Result.Error("Terjadi kesalahan: ${e.message}")
         }
     }
-
 
     fun getSession(): Flow<UserModel> = userPreference.getSession()
 
@@ -181,13 +233,11 @@ class FireRepository(
 
         fun getInstance(
             userPreference: UserPreference,
-            apiService: ApiService,
-            mqttClientHelper: MqttClientHelper
+            apiService: ApiService
         ): FireRepository = instance ?: synchronized(this) {
             instance ?: FireRepository(
                 userPreference,
-                apiService,
-                mqttClientHelper
+                apiService
             ).also { instance = it }
         }
     }

@@ -81,43 +81,17 @@
                 app:layout_constraintTop_toBottomOf="@id/tv_userName" />
 
             <TextView
-                android:id="@+id/tv_text_id"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="36dp"
-                android:fontFamily="@font/plus_jakarta_sans_regular"
-                android:text="@string/id_pengguna"
-                android:textColor="@color/primaryContainer"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/img_profile" />
-
-            <TextView
-                android:id="@+id/tv_id_perangkat"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
-                android:fontFamily="@font/plus_jakarta_sans_semi_bold"
-                tools:text="@string/id"
-                android:textColor="@color/color_text"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_text_id" />
-
-            <TextView
                 android:id="@+id/tv_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="24dp"
                 android:fontFamily="@font/plus_jakarta_sans_regular"
                 android:text="@string/nama"
                 android:textColor="@color/primaryContainer"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_id_perangkat" />
+                app:layout_constraintTop_toBottomOf="@id/img_profile" />
 
             <TextView
                 android:id="@+id/tv_user_full_name"

@@ -15,46 +15,43 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "se
 
 class UserPreference(private val dataStore: DataStore<Preferences>) {
 
-    suspend fun saveSession(user: UserModel) {
-        dataStore.edit { preferences ->
-            preferences[TOKEN_KEY] = user.token
-            preferences[IS_LOGIN_KEY] = true
-        }
-    }
-
-    fun getSession(): Flow<UserModel> {
-        return dataStore.data.map { preferences ->
-            UserModel(
-                preferences[TOKEN_KEY] ?: "", preferences[IS_LOGIN_KEY] ?: false
-            )
-        }
-    }
-
-    fun getToken(): Flow<String> {
-        return dataStore.data.map { preferences ->
-            preferences[TOKEN_KEY] ?: ""
-        }
-    }
-
-    suspend fun logout() {
-        dataStore.edit { preferences ->
-            preferences.clear()
-        }
-    }
-
     companion object {
+        private val TOKEN_KEY = stringPreferencesKey("token")
+        private val IS_LOGIN_KEY = booleanPreferencesKey("isLogin")
+        private val MAC_ADDRESS_KEY = stringPreferencesKey("mac_address_list")
+
         @Volatile
         private var INSTANCE: UserPreference? = null
 
-        private val TOKEN_KEY = stringPreferencesKey("token")
-        private val IS_LOGIN_KEY = booleanPreferencesKey("isLogin")
-
         fun getInstance(dataStore: DataStore<Preferences>): UserPreference {
             return INSTANCE ?: synchronized(this) {
-                val instance = UserPreference(dataStore)
-                INSTANCE = instance
-                instance
+                INSTANCE ?: UserPreference(dataStore).also { INSTANCE = it }
             }
         }
+    }
+
+    suspend fun saveSession(user: UserModel, macList: List<String>) {
+        dataStore.edit { preferences ->
+            preferences[TOKEN_KEY] = user.token
+            preferences[IS_LOGIN_KEY] = true
+            preferences[MAC_ADDRESS_KEY] = macList.joinToString(",") // Save as string
+        }
+    }
+
+    fun getToken(): Flow<String> = dataStore.data.map { it[TOKEN_KEY] ?: "" }
+
+    fun getSession(): Flow<UserModel> = dataStore.data.map {
+        UserModel(
+            token = it[TOKEN_KEY] ?: "",
+            isLogin = it[IS_LOGIN_KEY] ?: false
+        )
+    }
+
+    fun getMacList(): Flow<List<String>> = dataStore.data.map {
+        it[MAC_ADDRESS_KEY]?.split(",")?.filter { mac -> mac.isNotBlank() } ?: emptyList()
+    }
+
+    suspend fun logout() {
+        dataStore.edit { it.clear() }
     }
 }

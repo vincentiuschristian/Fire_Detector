@@ -7,10 +7,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.dev.firedetector.MainViewModel
 import com.dev.firedetector.data.repository.FireRepository
 import com.dev.firedetector.di.Injection
+import com.dev.firedetector.ui.history.HistoryViewModel
 import com.dev.firedetector.ui.home.HomeViewModel
 import com.dev.firedetector.ui.profile.ProfileViewModel
 import com.dev.firedetector.ui.register.AuthViewModel
-import com.dev.firedetector.ui.sensor_location.SensorLocationViewModel
 
 @Suppress("UNCHECKED_CAST")
 class ViewModelFactory(
@@ -32,14 +32,11 @@ class ViewModelFactory(
             modelClass.isAssignableFrom(ProfileViewModel::class.java) -> {
                 ProfileViewModel(repository) as T
             }
-//            modelClass.isAssignableFrom(HistoryViewModel::class.java) -> {
-//                HistoryViewModel(repository) as T
-//            }
-            modelClass.isAssignableFrom(SensorLocationViewModel::class.java) -> {
-                SensorLocationViewModel(repository) as T
-            }
             modelClass.isAssignableFrom(MainViewModel::class.java) -> {
                 MainViewModel(repository) as T
+            }
+            modelClass.isAssignableFrom(HistoryViewModel::class.java) -> {
+                HistoryViewModel(repository) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }

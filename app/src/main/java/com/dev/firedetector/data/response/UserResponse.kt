@@ -1,14 +1,23 @@
 package com.dev.firedetector.data.response
 
-data class UserResponse(
-    val status: Int,
-    val message: String,
-    val data: UserData
-)
+import com.google.gson.annotations.SerializedName
 
-data class UserData(
+data class UserResponse(
+    @SerializedName("_id")
+    val id: String,
+
+    @SerializedName("email")
     val email: String,
+
+    @SerializedName("username")
     val username: String,
-    val lokasi: String,
-    val role: String
+
+    @SerializedName("lokasi")
+    val location: String,
+
+    @SerializedName("role")
+    val role: String,
+
+    @SerializedName("__v")
+    val version: Int
 )

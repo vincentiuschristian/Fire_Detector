@@ -2,6 +2,7 @@ package com.dev.firedetector.ui.maps
 
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +11,7 @@ import com.dev.firedetector.data.ViewModelFactory
 import com.dev.firedetector.data.response.SensorDataResponse
 import com.dev.firedetector.databinding.ActivitySensorMapBinding
 import com.dev.firedetector.ui.home.HomeViewModel
+import com.dev.firedetector.util.Result
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -55,10 +57,14 @@ class SensorMapActivity : AppCompatActivity(), OnMapReadyCallback {
             true
         }
 
-        viewModel.sensorDataList.observe(this) { list ->
-            list.find { it.macAddress == selectedSensor.macAddress }?.let { updatedData ->
-                selectedSensor = updatedData
-                updateMarker(updatedData)
+        viewModel.getSensorListLiveData().observe(this) { result ->
+            if (result is Result.Success) {
+                result.data.find { it.macAddress == selectedSensor.macAddress }?.let { updatedData ->
+                    selectedSensor = updatedData
+                    updateMarker(updatedData)
+                }
+            } else if (result is Result.Error) {
+                Toast.makeText(this, "Gagal memuat data sensor", Toast.LENGTH_SHORT).show()
             }
         }
     }

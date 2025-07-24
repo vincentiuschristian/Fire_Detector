@@ -3,14 +3,16 @@ package com.dev.firedetector.ui.home
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -47,6 +49,19 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupRecyclerView()
+        setupEmergencyButtons()
+        showLoading(true)
+        observeViewModel()
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        profileViewModel.loadUserProfile()
+    }
+
+    private fun setupRecyclerView() {
         adapter = ListSensorAdapter { sensor ->
             val intent = Intent(requireContext(), SensorMapActivity::class.java).apply {
                 putExtra("sensor_data", sensor)
@@ -55,30 +70,21 @@ class HomeFragment : Fragment() {
         }
         binding.rvList.adapter = adapter
         binding.rvList.layoutManager = LinearLayoutManager(requireContext())
+    }
 
-        binding.apply {
-            btnPolisi.setOnClickListener {
-                val police = getString(R.string.notelp_polisi)
-                showConfirmationDialog(police)
-            }
-
-            btnCallAmbulance.setOnClickListener {
-                val ambulance = getString(R.string.notelp_ambulans)
-                showConfirmationDialog(ambulance)
-            }
+    private fun setupEmergencyButtons() {
+        binding.btnPolisi.setOnClickListener {
+            val police = getString(R.string.notelp_polisi)
+            showConfirmationDialog(police)
         }
 
-        fetchSensor()
-        fetchUserData()
+        binding.btnCallAmbulance.setOnClickListener {
+            val ambulance = getString(R.string.notelp_ambulans)
+            showConfirmationDialog(ambulance)
+        }
     }
 
-    override fun onResume() {
-        super.onResume()
-      //  profileViewModel.fetchData()
-        fetchSensor()
-    }
-
-    private fun fetchSensor() {
+    private fun observeViewModel() {
         viewModel.getSensorListLiveData().observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Success -> {
@@ -92,16 +98,15 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-    }
 
-    private fun fetchUserData() {
-/*
-        profileViewModel.userData.observe(viewLifecycleOwner) { result ->
+        profileViewModel.userResult.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Success -> {
-                    binding.apply {
-                        tvLocation.text = result.data.location
-                        tvName.text = getString(R.string.name, result.data.username)
+                    result.data.let { data ->
+                        binding.apply {
+                            tvLocation.text = data.location
+                            tvName.text = getString(R.string.name, data.username)
+                        }
                     }
                     showLoading(false)
                 }
@@ -110,8 +115,10 @@ class HomeFragment : Fragment() {
                 is Result.Error -> showToast(result.error)
             }
         }
-*/
 
+        Handler(Looper.getMainLooper()).postDelayed({
+            showLoading(false)
+        }, 50000)
     }
 
     private fun calling(number: String) {
@@ -120,7 +127,7 @@ class HomeFragment : Fragment() {
                 Manifest.permission.CALL_PHONE
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            startActivity(Intent(Intent.ACTION_CALL, Uri.parse(number)))
+            startActivity(Intent(Intent.ACTION_CALL, number.toUri()))
         } else {
             requestPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
         }

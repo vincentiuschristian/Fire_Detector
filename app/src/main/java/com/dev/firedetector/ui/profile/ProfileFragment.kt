@@ -41,17 +41,22 @@ class ProfileFragment : Fragment() {
         viewModel.userResult.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Success -> {
-                    val userData = result.data.data
-                    binding.apply {
-                        tvUserName.text = userData.username
-                        tvUserEmail.text = userData.email
-                        tvUserFullName.text = userData.username
-                        tvUserLocation.text = userData.lokasi
-                    }
-                }
+                    result.data?.let { userData ->
+                        binding.apply {
+                            tvUserName.text = userData.username
+                            tvUserEmail.text = userData.email
+                            tvUserFullName.text = userData.username
+                            tvUserLocation.text = userData.location
+                        }
+                    } ?: showToast("Data pengguna kosong")
 
+                    showLoading(false)
+                }
                 is Result.Loading -> showLoading(true)
-                is Result.Error -> showToast(result.error)
+                is Result.Error -> {
+                    showToast(result.error)
+                    showLoading(false)
+                }
             }
         }
     }

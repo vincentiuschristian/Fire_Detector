@@ -17,8 +17,8 @@ import org.eclipse.paho.mqttv5.common.packet.MqttProperties
 class MqttClientHelper {
     private val serverUri = "ssl://d7d8ee83.ala.asia-southeast1.emqxsl.com:8883"
     private val clientId = "android_client_${System.currentTimeMillis()}"
-    private val topic = "fire_detector/#"
     private val mqttClient = MqttAsyncClient(serverUri, clientId, null)
+    private var pendingMacList: List<String> = emptyList()
 
     private val _sensorLiveData = MutableLiveData<SensorDataResponse>()
     val sensorLiveData: LiveData<SensorDataResponse> get() = _sensorLiveData
@@ -46,9 +46,10 @@ class MqttClientHelper {
             }
 
             override fun messageArrived(topic: String, message: MqttMessage) {
-                Log.d("MQTT", "Message received: $message")
+                Log.d("MQTT", "Message received: $message on topic: $topic")
                 try {
                     val sensorData = Gson().fromJson(message.toString(), SensorDataResponse::class.java)
+                    Log.d("MQTT", "Parsed SensorData: $sensorData")
                     _sensorLiveData.postValue(sensorData)
                 } catch (e: Exception) {
                     Log.e("MQTT", "Failed to parse MQTT message: ${e.message}")
@@ -58,7 +59,10 @@ class MqttClientHelper {
             override fun deliveryComplete(token: IMqttToken) {}
             override fun connectComplete(reconnect: Boolean, serverURI: String) {
                 Log.d("MQTT", "Connected to $serverURI")
-                mqttClient.subscribe(topic, 1)
+                if (pendingMacList.isNotEmpty()) {
+                    subscribeTopics(pendingMacList)
+                    pendingMacList = emptyList()
+                }
             }
 
             override fun authPacketArrived(reasonCode: Int, properties: MqttProperties) {}
@@ -67,10 +71,27 @@ class MqttClientHelper {
         mqttClient.connect(options)
     }
 
+    fun subscribeTopics(macList: List<String>) {
+        if (!mqttClient.isConnected) {
+            Log.w("MQTT", "MQTT not connected yet, deferring subscription.")
+            pendingMacList = macList
+            return
+        }
+        macList.forEach { mac ->
+            val topic = "fire_detector/$mac"
+            try {
+                mqttClient.subscribe(topic, 1)
+                Log.d("MQTT", "Subscribed to topic: $topic")
+            } catch (e: MqttException) {
+                Log.e("MQTT", "Failed to subscribe to $topic: ${e.message}")
+            }
+        }
+    }
+
     fun disconnect() {
         if (mqttClient.isConnected) {
             mqttClient.disconnect()
         }
     }
-}
 
+}
