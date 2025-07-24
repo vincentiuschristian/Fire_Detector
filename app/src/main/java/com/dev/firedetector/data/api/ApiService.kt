@@ -10,7 +10,6 @@ import com.dev.firedetector.data.response.UserResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 
@@ -27,7 +26,6 @@ interface ApiService {
 
     @GET("/user/profile")
     suspend fun getUserProfile(
-        @Header("Authorization") token: String
     ): Response<UserResponse>
 
     @POST("users/logout")
@@ -35,13 +33,11 @@ interface ApiService {
 
     @GET("/sensor/history/{mac}")
     suspend fun getHistory(
-        @Header("Authorization") token: String,
         @Path("mac") macAddress: String
     ): HistoryResponse
 
     @GET("/sensor/history/{mac}")
     suspend fun getFilteredHistory(
-        @Header("Authorization") token: String,
         @Path("mac") macAddress: String,
         @retrofit2.http.Query("range") range: String
     ): HistoryResponse

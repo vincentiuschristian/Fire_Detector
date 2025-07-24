@@ -73,6 +73,7 @@
             style="@style/CustomEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/color_text"
             android:fontFamily="@font/plus_jakarta_sans_regular"
             android:hint="@string/email"
             android:inputType="textEmailAddress" />
@@ -95,6 +96,7 @@
             android:id="@+id/etPassword"
             style="@style/CustomEditText"
             android:layout_width="match_parent"
+            android:textColor="@color/color_text"
             android:layout_height="wrap_content"
             android:fontFamily="@font/plus_jakarta_sans_regular"
             android:hint="@string/password"

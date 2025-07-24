@@ -19,7 +19,6 @@ import com.dev.firedetector.data.response.UserResponse
 import com.dev.firedetector.util.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -138,7 +137,7 @@ class FireRepository(
             val token = userPreference.getToken().firstOrNull() ?: ""
             Log.d("Get User Data", "Token User: $token")
 
-            val response = apiService.getUserProfile("Bearer $token")
+            val response = apiService.getUserProfile()
             Log.d("API Response", "Code: ${response.code()}, Body: ${response.body()}")
 
             if (response.isSuccessful) {
@@ -181,9 +180,7 @@ class FireRepository(
     fun getSensorHistory(macAddress: String): LiveData<Result<HistoryResponse>> = liveData {
         emit(Result.Loading)
         try {
-            val user = userPreference.getSession().first()
-            val token = "Bearer ${user.token}"
-            val response = apiService.getHistory(token, macAddress)
+            val response = apiService.getHistory( macAddress)
             emit(Result.Success(response))
         } catch (_: HttpException) {
             emit(Result.Error("Failed to load history"))
@@ -195,9 +192,7 @@ class FireRepository(
     fun getFilteredHistory(mac: String, range: String): LiveData<Result<HistoryResponse>> = liveData {
         emit(Result.Loading)
         try {
-            val user = userPreference.getSession().first()
-            val token = "Bearer ${user.token}"
-            val response = apiService.getFilteredHistory(token, mac, range)
+            val response = apiService.getFilteredHistory( mac, range)
             emit(Result.Success(response))
         } catch (_: HttpException) {
             emit(Result.Error("Failed to load filtered history"))

@@ -75,6 +75,7 @@
                 style="@style/CustomEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/color_text"
                 android:fontFamily="@font/plus_jakarta_sans_regular"
                 android:hint="@string/email"
                 android:inputType="textEmailAddress" />
@@ -96,6 +97,7 @@
                 android:id="@+id/etUsername"
                 style="@style/CustomEditText"
                 android:layout_width="match_parent"
+                android:textColor="@color/color_text"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/plus_jakarta_sans_regular"
                 android:hint="@string/username"
@@ -119,6 +121,7 @@
                 style="@style/CustomEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/color_text"
                 android:fontFamily="@font/plus_jakarta_sans_regular"
                 android:hint="@string/password"
                 android:inputType="textPassword" />
@@ -144,23 +147,11 @@
                 android:fontFamily="@font/plus_jakarta_sans_regular"
                 android:hint="@string/lokasi"
                 android:inputType="text"
+                android:textColor="@color/color_text"
                 android:scrollHorizontally="true"
                 android:textIsSelectable="true" />
 
         </com.dev.firedetector.customview.CustomTextInputLayout>
-<!--
-        <ImageButton
-            android:id="@+id/btn_lokasi"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/bg_edit_text"
-            android:contentDescription="@string/get_location"
-            android:src="@drawable/current_location"
-            app:layout_constraintBottom_toBottomOf="@+id/tilLokasi"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tilLokasi" />
--->
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRegister"
@@ -223,6 +214,5 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 </ScrollView>
