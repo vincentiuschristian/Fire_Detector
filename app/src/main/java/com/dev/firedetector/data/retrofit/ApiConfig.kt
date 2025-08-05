@@ -1,4 +1,4 @@
-package com.dev.firedetector.data.api
+package com.dev.firedetector.data.retrofit
 
 import com.dev.firedetector.data.pref.UserPreference
 import kotlinx.coroutines.flow.firstOrNull

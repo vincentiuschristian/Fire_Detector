@@ -1,4 +1,4 @@
-package com.dev.firedetector.data.api
+package com.dev.firedetector.data.retrofit
 
 import com.dev.firedetector.data.response.HistoryResponse
 import com.dev.firedetector.data.response.LoginRequest

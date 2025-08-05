@@ -1,7 +1,7 @@
 package com.dev.firedetector.di
 
 import android.content.Context
-import com.dev.firedetector.data.api.ApiConfig
+import com.dev.firedetector.data.retrofit.ApiConfig
 import com.dev.firedetector.data.pref.UserPreference
 import com.dev.firedetector.data.pref.dataStore
 import com.dev.firedetector.data.repository.FireRepository

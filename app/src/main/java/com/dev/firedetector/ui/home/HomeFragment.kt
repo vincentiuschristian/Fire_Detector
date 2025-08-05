@@ -16,6 +16,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dev.firedetector.R
 import com.dev.firedetector.data.ViewModelFactory
+import com.dev.firedetector.data.response.SensorDataResponse
 import com.dev.firedetector.databinding.FragmentHomeBinding
 import com.dev.firedetector.ui.adapter.ListSensorAdapter
 import com.dev.firedetector.ui.maps.SensorMapActivity
@@ -87,7 +88,7 @@ class HomeFragment : Fragment() {
             when (result) {
                 is Result.Success -> {
                     showLoading(false)
-                    adapter.submitList(result.data)
+                    updateList(result.data)
                 }
                 is Result.Loading -> showLoading(true)
                 is Result.Error -> {
@@ -114,6 +115,18 @@ class HomeFragment : Fragment() {
             }
         }
 
+    }
+
+    private fun updateList(data: List<SensorDataResponse>) {
+        binding.apply {
+            if (data.isNotEmpty()) {
+                adapter.submitList(data)
+                progressBar.visibility = View.GONE
+            } else {
+                adapter.submitList(emptyList())
+                progressBar.visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun calling(number: String) {

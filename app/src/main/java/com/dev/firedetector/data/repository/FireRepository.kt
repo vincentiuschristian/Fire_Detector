@@ -5,7 +5,7 @@ import androidx.datastore.core.IOException
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
-import com.dev.firedetector.data.api.ApiService
+import com.dev.firedetector.data.retrofit.ApiService
 import com.dev.firedetector.data.model.UserModel
 import com.dev.firedetector.data.mqtt.MqttManager
 import com.dev.firedetector.data.pref.UserPreference
