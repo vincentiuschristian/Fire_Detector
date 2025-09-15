@@ -19,7 +19,7 @@
             android:layout_height="36dp"
             android:layout_marginStart="8dp"
             android:contentDescription="@string/icon_temperature"
-            android:src="@drawable/temperature_celsius"
+            android:src="@drawable/icon_temp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -51,7 +51,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="12dp"
             android:contentDescription="@string/icon_air_quality"
-            android:src="@drawable/windy"
+            android:src="@drawable/icon_gas"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_temperature" />
 
@@ -62,7 +62,7 @@
             android:textStyle="bold"
             android:paddingStart="8dp"
             android:paddingEnd="1dp"
-            android:text="@string/gas_terdeteksi"
+            android:text="@string/asap_terdeteksi"
             app:layout_constraintStart_toEndOf="@id/iv_kualitas_udara"
             app:layout_constraintTop_toTopOf="@id/iv_kualitas_udara" />
 
@@ -90,7 +90,7 @@
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:contentDescription="@string/icon_humidity"
-            android:src="@drawable/humidity"
+            android:src="@drawable/icon_hum"
             app:layout_constraintStart_toStartOf="@id/guidelineVertical"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -121,7 +121,7 @@
             android:layout_height="36dp"
             android:layout_marginTop="12dp"
             android:contentDescription="@string/icon_fire"
-            android:src="@drawable/fire"
+            android:src="@drawable/icon_fire"
             app:layout_constraintStart_toStartOf="@id/guidelineVertical"
             app:layout_constraintTop_toBottomOf="@id/iv_kelembapan" />
 

@@ -4,47 +4,32 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dev.firedetector.data.model.DataUserModel
-import com.dev.firedetector.data.repository.FireRepository
+import com.dev.firedetector.core.data.source.remote.response.UserResponse
+import com.dev.firedetector.core.domain.usecase.FireUseCase
+import com.dev.firedetector.util.Result
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ProfileViewModel(private val repository: FireRepository) : ViewModel() {
-    private val _userModelData = MutableLiveData<DataUserModel?>()
-    val userModelData: LiveData<DataUserModel?> get() = _userModelData
+@HiltViewModel
+class ProfileViewModel @Inject constructor(
+    private val useCase: FireUseCase
+) : ViewModel() {
 
-    private val _error = MutableLiveData<String>()
-    val error: LiveData<String> get() = _error
+    private val _userResult = MutableLiveData<Result<UserResponse>>()
+    val userResult: LiveData<Result<UserResponse>> = _userResult
 
-    private val _loading = MutableLiveData<Boolean>()
-    val loading: LiveData<Boolean> get() = _loading
-
-    fun fetchData() {
+    fun loadUserProfile() {
         viewModelScope.launch {
-            _loading.value = true
-            try {
-                val userData = repository.getUserData()
-                if (userData != null) {
-                    _userModelData.postValue(userData)
-                } else {
-                    _error.postValue("User data not found.")
-                }
-            } catch (e: Exception) {
-                _error.postValue("Failed to fetch data: ${e.message}")
-            } finally {
-                _loading.postValue(false)
-            }
+            _userResult.value = Result.Loading
+            _userResult.value = useCase.getUser()
         }
     }
 
-    fun logout() = repository.logout()
-
     fun clearIdSaved() {
         viewModelScope.launch {
-            try {
-                repository.deleteIdPerangkat()
-            } catch (e: Exception) {
-                _error.postValue("Failed to clear saved ID: ${e.message}")
-            }
+            useCase.logout()
+            useCase.clearSavedIds()
         }
     }
 }

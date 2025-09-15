@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "663348660530",
+    "project_id": "firedetector-167d8",
+    "storage_bucket": "firedetector-167d8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:663348660530:android:c6d0f46a81313441b5af2b",
+        "android_client_info": {
+          "package_name": "com.dev.firedetector"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeJx5AYpr56gL4qBqic9jNDgzFnTNKSxc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

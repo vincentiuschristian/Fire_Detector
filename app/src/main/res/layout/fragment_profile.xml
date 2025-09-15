@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".ui.profile.ProfileFragment">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -15,11 +16,18 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topBar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/background"
-            android:paddingTop="10dp"
-            app:title="@string/profile"
-            app:titleCentered="true" />
+            android:layout_height="?attr/actionBarSize">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/profile"
+                android:fontFamily="@font/plus_jakarta_sans_semi_bold"
+                android:textSize="20sp"
+                android:layout_gravity="center"
+                android:textColor="@color/color_text"/>
+
+        </com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -52,7 +60,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
                 android:fontFamily="@font/plus_jakarta_sans_semi_bold"
-                android:text="@string/name"
+                tools:text="@string/name"
                 android:textColor="@color/color_text"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toTopOf="@id/tv_userEmail"
@@ -66,50 +74,24 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginBottom="16dp"
                 android:fontFamily="@font/plus_jakarta_sans_regular"
-                android:text="@string/example_gmail_com"
+                tools:text="@string/example_gmail_com"
                 android:textColor="@color/color_text_second"
                 app:layout_constraintBottom_toBottomOf="@id/img_profile"
                 app:layout_constraintStart_toEndOf="@id/img_profile"
                 app:layout_constraintTop_toBottomOf="@id/tv_userName" />
 
             <TextView
-                android:id="@+id/tv_text_id"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="36dp"
-                android:fontFamily="@font/plus_jakarta_sans_regular"
-                android:text="@string/id_perangkat"
-                android:textColor="@color/primaryContainer"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/img_profile" />
-
-            <TextView
-                android:id="@+id/tv_id_perangkat"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
-                android:fontFamily="@font/plus_jakarta_sans_semi_bold"
-                android:text="@string/id"
-                android:textColor="@color/color_text"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_text_id" />
-
-            <TextView
                 android:id="@+id/tv_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="24dp"
                 android:fontFamily="@font/plus_jakarta_sans_regular"
-                android:text="@string/name"
+                android:text="@string/nama"
                 android:textColor="@color/primaryContainer"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_id_perangkat" />
+                app:layout_constraintTop_toBottomOf="@id/img_profile" />
 
             <TextView
                 android:id="@+id/tv_user_full_name"
@@ -118,7 +100,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="4dp"
                 android:fontFamily="@font/plus_jakarta_sans_semi_bold"
-                android:text="@string/name"
+                tools:text="@string/nama_profile"
                 android:textColor="@color/color_text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -146,7 +128,7 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="16dp"
                 android:fontFamily="@font/plus_jakarta_sans_semi_bold"
-                android:text="@string/address_dummy"
+                tools:text="@string/address_dummy"
                 android:textColor="@color/color_text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

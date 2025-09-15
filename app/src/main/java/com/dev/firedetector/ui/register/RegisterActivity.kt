@@ -1,177 +1,120 @@
 package com.dev.firedetector.ui.register
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.view.View
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import com.dev.firedetector.AuthActivity
 import com.dev.firedetector.R
-import com.dev.firedetector.data.ViewModelFactory
-import com.dev.firedetector.data.model.DataUserModel
 import com.dev.firedetector.databinding.ActivityRegisterBinding
 import com.dev.firedetector.ui.login.LoginActivity
-import com.dev.firedetector.util.Reference.isEmailValid
-import com.dev.firedetector.util.Reference.isPasswordValid
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
+import com.dev.firedetector.util.Reference
+import com.dev.firedetector.util.Result
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class RegisterActivity : AppCompatActivity() {
-
     private val binding: ActivityRegisterBinding by lazy {
         ActivityRegisterBinding.inflate(layoutInflater)
     }
-    private val authViewModel: AuthViewModel by viewModels {
-        ViewModelFactory.getInstance(applicationContext)
-    }
-    private lateinit var auth: FirebaseAuth
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val authViewModel: AuthViewModel by viewModels()
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        auth = FirebaseAuth.getInstance()
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
-        binding.apply {
-            btnRegister.setOnClickListener {
-                val idPerangkat = etIdPerangkat.text.toString().trim()
-                val username = etUsername.text.toString()
-                val email = etEmail.text.toString()
-                val password = etPassword.text.toString()
-                val location = etLokasi.text.toString()
-
-                if (username.isNotEmpty() && isEmailValid(applicationContext, email) &&
-                    isPasswordValid(
-                        applicationContext,
-                        password
-                    ) && location.isNotEmpty() && idPerangkat.isNotEmpty()
-                ) {
-
-                    authViewModel.register(
-                        email = email,
-                        pass = password,
-                        dataUserModel = DataUserModel(
-                            username = username,
-                            email = email,
-                            location = location,
-                            idPerangkat = idPerangkat
-                        ),
-                        idPerangkat = idPerangkat
-                    )
-
-                    authViewModel.loading.observe(this@RegisterActivity) {
-                        showLoading(it)
-                    }
-
-                    authViewModel.message.observe(this@RegisterActivity) { message ->
-                        if (message == "Register Success, Logging In...") {
-                            showSnackbar("Register Success")
-                            finish()
-                        } else {
-                            showSnackbar(message)
-                        }
-                    }
-                } else {
-                    showSnackbar(resources.getString(R.string.empty_field))
-                }
-            }
-
-
-            tvMoveRegister.setOnClickListener {
-                startActivity(Intent(applicationContext, LoginActivity::class.java))
-            }
-
-            btnLokasi.setOnClickListener {
-                getMyLocation()
-            }
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        val currentUser = auth.currentUser
-        updateUI(currentUser)
-    }
-
-    private fun updateUI(currentUser: FirebaseUser?) {
-        if (currentUser != null) {
-            startActivity(Intent(applicationContext, AuthActivity::class.java))
-            finish()
-        }
-    }
-
-    private fun getMyLocation() {
-        if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION) ||
-            checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
-        ) {
-
-            showLoading(true)
-
-            fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
-                .addOnSuccessListener { location: Location? ->
-                    showLoading(false)
-                    if (location != null) {
-                        val latitude = location.latitude
-                        val longitude = location.longitude
-                        binding.etLokasi.setText(
-                            getString(
-                                R.string.location_format,
-                                latitude,
-                                longitude
-                            )
-                        )
-                        showSnackbar("Lokasi berhasil didapatkan!")
-                    } else {
-                        showSnackbar(getString(R.string.location_not_found))
-                    }
-                }.addOnFailureListener {
-                    showLoading(false)
-                    showSnackbar("Gagal mendapatkan lokasi: ${it.message}")
-                }
-        } else {
-            requestPermissionLauncher.launch(
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            overrideActivityTransition(
+                OVERRIDE_TRANSITION_OPEN,
+                R.anim.slide_in_right,
+                R.anim.slide_out_left
             )
         }
+
+        setupListeners()
+        observeViewModel()
     }
 
-    private fun checkPermission(permission: String): Boolean {
-        return ContextCompat.checkSelfPermission(
-            this,
-            permission
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
-                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
-            ) {
-                getMyLocation()
-            } else {
-                showSnackbar(getString(R.string.permission_denied))
+    private fun observeViewModel() {
+        authViewModel.registerResult.observe(this) { result ->
+            when(result) {
+                is Result.Loading -> showLoading(true)
+                is Result.Success -> {
+                    showLoading(false)
+                    navigateToLogin()
+                }
+                is Result.Error -> showLoading(false)
             }
         }
 
-    private fun showSnackbar(message: String?) {
-        Snackbar.make(binding.root, message ?: "Unknown Error", Snackbar.LENGTH_SHORT).show()
+        authViewModel.snackbarMessage.observe(this) { message ->
+            message?.let {
+                showSnackbar(it)
+                authViewModel.resetSnackbar()
+            }
+        }
+    }
+
+    private fun setupListeners() {
+        binding.apply {
+            tvMoveRegister.setOnClickListener {
+                startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
+            }
+
+            btnRegister.setOnClickListener {
+                val username = etUsername.text.toString().trim()
+                val email = etEmail.text.toString().trim()
+                val password = etPassword.text.toString().trim()
+                val location = etLokasi.text.toString().trim()
+
+                when {
+                    username.isEmpty() -> {
+                        etUsername.requestFocus()
+                        showSnackbar("Username harus diisi")
+                    }
+                    !Reference.isEmailValid(applicationContext, email) -> {
+                        etEmail.requestFocus()
+                    }
+                    !Reference.isPasswordValid(applicationContext, password) -> {
+                        etPassword.requestFocus()
+                    }
+                    location.isEmpty() -> {
+                        etLokasi.requestFocus()
+                        showSnackbar("Lokasi harus diisi")
+                    }
+                    else -> {
+                        authViewModel.registerUser(username, email, password, location)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun navigateToLogin() {
+        startActivity(Intent(this, LoginActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+        })
+        finish()
+    }
+
+    private fun showSnackbar(message: String) {
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
+            .setAction("Tutup") { /* Optional action */ }
+            .show()
     }
 
     private fun showLoading(isLoading: Boolean) {
-        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        binding.apply {
+            progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            btnRegister.isEnabled = !isLoading
+            etUsername.isEnabled = !isLoading
+            etEmail.isEnabled = !isLoading
+            etPassword.isEnabled = !isLoading
+            etLokasi.isEnabled = !isLoading
+        }
     }
 }

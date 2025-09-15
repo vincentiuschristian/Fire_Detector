@@ -10,7 +10,6 @@
 
         <item name="colorOutlineVariant">@color/outline</item>
 
-
         <!-- Status bar color. -->
         <!--        <item name="android:statusBarColor">@color/white</item>-->
         <!-- Customize your theme here. -->
@@ -24,6 +23,8 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">16dp</item>
     </style>
+
+
 
     <style name="CustomEditText">
         <item name="android:layout_width">match_parent</item>
@@ -50,6 +51,8 @@
         <item name="bottomNavigationStyle">@style/Widget.Material3.BottomNavigationView</item>
 
     </style>
+
+
     <!-- Base application theme. -->
     <style name="Base.Theme.FireDetector" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->

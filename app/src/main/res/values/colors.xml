@@ -7,7 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="red">#FF0000</color>
+    <color name="red">#FF1744</color>
 
     <color name="background">#FFFFFF</color>
     <color name="primary">#222227</color>
@@ -19,7 +19,7 @@
     <color name="outline">#2F2F2F</color>
     <color name="icon">#222227</color>
     <color name="transparent">#00FFFFFF</color>
-    <color name="cardview_color">#F5F5F5</color>
+    <color name="cardview_color">#F4F4F4</color>
     <color name="color_text">#282828</color>
     <color name="color_text_second">#545454</color>
     <color name="color_text_link">#273FC3</color>

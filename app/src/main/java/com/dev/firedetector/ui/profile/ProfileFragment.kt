@@ -8,17 +8,17 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.dev.firedetector.AuthActivity
-import com.dev.firedetector.data.ViewModelFactory
 import com.dev.firedetector.databinding.FragmentProfileBinding
+import com.dev.firedetector.ui.register.RegisterActivity
+import com.dev.firedetector.util.Result
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: ProfileViewModel by viewModels {
-        ViewModelFactory.getInstance(requireContext())
-    }
+    private val viewModel: ProfileViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,33 +34,35 @@ class ProfileFragment : Fragment() {
 
         binding.btnLogout.setOnClickListener {
             viewModel.clearIdSaved()
-            viewModel.logout()
-            startActivity(Intent(requireActivity(), AuthActivity::class.java))
+            startActivity(Intent(requireActivity(), RegisterActivity::class.java))
         }
 
-        viewModel.loading.observe(viewLifecycleOwner) {
-            showLoading(it)
-        }
+        viewModel.userResult.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Success -> {
+                    result.data.let { userData ->
+                        binding.apply {
+                            tvUserName.text = userData.username
+                            tvUserEmail.text = userData.email
+                            tvUserFullName.text = userData.username
+                            tvUserLocation.text = userData.location
+                        }
+                    }
 
-        viewModel.userModelData.observe(viewLifecycleOwner) { data ->
-            if (data != null) {
-                binding.apply {
-                    tvIdPerangkat.text = data.idPerangkat
-                    tvUserName.text = data.username
-                    tvUserEmail.text = data.email
-                    tvUserFullName.text = data.username
-                    tvUserLocation.text = data.location
+                    showLoading(false)
                 }
-            } else {
-                showToast(viewModel.error.toString())
+                is Result.Loading -> showLoading(true)
+                is Result.Error -> {
+                    showToast(result.error)
+                    showLoading(false)
+                }
             }
         }
-
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.fetchData()
+        viewModel.loadUserProfile()
     }
 
     override fun onDestroyView() {
@@ -68,9 +70,8 @@ class ProfileFragment : Fragment() {
         _binding = null
     }
 
-    private fun showToast(message: String?) {
+    private fun showToast(message: String?) =
         Toast.makeText(requireContext(), message!!, Toast.LENGTH_SHORT).show()
-    }
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE

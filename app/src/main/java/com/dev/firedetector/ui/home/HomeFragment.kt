@@ -3,7 +3,6 @@ package com.dev.firedetector.ui.home
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,26 +10,28 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.dev.firedetector.R
-import com.dev.firedetector.data.ViewModelFactory
+import com.dev.firedetector.core.data.source.remote.response.SensorDataResponse
 import com.dev.firedetector.databinding.FragmentHomeBinding
+import com.dev.firedetector.ui.adapter.ListSensorAdapter
+import com.dev.firedetector.ui.maps.SensorMapActivity
 import com.dev.firedetector.ui.profile.ProfileViewModel
+import com.dev.firedetector.util.Result
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: HomeViewModel by viewModels {
-        ViewModelFactory.getInstance(requireContext())
-    }
-    private val profileViewModel: ProfileViewModel by viewModels {
-        ViewModelFactory.getInstance(requireContext())
-    }
-
+    private val viewModel: HomeViewModel by viewModels()
+    private val profileViewModel: ProfileViewModel by viewModels()
+    private lateinit var adapter: ListSensorAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,62 +44,86 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.apply {
-            btnPolisi.setOnClickListener {
-                val police = getString(R.string.notelp_polisi)
-                showConfirmationDialog(police)
-            }
 
-            btnCallAmbulance.setOnClickListener {
-                val ambulance = getString(R.string.notelp_ambulans)
-                showConfirmationDialog(ambulance)
-            }
-        }
-    }
+        setupRecyclerView()
+        setupEmergencyButtons()
+        showLoading(true)
+        observeViewModel()
 
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-
-        viewModel.loading.observe(viewLifecycleOwner) {
-            showLoading(it)
-        }
-
-        viewModel.getId().observe(viewLifecycleOwner) {
-            binding.tvIdPerangkat.text = it.idPerangkat
-        }
-
-        viewModel.sensorData.observe(viewLifecycleOwner) { data ->
-            if (data != null) {
-                binding.apply {
-                    txtTemperature.text = getString(R.string.text_suhu, data.temp.toString())
-                    txtHumidity.text = getString(R.string.text_kelembapan, data.hum.toString())
-                    txtAirQuality.text =  data.mqValue
-                    txtFireDetection.text = data.flameDetected
-                    cvIsFire.setCardBackgroundColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            if (data.flameDetected.toString() == "Api Terdeteksi") R.color.red else R.color.cardview_color
-                        )
-                    )
-                }
-            }
-        }
-
-        profileViewModel.userModelData.observe(viewLifecycleOwner) { data ->
-            if (data != null) {
-                binding.apply {
-                    tvName.text = data.username
-                }
-            } else {
-                showSnackbar(profileViewModel.error.toString())
-            }
-        }
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.fetchLatestSensorData()
-        profileViewModel.fetchData()
+        profileViewModel.loadUserProfile()
+    }
+
+    private fun setupRecyclerView() {
+        adapter = ListSensorAdapter { sensor ->
+            val intent = Intent(requireContext(), SensorMapActivity::class.java).apply {
+                putExtra("sensor_data", sensor)
+            }
+            startActivity(intent)
+        }
+        binding.rvList.adapter = adapter
+        binding.rvList.layoutManager = LinearLayoutManager(requireContext())
+    }
+
+    private fun setupEmergencyButtons() {
+        binding.btnPolisi.setOnClickListener {
+            val police = getString(R.string.notelp_polisi)
+            showConfirmationDialog(police)
+        }
+
+        binding.btnCallAmbulance.setOnClickListener {
+            val ambulance = getString(R.string.notelp_ambulans)
+            showConfirmationDialog(ambulance)
+        }
+    }
+
+    private fun observeViewModel() {
+        viewModel.getSensorListLiveData().observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Success -> {
+                    showLoading(false)
+                    updateList(result.data)
+                }
+                is Result.Loading -> showLoading(true)
+                is Result.Error -> {
+                    showLoading(false)
+                    showToast(result.error)
+                }
+            }
+        }
+
+        profileViewModel.userResult.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Success -> {
+                    result.data.let { data ->
+                        binding.apply {
+                            tvLocation.text = data.location
+                            tvName.text = getString(R.string.name, data.username)
+                        }
+                    }
+                    showLoading(false)
+                }
+
+                is Result.Loading -> showLoading(true)
+                is Result.Error -> showToast(result.error)
+            }
+        }
+
+    }
+
+    private fun updateList(data: List<SensorDataResponse>) {
+        binding.apply {
+            if (data.isNotEmpty()) {
+                adapter.submitList(data)
+                progressBar.visibility = View.GONE
+            } else {
+                adapter.submitList(emptyList())
+                progressBar.visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun calling(number: String) {
@@ -107,7 +132,7 @@ class HomeFragment : Fragment() {
                 Manifest.permission.CALL_PHONE
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            startActivity(Intent(Intent.ACTION_CALL, Uri.parse(number)))
+            startActivity(Intent(Intent.ACTION_CALL, number.toUri()))
         } else {
             requestPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
         }
@@ -139,14 +164,12 @@ class HomeFragment : Fragment() {
         }
     }
 
-
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
-    private fun showSnackbar(message: String?) {
-        Snackbar.make(binding.root, message ?: "Unknown Error", Snackbar.LENGTH_SHORT).show()
-    }
+    private fun showToast(message: String?) =
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -1,80 +1,122 @@
 package com.dev.firedetector.ui.register
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dev.firedetector.data.model.DataUserModel
-import com.dev.firedetector.data.pref.IDPerangkatModel
-import com.dev.firedetector.data.repository.FireRepository
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.dev.firedetector.R
+import com.dev.firedetector.core.data.source.remote.response.LoginResponse
+import com.dev.firedetector.core.data.source.remote.response.RegisterResponse
+import com.dev.firedetector.core.domain.usecase.FireUseCase
+import com.dev.firedetector.util.Reference
+import com.dev.firedetector.util.Result
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AuthViewModel(private val repository: FireRepository) : ViewModel() {
-    private val _message = MutableLiveData<String?>()
-    val message: LiveData<String?> get() = _message
+@HiltViewModel
+class AuthViewModel @Inject constructor(
+    private val useCase: FireUseCase,
+    @ApplicationContext private val appContext: Context
+) : ViewModel() {
 
-    private val _loading = MutableLiveData<Boolean>()
-    val loading: LiveData<Boolean> get() = _loading
+    private val _registerResult = MutableLiveData<Result<RegisterResponse>>()
+    val registerResult: LiveData<Result<RegisterResponse>> get() = _registerResult
 
-    private val _loggedInUser = MutableLiveData<String?>()
-    val loggedInUser: LiveData<String?> get() = _loggedInUser
+    private val _loginResult = MutableLiveData<Result<LoginResponse>>()
+    val loginResult: LiveData<Result<LoginResponse>> get() = _loginResult
 
-    init {
-        autoLogin()
-    }
+    private val _snackbarMessage = MutableLiveData<String?>()
+    val snackbarMessage: LiveData<String?> get() = _snackbarMessage
 
-    private fun autoLogin() {
-        _loggedInUser.value = repository.getUser()
-    }
-
-    fun login(email: String, pass: String) {
-        _loading.value = true
-        repository.login(email, pass, onSuccess = {
-            autoLogin()
-            _message.postValue("Login Successful")
-            _loading.postValue(false)
-        }, onFailure = { exception ->
-            _loading.postValue(false)
-            _message.postValue(parseFirebaseError(exception))
-        })
-    }
-
-    fun register(email: String, pass: String, dataUserModel: DataUserModel, idPerangkat: String) {
-        _loading.value = true
-        repository.register(
-            dataUserModel,
-            email,
-            pass,
-            idPerangkat,
-            onResult = { success, exception ->
-                if (success) {
-                    login(email, pass)
-                    _message.postValue("Registration Successful")
-                } else {
-                    _loading.postValue(false)
-                    _message.postValue(parseFirebaseError(exception!!))
-                }
-            })
-
-    }
-
-    private fun parseFirebaseError(exception: Exception): String {
-        return when (exception) {
-            is FirebaseAuthInvalidCredentialsException -> "Periksa kembali email atau kata sandi Anda!"
-            is FirebaseAuthUserCollisionException -> "Email ini sudah terdaftar. Silakan gunakan email lain atau coba masuk."
-            is FirebaseAuthInvalidUserException -> "Pengguna tidak ditemukan. Silakan periksa kembali email yang Anda masukkan."
-            else -> exception.message
-                ?: "Terjadi kesalahan yang tidak diketahui. Silakan coba lagi."
-        }
-    }
-
-    fun saveId(idPerangkatModel: IDPerangkatModel) {
+    fun registerUser(username: String, email: String, password: String, location: String) {
         viewModelScope.launch {
-            repository.saveIdPerangkat(idPerangkatModel)
+            _registerResult.value = Result.Loading
+
+            when {
+                email.isEmpty() -> {
+                    _registerResult.value = Result.Error("Email harus diisi")
+                    _snackbarMessage.value = appContext.getString(R.string.email_warning)
+                }
+                !Reference.isEmailValid(appContext, email) -> {
+                    _registerResult.value = Result.Error("Format email tidak valid")
+                }
+                password.isEmpty() -> {
+                    _registerResult.value = Result.Error("Password harus diisi")
+                    _snackbarMessage.value = appContext.getString(R.string.password_warning)
+                }
+                !Reference.isPasswordValid(appContext, password) -> {
+                    _registerResult.value = Result.Error("Password minimal 6 karakter")
+                }
+                else -> {
+                    try {
+                        val result = useCase.registerUser(username, email, password, location)
+                        _registerResult.value = result
+
+                        if (result is Result.Error) {
+                            _snackbarMessage.value = when {
+                                result.error.contains("already registered", true) ->
+                                    appContext.getString(R.string.email_already_registered)
+                                result.error.contains("username already taken", true) ->
+                                    appContext.getString(R.string.username_taken)
+                                result.error.contains("network", true) ->
+                                    appContext.getString(R.string.network_error)
+                                else -> result.error
+                            }
+                        }
+                    } catch (e: Exception) {
+                        val errorMessage = appContext.getString(R.string.general_error, e.message ?: "")
+                        _registerResult.value = Result.Error(errorMessage)
+                        _snackbarMessage.value = errorMessage
+                    }
+                }
+            }
         }
     }
 
+    fun loginUser(email: String, password: String) {
+        viewModelScope.launch {
+            _loginResult.value = Result.Loading
+
+            when {
+                email.isEmpty() -> {
+                    _loginResult.value = Result.Error("Email harus diisi")
+                    _snackbarMessage.value = appContext.getString(R.string.email_warning)
+                }
+                !Reference.isEmailValid(appContext, email) -> {
+                    _loginResult.value = Result.Error("Format email tidak valid")
+                }
+                password.isEmpty() -> {
+                    _loginResult.value = Result.Error("Password harus diisi")
+                    _snackbarMessage.value = appContext.getString(R.string.password_warning)
+                }
+                else -> {
+                    try {
+                        val result = useCase.loginUser(email, password)
+                        _loginResult.value = result
+
+                        if (result is Result.Error) {
+                            _snackbarMessage.value = when {
+                                result.error.contains("invalid credentials", true) ->
+                                    appContext.getString(R.string.invalid_credentials)
+                                result.error.contains("network", true) ->
+                                    appContext.getString(R.string.network_error)
+                                result.error.contains("timeout", true) ->
+                                    appContext.getString(R.string.timeout_error)
+                                else -> result.error
+                            }
+                        }
+                    } catch (e: Exception) {
+                        val errorMessage = appContext.getString(R.string.general_error, e.message ?: "")
+                        _loginResult.value = Result.Error(errorMessage)
+                        _snackbarMessage.value = errorMessage
+                    }
+                }
+            }
+        }
+    }
+
+    fun resetSnackbar() { _snackbarMessage.value = null }
 }

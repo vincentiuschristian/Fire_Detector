@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/textSuhu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/plus_jakarta_sans_semi_bold"
+        android:text="@string/suhu"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtTemperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:fontFamily="@font/plus_jakarta_sans_regular"
+        android:text="@string/kosong"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textSuhu"
+        app:layout_constraintStart_toEndOf="@id/textSuhu"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/textHum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/plus_jakarta_sans_semi_bold"
+        android:text="@string/kelembapan_dialog"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textSuhu" />
+
+    <TextView
+        android:id="@+id/txtHumidity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/plus_jakarta_sans_regular"
+        android:text="@string/kosong"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textHum"
+        app:layout_constraintStart_toEndOf="@+id/textHum"
+        app:layout_constraintTop_toBottomOf="@+id/txtTemperature" />
+
+
+    <TextView
+        android:id="@+id/textAsap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/plus_jakarta_sans_semi_bold"
+        android:text="@string/asap"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textHum" />
+
+
+    <TextView
+        android:id="@+id/txtGasStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/plus_jakarta_sans_regular"
+        android:text="@string/kosong"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/textApi"
+        app:layout_constraintStart_toEndOf="@+id/textAsap"
+        app:layout_constraintTop_toBottomOf="@+id/txtHumidity" />
+
+
+    <TextView
+        android:id="@+id/textApi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/plus_jakarta_sans_semi_bold"
+        android:text="Api :"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textAsap" />
+
+
+    <TextView
+        android:id="@+id/txtFireStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/plus_jakarta_sans_regular"
+        android:text="@string/kosong"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textApi"
+        app:layout_constraintStart_toEndOf="@+id/textApi"
+        app:layout_constraintTop_toBottomOf="@+id/txtGasStatus" />
+
+
+    <TextView
+        android:id="@+id/textWaktu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/plus_jakarta_sans_semi_bold"
+        android:text="@string/waktu"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textApi" />
+
+
+    <TextView
+        android:id="@+id/txtTimestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="1dp"
+        android:fontFamily="@font/plus_jakarta_sans_regular"
+        android:text="@string/kosong"
+        android:textColor="?android:attr/textColorSecondary"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textWaktu"
+        app:layout_constraintStart_toEndOf="@+id/textWaktu"
+        app:layout_constraintTop_toBottomOf="@+id/txtFireStatus" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnOpenInMaps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/primary"
+        android:fontFamily="@font/plus_jakarta_sans_semi_bold"
+        android:text="@string/buka_di_google_maps"
+        android:textColor="@color/onprimary"
+        app:cornerRadius="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtTimestamp" />
+</androidx.constraintlayout.widget.ConstraintLayout>

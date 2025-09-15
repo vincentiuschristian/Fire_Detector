@@ -1,35 +1,17 @@
 package com.dev.firedetector.ui.history
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.dev.firedetector.data.model.DataAlatModel
-import com.dev.firedetector.data.repository.FireRepository
-import kotlinx.coroutines.launch
+import com.dev.firedetector.core.domain.usecase.FireUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class HistoryViewModel(private val repository: FireRepository) : ViewModel() {
+@HiltViewModel
+class HistoryViewModel @Inject constructor(
+    private val useCase: FireUseCase
+) : ViewModel() {
 
-    private val _dataHistory = MutableLiveData<List<DataAlatModel>>()
-    val dataHistory: LiveData<List<DataAlatModel>> get() = _dataHistory
+    fun getHistory(macAddress: String) = useCase.getHistory(macAddress)
 
-    private val _loading = MutableLiveData<Boolean>()
-    val loading: LiveData<Boolean> = _loading
-
-    private val _errorMessage = MutableLiveData<String>()
-    val errorMessage: LiveData<String> get() = _errorMessage
-
-    fun getDataHistory() {
-        viewModelScope.launch {
-            repository.getSensorData(
-                onDataChanged = { data ->
-                    _dataHistory.postValue(data)
-                },
-                onError = { error ->
-                    println("Error in listener: ${error.message}")
-                }
-            )
-        }
-    }
-
+    fun getFilteredHistory(macAddress: String, range: String) =
+        useCase.getFilteredHistory(macAddress, range)
 }
