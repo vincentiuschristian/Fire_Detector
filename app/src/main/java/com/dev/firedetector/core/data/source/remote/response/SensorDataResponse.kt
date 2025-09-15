@@ -1,4 +1,4 @@
-package com.dev.firedetector.data.response
+package com.dev.firedetector.core.data.source.remote.response
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName

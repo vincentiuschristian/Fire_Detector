@@ -1,4 +1,4 @@
-package com.dev.firedetector.data.mqtt
+package com.dev.firedetector.core.data.source.mqtt
 
 import java.security.SecureRandom
 import java.security.cert.X509Certificate

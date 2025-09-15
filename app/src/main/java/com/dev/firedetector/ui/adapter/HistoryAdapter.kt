@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.dev.firedetector.data.response.SensorDataResponse
+import com.dev.firedetector.core.data.source.remote.response.SensorDataResponse
 import com.dev.firedetector.databinding.HistoryListBinding
 import java.text.SimpleDateFormat
 
@@ -30,7 +30,7 @@ class HistoryAdapter : ListAdapter<SensorDataResponse, HistoryAdapter.HistoryVie
                 val formatted = try {
                     val date = isoFormat.parse(data.timestamp)
                     localFormat.format(date!!)
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     data.timestamp
                 }
 

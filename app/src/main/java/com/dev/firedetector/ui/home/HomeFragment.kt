@@ -15,25 +15,22 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dev.firedetector.R
-import com.dev.firedetector.data.ViewModelFactory
-import com.dev.firedetector.data.response.SensorDataResponse
+import com.dev.firedetector.core.data.source.remote.response.SensorDataResponse
 import com.dev.firedetector.databinding.FragmentHomeBinding
 import com.dev.firedetector.ui.adapter.ListSensorAdapter
 import com.dev.firedetector.ui.maps.SensorMapActivity
 import com.dev.firedetector.ui.profile.ProfileViewModel
 import com.dev.firedetector.util.Result
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: HomeViewModel by viewModels {
-        ViewModelFactory.getInstance(requireContext())
-    }
-    private val profileViewModel: ProfileViewModel by viewModels {
-        ViewModelFactory.getInstance(requireContext())
-    }
+    private val viewModel: HomeViewModel by viewModels()
+    private val profileViewModel: ProfileViewModel by viewModels()
     private lateinit var adapter: ListSensorAdapter
 
     override fun onCreateView(

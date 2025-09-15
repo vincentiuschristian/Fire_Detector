@@ -8,18 +8,17 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.dev.firedetector.data.ViewModelFactory
 import com.dev.firedetector.databinding.FragmentProfileBinding
 import com.dev.firedetector.ui.register.RegisterActivity
 import com.dev.firedetector.util.Result
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: ProfileViewModel by viewModels {
-        ViewModelFactory.getInstance(requireContext())
-    }
+    private val viewModel: ProfileViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,14 +40,14 @@ class ProfileFragment : Fragment() {
         viewModel.userResult.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Success -> {
-                    result.data?.let { userData ->
+                    result.data.let { userData ->
                         binding.apply {
                             tvUserName.text = userData.username
                             tvUserEmail.text = userData.email
                             tvUserFullName.text = userData.username
                             tvUserLocation.text = userData.location
                         }
-                    } ?: showToast("Data pengguna kosong")
+                    }
 
                     showLoading(false)
                 }

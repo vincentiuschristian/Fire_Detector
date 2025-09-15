@@ -9,21 +9,20 @@ import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import com.dev.firedetector.R
-import com.dev.firedetector.data.ViewModelFactory
-import com.dev.firedetector.data.response.SensorDataResponse
+import com.dev.firedetector.core.data.source.remote.response.SensorDataResponse
 import com.dev.firedetector.databinding.FragmentSensorDataDialogBinding
 import com.dev.firedetector.ui.home.HomeViewModel
 import com.dev.firedetector.util.Result
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SensorDataDialogFragment : BottomSheetDialogFragment() {
 
     private var _binding: FragmentSensorDataDialogBinding? = null
     private val binding get() = _binding!!
     private lateinit var macAddress: String
-    private val viewModel: HomeViewModel by activityViewModels {
-        ViewModelFactory.getInstance(requireContext())
-    }
+    private val viewModel: HomeViewModel by activityViewModels()
 
     companion object {
         private const val ARG_MAC = "mac_address"

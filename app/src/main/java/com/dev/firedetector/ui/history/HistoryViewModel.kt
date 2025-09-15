@@ -1,18 +1,17 @@
 package com.dev.firedetector.ui.history
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.dev.firedetector.data.repository.FireRepository
-import com.dev.firedetector.data.response.HistoryResponse
-import com.dev.firedetector.util.Result
+import com.dev.firedetector.core.domain.usecase.FireUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class HistoryViewModel(private val repository: FireRepository) : ViewModel() {
+@HiltViewModel
+class HistoryViewModel @Inject constructor(
+    private val useCase: FireUseCase
+) : ViewModel() {
 
-    fun getHistory(macAddress: String): LiveData<Result<HistoryResponse>> {
-        return repository.getSensorHistory(macAddress)
-    }
+    fun getHistory(macAddress: String) = useCase.getHistory(macAddress)
 
-    fun getFilteredHistory(macAddress: String, range: String): LiveData<Result<HistoryResponse>> {
-        return repository.getFilteredHistory(macAddress, range)
-    }
+    fun getFilteredHistory(macAddress: String, range: String) =
+        useCase.getFilteredHistory(macAddress, range)
 }

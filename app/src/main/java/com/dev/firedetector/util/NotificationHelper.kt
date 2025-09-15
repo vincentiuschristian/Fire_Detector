@@ -17,10 +17,14 @@ import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.dev.firedetector.MainActivity
 import com.dev.firedetector.R
-import com.dev.firedetector.data.response.SensorDataResponse
+import com.dev.firedetector.core.data.source.remote.response.SensorDataResponse
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class NotificationHelper(
-    private val context: Context
+@Singleton
+class NotificationHelper @Inject constructor(
+    @ApplicationContext private val context: Context
 ) {
     private val CHANNEL_ID = "fire_alert_channel"
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -32,7 +36,6 @@ class NotificationHelper(
 
     init {
         createNotificationChannel()
-        registerNotificationReceiver()
     }
 
     fun registerNotificationReceiver() {

@@ -1,4 +1,4 @@
-package com.dev.firedetector.data.pref
+package com.dev.firedetector.core.data.source.pref
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -7,27 +7,21 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.dev.firedetector.data.model.UserModel
+import com.dev.firedetector.core.domain.model.UserModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
 
-class UserPreference(private val dataStore: DataStore<Preferences>) {
+@Singleton
+class UserPreference @Inject constructor(private val dataStore: DataStore<Preferences>) {
 
     companion object {
         private val TOKEN_KEY = stringPreferencesKey("token")
         private val IS_LOGIN_KEY = booleanPreferencesKey("isLogin")
         private val MAC_ADDRESS_KEY = stringPreferencesKey("mac_address_list")
-
-        @Volatile
-        private var INSTANCE: UserPreference? = null
-
-        fun getInstance(dataStore: DataStore<Preferences>): UserPreference {
-            return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: UserPreference(dataStore).also { INSTANCE = it }
-            }
-        }
     }
 
     suspend fun saveSession(user: UserModel, macList: List<String>) {

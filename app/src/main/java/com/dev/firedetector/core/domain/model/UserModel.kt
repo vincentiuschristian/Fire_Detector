@@ -1,4 +1,4 @@
-package com.dev.firedetector.data.model
+package com.dev.firedetector.core.domain.model
 
 data class UserModel(
     val token: String,

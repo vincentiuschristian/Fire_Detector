@@ -11,22 +11,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
-import com.dev.firedetector.data.ViewModelFactory
 import com.dev.firedetector.databinding.ActivityMainBinding
 import com.dev.firedetector.ui.login.LoginActivity
 import com.dev.firedetector.util.MqttForegroundService
 import com.dev.firedetector.util.NotificationHelper
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var notificationHelper: NotificationHelper
-
-    private val viewModel: MainViewModel by viewModels {
-        ViewModelFactory.getInstance(applicationContext)
-    }
+    @Inject
+    lateinit var notificationHelper: NotificationHelper
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +40,6 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        notificationHelper = NotificationHelper(this)
         notificationHelper.createNotificationChannel()
         notificationHelper.registerNotificationReceiver()
         notificationHelper.clearAllNotifications()

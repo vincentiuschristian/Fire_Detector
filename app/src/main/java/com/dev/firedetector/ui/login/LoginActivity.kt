@@ -8,20 +8,19 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.dev.firedetector.MainActivity
 import com.dev.firedetector.R
-import com.dev.firedetector.data.ViewModelFactory
 import com.dev.firedetector.databinding.ActivityLoginBinding
 import com.dev.firedetector.ui.register.AuthViewModel
 import com.dev.firedetector.ui.register.RegisterActivity
 import com.dev.firedetector.util.Result
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
     private val binding: ActivityLoginBinding by lazy {
         ActivityLoginBinding.inflate(layoutInflater)
     }
-    private val authViewModel: AuthViewModel by viewModels {
-        ViewModelFactory.getInstance(applicationContext)
-    }
+    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

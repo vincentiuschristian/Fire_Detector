@@ -107,4 +107,5 @@
     <string name="buka_di_google_maps">Buka di Google Maps</string>
     <string name="history_data">History Data</string>
     <string name="tidak_ada_data_pada_rentang_waktu_tersebut">Tidak Ada Data Pada Rentang Waktu Tersebut</string>
+    <string name="waktu">Waktu :</string>
 </resources>

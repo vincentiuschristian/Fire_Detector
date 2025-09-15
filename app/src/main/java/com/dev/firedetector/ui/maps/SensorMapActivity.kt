@@ -7,8 +7,7 @@ import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.dev.firedetector.R
-import com.dev.firedetector.data.ViewModelFactory
-import com.dev.firedetector.data.response.SensorDataResponse
+import com.dev.firedetector.core.data.source.remote.response.SensorDataResponse
 import com.dev.firedetector.databinding.ActivitySensorMapBinding
 import com.dev.firedetector.ui.home.HomeViewModel
 import com.dev.firedetector.util.Result
@@ -19,16 +18,16 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SensorMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivitySensorMapBinding
     private var currentMarker: Marker? = null
     private lateinit var selectedSensor: SensorDataResponse
-    private val viewModel: HomeViewModel by viewModels {
-        ViewModelFactory.getInstance(applicationContext)
-    }
+    private val viewModel: HomeViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {

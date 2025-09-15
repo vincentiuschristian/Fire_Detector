@@ -112,7 +112,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:fontFamily="@font/plus_jakarta_sans_semi_bold"
-        android:text="Waktu :"
+        android:text="@string/waktu"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textApi" />

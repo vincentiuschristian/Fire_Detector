@@ -10,19 +10,18 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dev.firedetector.R
-import com.dev.firedetector.data.ViewModelFactory
-import com.dev.firedetector.data.response.SensorDataResponse
+import com.dev.firedetector.core.data.source.remote.response.SensorDataResponse
 import com.dev.firedetector.databinding.ActivityHistoryBinding
 import com.dev.firedetector.ui.adapter.HistoryAdapter
 import com.dev.firedetector.util.Result
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HistoryActivity : AppCompatActivity() {
     private val binding: ActivityHistoryBinding by lazy {
         ActivityHistoryBinding.inflate(layoutInflater)
     }
-    private val viewModel: HistoryViewModel by viewModels {
-        ViewModelFactory.getInstance(applicationContext)
-    }
+    private val viewModel: HistoryViewModel by viewModels()
     private lateinit var adapter: HistoryAdapter
     private var history: List<SensorDataResponse    > = emptyList()
 

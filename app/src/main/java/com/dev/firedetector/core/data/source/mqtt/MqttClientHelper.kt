@@ -1,9 +1,9 @@
-package com.dev.firedetector.data.mqtt
+package com.dev.firedetector.core.data.source.mqtt
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.dev.firedetector.data.response.SensorDataResponse
+import com.dev.firedetector.core.data.source.remote.response.SensorDataResponse
 import com.google.gson.Gson
 import org.eclipse.paho.mqttv5.client.IMqttToken
 import org.eclipse.paho.mqttv5.client.MqttAsyncClient
@@ -13,8 +13,11 @@ import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse
 import org.eclipse.paho.mqttv5.common.MqttException
 import org.eclipse.paho.mqttv5.common.MqttMessage
 import org.eclipse.paho.mqttv5.common.packet.MqttProperties
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class MqttClientHelper {
+@Singleton
+class MqttClientHelper @Inject constructor() {
     private val serverUri = "ssl://d7d8ee83.ala.asia-southeast1.emqxsl.com:8883"
     private val clientId = "android_client_${System.currentTimeMillis()}"
     private val mqttClient = MqttAsyncClient(serverUri, clientId, null)
@@ -23,11 +26,7 @@ class MqttClientHelper {
     private val _sensorLiveData = MutableLiveData<SensorDataResponse>()
     val sensorLiveData: LiveData<SensorDataResponse> get() = _sensorLiveData
 
-    init {
-        connect()
-    }
-
-    private fun connect() {
+    fun connect() {
         val options = MqttConnectionOptions().apply {
             isCleanStart = true
             keepAliveInterval = 30
@@ -48,7 +47,8 @@ class MqttClientHelper {
             override fun messageArrived(topic: String, message: MqttMessage) {
                 Log.d("MQTT", "Message received: $message on topic: $topic")
                 try {
-                    val sensorData = Gson().fromJson(message.toString(), SensorDataResponse::class.java)
+                    val sensorData =
+                        Gson().fromJson(message.toString(), SensorDataResponse::class.java)
                     Log.d("MQTT", "Parsed SensorData: $sensorData")
                     _sensorLiveData.postValue(sensorData)
                 } catch (e: Exception) {

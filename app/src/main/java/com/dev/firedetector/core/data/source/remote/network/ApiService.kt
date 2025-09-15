@@ -1,12 +1,12 @@
-package com.dev.firedetector.data.retrofit
+package com.dev.firedetector.core.data.source.remote.network
 
-import com.dev.firedetector.data.response.HistoryResponse
-import com.dev.firedetector.data.response.LoginRequest
-import com.dev.firedetector.data.response.LoginResponse
-import com.dev.firedetector.data.response.LogoutResponse
-import com.dev.firedetector.data.response.RegisterRequest
-import com.dev.firedetector.data.response.RegisterResponse
-import com.dev.firedetector.data.response.UserResponse
+import com.dev.firedetector.core.data.source.remote.response.HistoryResponse
+import com.dev.firedetector.core.data.source.remote.response.LoginRequest
+import com.dev.firedetector.core.data.source.remote.response.LoginResponse
+import com.dev.firedetector.core.data.source.remote.response.LogoutResponse
+import com.dev.firedetector.core.data.source.remote.response.RegisterRequest
+import com.dev.firedetector.core.data.source.remote.response.RegisterResponse
+import com.dev.firedetector.core.data.source.remote.response.UserResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
