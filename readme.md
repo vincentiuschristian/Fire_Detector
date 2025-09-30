@@ -71,4 +71,4 @@ Follow these instructions to get a copy of the project up and running on your lo
 
 ## Screenshots
 
-https://github.com/user-attachments/assets/44b67d97-b57f-40db-8d4e-f32ff0d132e4
+![Screenshot Aplikasi](https://github.com/user-attachments/assets/44b67d97-b57f-40db-8d4e-f32ff0d132e4)
